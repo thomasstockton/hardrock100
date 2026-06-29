@@ -254,6 +254,24 @@
   .skel{color:var(--ink-3);font-size:13px}
   .err{color:var(--nogo);font-size:12px}
 
+  /* decision matrix */
+  .dm{margin-bottom:22px}
+  .dm-body{padding:16px}
+  .dm-sec{font-family:var(--display);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .dm-row{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.045)}
+  .dm-row:last-child{border-bottom:none}
+  .dm-f .t{font-weight:600;font-size:14px;color:var(--ink)}
+  .dm-f .d{font-size:11.5px;color:var(--ink-3);margin-top:3px;max-width:66ch}
+  .dm-c{justify-self:end}
+  .dm-s{justify-self:end;font-family:var(--display);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;text-align:right;min-width:108px;color:var(--ink-3)}
+  .dm-s.met{color:var(--nogo)}
+  .dm-s.ok{color:var(--go)}
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+  .seg button{background:var(--panel-2);border:none;color:var(--ink-2);font-family:var(--body);font-weight:600;font-size:12.5px;padding:6px 15px;cursor:pointer;transition:.12s}
+  .seg button:hover{color:#fff}
+  .seg button.active{background:var(--teal-deep);color:#fff}
+  .seg button[data-v="yes"].active{background:var(--nogo-deep);color:#fff}
+
   /* leaflet dark popups */
   .leaflet-popup-content-wrapper{background:var(--panel-2);color:var(--ink);border-radius:10px;box-shadow:var(--shadow)}
   .leaflet-popup-tip{background:var(--panel-2)}
@@ -385,6 +403,28 @@
     </section>
   </div>
 
+  <!-- DECISION MATRIX -->
+  <div class="stack">
+    <section class="panel dm">
+      <div class="panel-head">
+        <h2>Fire decision logic</h2>
+        <div class="meta">Simplified test interface</div>
+      </div>
+      <div class="dm-body">
+        <div class="dm-sec">Auto-detection</div>
+        <div class="dm-row">
+          <div class="dm-f">
+            <div class="t">Fire on course?</div>
+            <div class="d" id="dmFireVal">—</div>
+            <div class="d" style="margin-top:5px;font-size:10px">Auto detects perimeters &lt;1 mi (refreshes ~5 min)</div>
+          </div>
+          <div class="dm-c"><div class="seg three" data-key="fire"><button data-v="auto" class="active">Auto</button><button data-v="yes">Yes</button><button data-v="no">No</button></div></div>
+          <div class="dm-s" id="dmFireStatus">—</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <!-- THRESHOLDS -->
   <div class="stack">
     <section class="panel">
@@ -416,7 +456,7 @@
           </div>
           <div class="tcard">
             <h3>Fire posture logic</h3>
-            <p><b>No-go signals:</b> AQI ≥201 on course, a fire perimeter on/adjacent to the route, or extreme wind under a Red Flag Warning.</p>
+            <p><b>No-go signals:</b> AQI ≥201 on course, a fire perimeter &lt;1 mi from course, or extreme wind under a Red Flag Warning.</p>
             <p><b>Heightened:</b> AQI 101–200, a Red Flag Warning, a perimeter within ≈25 mi, or alpine gusts 35–55 mph.</p>
           </div>
         </div>
@@ -443,7 +483,10 @@
 <script>
 "use strict";
 
-/* ---------------- Course locations (real town coords; alpine point for exposure) ---------------- */
+/* Fire detection threshold (miles) */
+const FIRE_ON_COURSE_MI = 1;
+
+/* Course locations */
 const LOCATIONS = [
   { name:"Silverton",   role:"Start / Finish",        elev:9318,  lat:37.8119, lon:-107.6645 },
   { name:"Lake City",   role:"Eastern access / host", elev:8661,  lat:38.0302, lon:-107.3151 },
@@ -453,7 +496,6 @@ const LOCATIONS = [
   { name:"Handies Peak",role:"Course high point",     elev:14048, lat:37.9131, lon:-107.5042 }
 ];
 
-/* Approximate course corridor (NOT the official GPX) */
 const COURSE = [
   [37.8119,-107.6645],[37.8270,-107.5930],[37.8650,-107.5300],[37.9100,-107.4600],
   [37.9131,-107.5042],[37.9500,-107.5450],[37.9950,-107.5780],[38.0228,-107.6712],
@@ -461,15 +503,15 @@ const COURSE = [
   [37.8350,-107.7700],[37.8050,-107.7150],[37.8119,-107.6645]
 ];
 
-const COURSE_BBOX = { xmin:-108.30, ymin:37.40, xmax:-106.80, ymax:38.40 }; // perimeter query box
+const COURSE_BBOX = { xmin:-108.30, ymin:37.40, xmax:-106.80, ymax:38.40 };
 
-/* ---------------- State ---------------- */
+/* State */
 let map, fireWMS, perimeterLayer, aqiLayer;
-let fireDate = new Date();          // satellite detection day
+let fireDate = new Date();
 let latestWeather = [], latestAir = [], latestAlerts = [], latestPerims = [];
 let autoTimer = null;
 
-/* ---------------- Helpers ---------------- */
+/* Helpers */
 const $ = s => document.querySelector(s);
 const pad = n => String(n).padStart(2,"0");
 const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -484,6 +526,7 @@ function aqiInfo(v){
   if(v<=300) return {cat:"V.Unhealthy",color:"var(--aqi-vunh)", sev:4};
   return       {cat:"Hazardous", color:"var(--aqi-haz)",  sev:5};
 }
+
 const DIRS = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
 const windDir = d => (d==null)?"—":DIRS[Math.round(d/22.5)%16];
 
@@ -500,10 +543,10 @@ function haversineMi(a,b,c,d){
   return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
 }
 
-/* ---------------- Map ---------------- */
+/* Map */
 function initMap(){
   map = L.map("map",{ zoomControl:true, attributionControl:true }).setView([37.93,-107.62], 10);
-
+  
   const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
     maxZoom:17, subdomains:"abc",
     attribution:'© OpenTopoMap · OpenStreetMap contributors'
@@ -515,7 +558,6 @@ function initMap(){
     maxZoom:18, attribution:'© Esri World Imagery'
   });
 
-  // Course corridor + aid towns
   const courseLine = L.polyline(COURSE,{ color:"#3fb6c9", weight:3.5, opacity:.9, dashArray:"1 0" });
   const courseGroup = L.layerGroup([courseLine]);
   LOCATIONS.forEach(l=>{
@@ -527,7 +569,6 @@ function initMap(){
   });
   courseGroup.addTo(map);
 
-  // NASA GIBS / FIRMS satellite fire detections (keyless WMS)
   fireWMS = L.tileLayer.wms("https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi",{
     layers:"VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All",
     format:"image/png", transparent:true, version:"1.3.0",
@@ -567,7 +608,7 @@ function refreshFireDate(){
   if(fireWMS) fireWMS.setParams({ time: fmtDate(fireDate) });
 }
 
-/* ---------------- Fetchers ---------------- */
+/* Fetchers */
 async function fetchWeather(){
   const lats = LOCATIONS.map(l=>l.lat).join(",");
   const lons = LOCATIONS.map(l=>l.lon).join(",");
@@ -592,7 +633,6 @@ async function fetchAir(){
 }
 
 async function fetchAlerts(){
-  // unique town points (skip Handies — same zone as Silverton)
   const pts = LOCATIONS.filter(l=>l.name!=="Handies Peak");
   const seen = new Map();
   await Promise.all(pts.map(async l=>{
@@ -619,7 +659,7 @@ async function fetchPerimeters(){
   return await r.json();
 }
 
-/* ---------------- Renderers ---------------- */
+/* Renderers */
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
@@ -652,7 +692,6 @@ function renderCards(weather, air){
     host.appendChild(card);
   });
 
-  // AQI markers on map
   if(aqiLayer){
     aqiLayer.clearLayers();
     LOCATIONS.forEach((l,i)=>{
@@ -696,7 +735,6 @@ function renderPerimeters(geo){
     const p=f.properties||{};
     const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
     const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
-    // nearest distance from any course point to any vertex (approx)
     let minMi = Infinity;
     const coords = [];
     const collect = arr => {
@@ -712,15 +750,32 @@ function renderPerimeters(geo){
     });
     latestPerims.push({ name, acres, minMi:isFinite(minMi)?minMi:null });
   });
+  updateDecisionFire();
 }
 
-/* ---------------- Posture engine (advisory) ---------------- */
+/* Decision logic */
+function updateDecisionFire(){
+  const fireAuto = latestPerims.length && latestPerims.some(p=>p.minMi!=null && p.minMi<FIRE_ON_COURSE_MI);
+  const val = $("#dmFireVal");
+  const status = $("#dmFireStatus");
+  if(fireAuto){
+    val.textContent = `${latestPerims.filter(p=>p.minMi<FIRE_ON_COURSE_MI).length} perimeter(s) ≤1 mi detected`;
+    status.textContent = "TRIGGERED";
+    status.className = "dm-s met";
+    $('[data-key="fire"] button[data-v="auto"]').click();
+  } else {
+    val.textContent = latestPerims.length ? "No perimeters ≤1 mi" : "No perimeters detected";
+    status.textContent = "OK";
+    status.className = "dm-s ok";
+  }
+}
+
+/* Posture engine */
 function computePosture(){
   const chips = [];
   let level = "go";
   const bump = lv => { if(lv==="nogo") level="nogo"; else if(lv==="hold" && level!=="nogo") level="hold"; };
 
-  // Air quality
   let worstAqi = -1, worstLoc = "";
   latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
   if(worstAqi>=0){
@@ -731,7 +786,6 @@ function computePosture(){
     chips.push({sev, html:`<b>AQI ${Math.round(worstAqi)}</b> ${info.cat} · ${worstLoc}`});
   }
 
-  // Wind (alpine exposure — Handies + max gust)
   let maxGust=-1, gustLoc="";
   latestWeather.forEach((w,i)=>{ const g=w?.current?.wind_gusts_10m; if(g!=null && g>maxGust){maxGust=g; gustLoc=LOCATIONS[i].name;} });
   if(maxGust>=0){
@@ -741,7 +795,6 @@ function computePosture(){
     chips.push({sev, html:`<b>Gusts ${Math.round(maxGust)} mph</b> · ${gustLoc}`});
   }
 
-  // NWS alerts
   const redFlag = latestAlerts && latestAlerts.some(a=>/red flag/i.test(a.event||""));
   const fireWatch = latestAlerts && latestAlerts.some(a=>/fire weather/i.test(a.event||""));
   const aqAlert = latestAlerts && latestAlerts.some(a=>/air quality|smoke/i.test(a.event||""));
@@ -754,7 +807,7 @@ function computePosture(){
     const nearest = latestPerims.reduce((m,p)=> (p.minMi!=null && p.minMi<(m.minMi??Infinity))?p:m, {minMi:Infinity});
     const d = nearest.minMi;
     let sev="go";
-    if(d!=null && d<1) sev="nogo";
+    if(d!=null && d<FIRE_ON_COURSE_MI) sev="nogo";
     else if(d!=null && d<=8) sev="hold";
     else if(d!=null && d<=25) sev="hold";
     bump(sev);
@@ -763,7 +816,6 @@ function computePosture(){
     chips.push({sev:"go", html:`No mapped fire perimeters near course`});
   }
 
-  // No data fallback
   if(chips.length===0){ chips.push({sev:"go", html:`Awaiting data`}); }
 
   const words = { go:"NOMINAL", hold:"HEIGHTENED", nogo:"CRITICAL" };
@@ -772,15 +824,13 @@ function computePosture(){
   $("#postureWord").textContent = words[level];
   $("#postureChips").innerHTML = chips.map(c=>`<span class="chip" data-sev="${c.sev}"><span class="pip"></span>${c.html}</span>`).join("");
 
-  // live dot mirrors posture
   const dot = $("#liveDot");
   dot.style.background = level==="nogo"?"var(--nogo)":level==="hold"?"var(--hold)":"var(--go)";
 }
 
-/* ---------------- Orchestration ---------------- */
+/* Orchestration */
 async function loadAll(){
   $("#refreshBtn").disabled = true;
-  // Weather + AQI (one combined render)
   try{
     const [w,a] = await Promise.all([fetchWeather(), fetchAir()]);
     latestWeather = w; latestAir = a;
@@ -788,19 +838,17 @@ async function loadAll(){
   }catch(e){
     $("#cards").innerHTML = `<div class="err">Could not load wind/AQI from Open-Meteo. Retry shortly.</div>`;
   }
-  // Alerts
   try{ latestAlerts = await fetchAlerts(); renderAlerts(latestAlerts); }
   catch(e){ latestAlerts = null; renderAlerts(null); }
-  // Perimeters
   try{ const geo = await fetchPerimeters(); renderPerimeters(geo); }
-  catch(e){ /* keep map clean; sources panel covers fallback */ }
+  catch(e){ /* keep map clean */ }
 
   computePosture();
   $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
   $("#refreshBtn").disabled = false;
 }
 
-/* ---------------- Wire up ---------------- */
+/* Init */
 document.addEventListener("DOMContentLoaded", ()=>{
   initMap();
   refreshFireDate();
@@ -809,11 +857,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
   $("#refreshBtn").addEventListener("click", loadAll);
   $("#dPrev").addEventListener("click", ()=>{ fireDate.setDate(fireDate.getDate()-1); refreshFireDate(); });
   $("#dNext").addEventListener("click", ()=>{
-    const t=new Date(); if(fmtDate(fireDate)>=fmtDate(t)) return; // don't go to future
+    const t=new Date(); if(fmtDate(fireDate)>=fmtDate(t)) return;
     fireDate.setDate(fireDate.getDate()+1); refreshFireDate();
   });
 
-  // auto-refresh every 10 min
+  // Fire decision toggles
+  document.querySelectorAll('[data-key="fire"] button').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll('[data-key="fire"] button').forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+
   autoTimer = setInterval(loadAll, 10*60*1000);
 });
 </script>
