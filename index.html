@@ -399,7 +399,7 @@
   <!-- HEADER -->
   <header class="topbar">
     <div class="brandblock">
-      <div class="eyebrow kicker">Board of Directors · Go / No-Go Support</div>
+      <div class="eyebrow kicker">Board of Directors &amp; Run Committee · Go / No-Go Support</div>
       <h1>HARDROCK <span class="lo">100</span> · CONDITIONS WATCH</h1>
       <div class="sub">Live wildfire, smoke / air-quality, wind, and alert monitoring across the San Juan Mountains course corridor — Silverton · Lake City · Ouray · Telluride · Ophir.</div>
     </div>
@@ -602,7 +602,7 @@
     <div class="dm-body">
       <div class="dm-sec">1 · Fire</div>
       <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Fire on course</div><div class="d" id="dmFireVal">—</div></div>
+        <div class="dm-f"><div class="t">Fire on course</div><div class="d" id="dmFireVal">—</div><div class="d" style="margin-top:5px">Auto counts wildfire &amp; complex perimeters within 1 mi of the route; prescribed burns are shown but don’t auto-trigger.</div></div>
         <div class="dm-c"><div class="seg three" data-key="fire"><button data-v="auto" class="active">Auto</button><button data-v="yes">Yes</button><button data-v="no">No</button></div></div>
         <div class="dm-s" id="dmFireStatus">—</div>
       </div>
@@ -766,13 +766,14 @@ function initMap(){
   }).addTo(map);
 
   perimeterLayer = L.geoJSON(null,{
-    style:{ color:"#ef5350", weight:2, fillColor:"#ef5350", fillOpacity:.22 },
+    style:(f)=>{ const c = fireTypeOf(f.properties||{})==="prescribed" ? "#f5a623" : "#ef5350"; return { color:c, weight:2, fillColor:c, fillOpacity:.20 }; },
     onEachFeature:(f,layer)=>{
       const p=f.properties||{};
       const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed incident";
       const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize;
       const cont=p.attr_PercentContained;
-      layer.bindPopup(`<b>${name}</b><br>${acres?Math.round(acres).toLocaleString()+" acres":"size n/a"}`
+      const tl=fireTypeLabel(fireTypeOf(p));
+      layer.bindPopup(`<b>${name}</b><br>${tl}${acres?` \u00b7 ${Math.round(acres).toLocaleString()} acres`:""}`
         + (cont!=null?`<br>${Math.round(cont)}% contained`:"")
         + `<br><span style="color:#9fb0c0">NIFC live perimeter</span>`);
     }
@@ -872,7 +873,7 @@ function renderLayerStatus(){
   const aqiCol = cur ? aqiInfo(cur.max).color : "#6f8497";
   const aqiTxt = cur ? `${Math.round(cur.max)} ${aqiInfo(cur.max).cat}` : "loading…";
   el.innerHTML =
-      `<span><i class="sw" style="background:#ef5350"></i>Fire perimeters (NIFC): <b>${nP?`${nP} in region`:"none currently"}</b></span>`
+      `<span><i class="sw" style="background:#ef5350"></i>Fire perimeters (NIFC): <b>${nP?`${nP} in region`:"none currently"}</b>${(()=>{const rx=(latestPerims||[]).filter(x=>x.type==="prescribed").length;return rx?` \u00b7 ${nP-rx} wildfire/complex, ${rx} prescribed`:"";})()}</span>`
     + `<span><i class="sw" style="background:#f5a623"></i>Satellite detections (VIIRS): <b>${prettyDate(fireDate)}</b> · 12–24 h latency</span>`
     + `<span><i class="sw" style="background:${aqiCol}"></i>Air quality: <b>course max ${aqiTxt}</b></span>`
     + `<span><i class="sw" style="background:#3fb6c9"></i>Course + <b>${AID_STATIONS.length} aid stations</b></span>`;
@@ -945,17 +946,27 @@ function renderAlerts(alerts){
   });
 }
 
+function fireTypeOf(p){
+  const c = String(p.attr_IncidentTypeCategory||p.IncidentTypeCategory||p.poly_FeatureCategory||p.FeatureCategory||"").toUpperCase();
+  if(c.startsWith("RX")||c.indexOf("PRESCRIB")>=0) return "prescribed";
+  if(c.startsWith("CX")||c.indexOf("COMPLEX")>=0) return "complex";
+  if(c.startsWith("WF")||c.indexOf("WILDFIRE")>=0) return "wildfire";
+  return "unknown";
+}
+function fireTypeLabel(t){ return t==="prescribed"?"Prescribed burn":t==="complex"?"Complex":t==="wildfire"?"Wildfire":"Fire"; }
+
 function renderPerimeters(geo){
   perimeterLayer.clearLayers();
   latestPerims = [];
-  latestFire = { nearestCourseMi:null, nearestName:"", onCourse:false };
+  latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
   if(!geo || !geo.features) return;
   perimeterLayer.addData(geo);
-  let bestCourse = Infinity, bestName = "";
+  let bestTrig=Infinity, bestTrigName="", bestTrigType="", bestRx=Infinity, bestRxName="";
   geo.features.forEach(f=>{
     const p=f.properties||{};
     const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
     const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
+    const type=fireTypeOf(p);
     const coords = [];
     const collect = arr => { if(typeof arr[0]==="number") coords.push(arr); else arr.forEach(collect); };
     if(f.geometry && f.geometry.coordinates) collect(f.geometry.coordinates);
@@ -966,10 +977,19 @@ function renderPerimeters(geo){
       for(const l of LOCATIONS){ const d=haversineMi(l.lat,l.lon,c[1],c[0]); if(d<minLoc) minLoc=d; }
       for(let pi=0; pi<COURSE.length; pi+=2){ const d=haversineMi(COURSE[pi][0],COURSE[pi][1],c[1],c[0]); if(d<minCourse) minCourse=d; }
     }
-    latestPerims.push({ name, acres, minMi:isFinite(minLoc)?minLoc:null });
-    if(isFinite(minCourse) && minCourse<bestCourse){ bestCourse=minCourse; bestName=name; }
+    latestPerims.push({ name, acres, type, minMi:isFinite(minLoc)?minLoc:null, courseMi:isFinite(minCourse)?minCourse:null });
+    if(isFinite(minCourse)){
+      if(type==="prescribed"){ if(minCourse<bestRx){ bestRx=minCourse; bestRxName=name; } }
+      else { if(minCourse<bestTrig){ bestTrig=minCourse; bestTrigName=name; bestTrigType=type; } }
+    }
   });
-  if(isFinite(bestCourse)) latestFire = { nearestCourseMi:bestCourse, nearestName:bestName, onCourse: bestCourse<=FIRE_ON_COURSE_MI };
+  latestFire = {
+    onCourse: isFinite(bestTrig) && bestTrig<=FIRE_ON_COURSE_MI,
+    nearestCourseMi: isFinite(bestTrig)?bestTrig:null,
+    nearestName: bestTrigName, nearestType: bestTrigType||"",
+    rxOnCourse: isFinite(bestRx) && bestRx<=FIRE_ON_COURSE_MI,
+    rxName: bestRxName, rxMi: isFinite(bestRx)?bestRx:null
+  };
 }
 
 /* ---------------- Posture engine (advisory) ---------------- */
@@ -1257,7 +1277,7 @@ const FIRE_ON_COURSE_MI = 1.0;
 
 const board = { fire:"auto", extra:false, extraLabel:"", emerg:false, access:false, aid:0, commFin:"", rev:"" };
 let latestAqiWindow = null;
-let latestFire = { nearestCourseMi:null, nearestName:"", onCourse:false };
+let latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
 
 function aqiWindowMax(air){
   let max=-1, loc="", when="", covered=0, lastTime="";
@@ -1287,8 +1307,9 @@ function computeDecision(){
   const aqiTrigger = aqiMax!=null && aqiMax>150;
   const triggers=[];
   if(fire){
-    const lbl = (board.fire==="auto") ? `Fire on/near course${latestFire.nearestName?` \u2014 ${latestFire.nearestName}`:""}`
-              : "Fire on course (Board)";
+    const lbl = (board.fire==="auto")
+      ? `${fireTypeLabel(latestFire.nearestType||"wildfire")} on/near course${latestFire.nearestName?` \u2014 ${latestFire.nearestName}`:""}`
+      : "Fire on course (Board)";
     triggers.push(lbl);
   }
   if(aqiTrigger) triggers.push(`Course AQI ${Math.round(aqiMax)} \u00b7 Unhealthy (>150)`);
@@ -1323,9 +1344,11 @@ function renderDecision(){
   // Fire
   const f = latestFire;
   let fv;
-  if(f.nearestCourseMi==null) fv = "No mapped fire perimeters in region \u00b7 satellite/perimeter data lags \u2014 confirm with incident command";
-  else if(f.onCourse) fv = `Perimeter on/near course \u2014 ${f.nearestName||"incident"} (\u2248${f.nearestCourseMi.toFixed(1)} mi from route)`;
-  else fv = `Nearest perimeter \u2248${f.nearestCourseMi.toFixed(1)} mi off route${f.nearestName?` \u2014 ${f.nearestName}`:""}`;
+  if(f.nearestCourseMi==null && f.rxMi==null) fv = "No mapped fire perimeters in region \u00b7 satellite/perimeter data lags \u2014 confirm with incident command";
+  else if(f.onCourse) fv = `${fireTypeLabel(f.nearestType)} on/near course \u2014 ${f.nearestName||"incident"} (\u2248${f.nearestCourseMi.toFixed(1)} mi from route)`;
+  else if(f.nearestCourseMi!=null) fv = `Nearest ${fireTypeLabel(f.nearestType).toLowerCase()} \u2248${f.nearestCourseMi.toFixed(1)} mi off route${f.nearestName?` \u2014 ${f.nearestName}`:""}`;
+  else fv = "No triggering wildfire perimeters near route";
+  if(f.rxMi!=null) fv += ` <span style="color:var(--amber-soft)">\u00b7 Prescribed burn ${f.rxName} \u2248${f.rxMi.toFixed(1)} mi (not auto-triggering)</span>`;
   const mode = board.fire==="auto" ? `Auto \u2192 ${f.onCourse?"YES":"no"}` : `Override \u2192 ${board.fire.toUpperCase()}`;
   $("#dmFireVal").innerHTML = `${fv} <span style="color:var(--ink-3)">\u00b7 ${mode}</span>`;
   setDmStatus("#dmFireStatus", D.fire);
