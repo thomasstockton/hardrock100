@@ -240,6 +240,36 @@
   .tcard p{font-size:12px;color:var(--ink-2);margin:0}
   .tcard p+p{margin-top:7px}
 
+  .profwrap{position:relative;width:100%}
+  .profwrap svg{display:block;width:100%;height:230px}
+  .prof-tip{position:absolute;pointer-events:none;background:var(--panel-3);border:1px solid var(--line-strong);
+    border-radius:8px;padding:6px 9px;font-size:12px;color:var(--ink);transform:translate(-50%,-130%);
+    white-space:nowrap;opacity:0;transition:opacity .08s;font-variant-numeric:tabular-nums;z-index:6}
+  .prof-tip b{color:var(--teal);font-weight:600}
+  .prof-tip .a{color:var(--amber-soft)}
+  .fc-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .fc-pill{font-family:var(--body);font-size:12.5px;font-weight:600;background:var(--panel-2);color:var(--ink-2);
+    border:1px solid var(--line-strong);border-radius:999px;padding:6px 14px;cursor:pointer;transition:.15s}
+  .fc-pill:hover{border-color:var(--teal);color:#fff}
+  .fc-pill.active{background:var(--teal-deep);border-color:var(--teal);color:#fff}
+  .fc-now{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start;background:var(--panel-2);
+    border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 17px;margin-bottom:13px}
+  .fc-now .ic{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:104px}
+  .fc-now .ic img{width:66px;height:66px;border-radius:10px;border:1px solid var(--line);object-fit:cover}
+  .fc-now .ic .nm{font-family:var(--display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);text-align:center}
+  .fc-now .ic .tp{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+  .fc-now .det{color:var(--ink-2);font-size:13.5px;line-height:1.55}
+  .fc-now .wind{color:var(--amber-soft);font-size:12.5px;margin-top:8px;font-weight:600;letter-spacing:.01em}
+  .fc-row{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+  .fc-row::-webkit-scrollbar{height:8px}
+  .fc-row::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:8px}
+  .fc-card{flex:0 0 auto;width:130px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 12px;text-align:center}
+  .fc-card .nm{font-family:var(--display);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);min-height:28px;line-height:1.2}
+  .fc-card img{width:38px;height:38px;margin:3px auto;display:block;border-radius:7px}
+  .fc-card .tp{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+  .fc-card .sf{font-size:11px;color:var(--ink-2);margin-top:4px;line-height:1.35;min-height:46px}
+  .fc-card .wd{font-size:10.5px;color:var(--ink-3);margin-top:5px;border-top:1px solid var(--line);padding-top:5px}
+  @media (max-width:560px){ .fc-now{grid-template-columns:1fr} .fc-now .ic{flex-direction:row;justify-content:flex-start;gap:14px;min-width:0} }
   .full{grid-column:1 / -1}
   .stack{display:flex;flex-direction:column;gap:20px;margin-top:20px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
@@ -345,6 +375,34 @@
         <div class="cards" id="cards">
           <div class="skel">Loading wind &amp; air-quality for each location…</div>
         </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ELEVATION PROFILE -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Elevation profile &amp; alpine exposure</h2>
+        <div class="meta" id="profStats">—</div>
+      </div>
+      <div class="panel-body">
+        <div class="profwrap" id="profWrap"><div class="prof-tip" id="profTip"></div></div>
+        <div class="maphint">Hover the profile to trace position on the map. The shaded band marks terrain above treeline (≈11,800 ft) — the exposed alpine sections where wind, cold, and lightning risk are greatest. Amber ticks are aid stations.</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- NWS FORECAST -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>NWS forecast</h2>
+        <div class="meta" id="fcPlace">—</div>
+      </div>
+      <div class="panel-body">
+        <div class="fc-pills" id="fcPills"></div>
+        <div id="fcBody"><div class="skel">Loading National Weather Service forecast…</div></div>
       </div>
     </section>
   </div>
@@ -458,8 +516,11 @@ const COURSE = [[37.81242,-107.66573],[37.81265,-107.66611],[37.81097,-107.66765
 
 const COURSE_BBOX = { xmin:-108.30, ymin:37.40, xmax:-106.80, ymax:38.40 }; // perimeter query box
 
+const AID_STATIONS = [{"name":"Putnam","lat":37.80636,"lon":-107.70874,"mile":3.3},{"name":"Chapman","lat":37.87078,"lon":-107.79018,"mile":20.6},{"name":"Telluride","lat":37.93664,"lon":-107.8088,"mile":27.3},{"name":"Kroger's / Virginius","lat":37.95558,"lon":-107.77866,"mile":30.9},{"name":"Governor Basin","lat":37.97517,"lon":-107.74367,"mile":35.5},{"name":"Ouray","lat":38.02319,"lon":-107.67287,"mile":42.7},{"name":"Engineer","lat":37.99168,"lon":-107.60782,"mile":49.4},{"name":"Grouse Gulch","lat":37.94937,"lon":-107.57318,"mile":54.2},{"name":"Pole Creek","lat":37.90598,"lon":-107.50892,"mile":60.6},{"name":"Sherman","lat":37.91017,"lon":-107.44073,"mile":67.7},{"name":"Cunningham","lat":37.81646,"lon":-107.60733,"mile":93.2},{"name":"Silverton (S/F)","lat":37.8124,"lon":-107.66571,"mile":98.5}];
+const ELEV_PROFILE = [[0.0,9310,37.81242,-107.66573],[0.37,9475,37.81284,-107.67036],[0.59,9424,37.81099,-107.67323],[0.8,9356,37.80938,-107.67605],[0.99,9359,37.80886,-107.67862],[1.22,9387,37.80973,-107.68246],[1.44,9433,37.81145,-107.68559],[1.68,9469,37.81264,-107.68935],[1.88,9487,37.81411,-107.69209],[2.02,9497,37.81514,-107.69369],[2.1,9464,37.81532,-107.69503],[2.28,9437,37.81532,-107.6979],[2.38,9485,37.81413,-107.69835],[2.53,9585,37.81358,-107.70036],[2.76,9798,37.81163,-107.70264],[3.0,9910,37.80885,-107.70471],[3.15,9987,37.8075,-107.70672],[3.36,10095,37.80542,-107.70913],[3.55,10133,37.80328,-107.71102],[3.7,10180,37.80164,-107.71276],[3.88,10253,37.79988,-107.71473],[4.03,10339,37.79851,-107.7168],[4.14,10414,37.79742,-107.71801],[4.23,10476,37.79651,-107.71894],[4.36,10594,37.79504,-107.72046],[4.53,10687,37.79305,-107.72181],[4.65,10778,37.7915,-107.72234],[4.76,10870,37.79003,-107.72274],[4.9,10957,37.78838,-107.72395],[5.02,11038,37.78674,-107.72462],[5.11,11090,37.78561,-107.72548],[5.26,11110,37.78369,-107.72628],[5.39,11103,37.78194,-107.72615],[5.53,11182,37.78027,-107.727],[5.69,11363,37.78063,-107.72959],[5.84,11498,37.78137,-107.73176],[5.98,11580,37.78195,-107.73389],[6.08,11636,37.78188,-107.73559],[6.17,11700,37.78122,-107.73709],[6.33,11820,37.7796,-107.73918],[6.43,11872,37.77882,-107.74047],[6.55,12028,37.77846,-107.7425],[6.66,12073,37.77799,-107.74374],[6.79,12094,37.77632,-107.74455],[6.91,12194,37.77463,-107.74443],[7.15,12388,37.77129,-107.7454],[7.39,12677,37.77382,-107.74807],[7.68,12596,37.77679,-107.7514],[7.91,12169,37.77705,-107.75534],[8.13,12088,37.77523,-107.75848],[8.37,12155,37.77431,-107.76252],[8.58,12236,37.77572,-107.76578],[8.76,12265,37.77746,-107.76823],[8.88,12194,37.77822,-107.76993],[8.99,12064,37.77916,-107.7711],[9.08,11956,37.77961,-107.77208],[9.19,11837,37.78106,-107.77231],[9.27,11784,37.78187,-107.77284],[9.51,11497,37.78423,-107.77338],[9.63,11373,37.78453,-107.77553],[9.81,11298,37.78546,-107.77817],[10.0,11401,37.78635,-107.78114],[10.22,11297,37.7848,-107.78453],[10.38,11293,37.78463,-107.78732],[10.6,11307,37.78392,-107.79075],[10.75,11106,37.78347,-107.79304],[10.86,10903,37.78419,-107.7944],[10.94,10801,37.78471,-107.79524],[11.04,10693,37.78575,-107.79586],[11.2,10626,37.78797,-107.79659],[11.41,10687,37.79011,-107.79532],[11.69,10746,37.79338,-107.79241],[11.98,10934,37.79702,-107.79021],[12.24,11030,37.8006,-107.78887],[12.55,11139,37.80475,-107.78663],[12.78,11141,37.8073,-107.78426],[13.07,11097,37.80938,-107.78883],[13.25,11124,37.81075,-107.79021],[13.4,11296,37.81236,-107.7899],[13.6,11490,37.81338,-107.79115],[13.84,11785,37.81509,-107.79232],[14.09,12070,37.81522,-107.79641],[14.23,12234,37.8167,-107.79697],[14.37,12376,37.81851,-107.79756],[14.58,12580,37.82092,-107.79962],[14.72,12780,37.82281,-107.80057],[14.83,12852,37.82318,-107.7994],[14.97,12535,37.8252,-107.7993],[15.09,12374,37.8268,-107.7995],[15.15,12241,37.82757,-107.79927],[15.22,12125,37.82846,-107.79962],[15.34,11938,37.82983,-107.80042],[15.44,11805,37.83091,-107.80061],[15.52,11669,37.83168,-107.8015],[15.75,11624,37.83303,-107.80481],[15.91,11589,37.83441,-107.80718],[16.01,11480,37.83583,-107.80741],[16.11,11420,37.83709,-107.8079],[16.2,11405,37.83814,-107.80881],[16.32,11359,37.83906,-107.81032],[16.5,11299,37.84152,-107.80947],[16.67,11151,37.84367,-107.80835],[16.82,10995,37.84572,-107.80732],[17.04,10814,37.84872,-107.80701],[17.29,10563,37.84943,-107.80472],[17.48,10460,37.85155,-107.8036],[17.71,10295,37.85374,-107.80455],[17.95,10190,37.85677,-107.80535],[18.24,10169,37.85872,-107.80965],[18.49,10370,37.85965,-107.80576],[18.66,10520,37.86054,-107.80391],[18.87,10744,37.86213,-107.80132],[19.02,10909,37.86214,-107.79869],[19.2,11170,37.86305,-107.79796],[19.38,11427,37.86453,-107.79577],[19.55,11633,37.86539,-107.79605],[19.73,11896,37.86673,-107.79452],[19.96,12188,37.86938,-107.79402],[20.19,12391,37.86995,-107.79312],[20.38,12599,37.87039,-107.7917],[20.62,12922,37.87116,-107.79052],[20.91,13154,37.87497,-107.79196],[21.09,12985,37.87756,-107.79138],[21.19,13009,37.87826,-107.79201],[21.27,12944,37.87847,-107.79321],[21.38,12837,37.87885,-107.79474],[21.48,12733,37.87907,-107.79563],[21.57,12626,37.87988,-107.79657],[21.71,12492,37.88159,-107.7976],[21.94,12384,37.8844,-107.79962],[22.14,12248,37.88625,-107.8023],[22.38,12202,37.88839,-107.80536],[22.43,12154,37.88865,-107.80597],[22.54,12041,37.8893,-107.80701],[22.68,11945,37.88924,-107.80777],[22.81,11860,37.89019,-107.80933],[22.86,11791,37.8904,-107.80982],[22.97,11760,37.8919,-107.81],[23.11,11644,37.89369,-107.80916],[23.24,11486,37.89535,-107.80978],[23.31,11486,37.89463,-107.81014],[23.42,11486,37.89414,-107.81117],[23.53,10882,37.89561,-107.81184],[23.6,10882,37.89588,-107.81261],[23.78,10882,37.89822,-107.81376],[23.9,10809,37.89986,-107.8139],[24.05,10591,37.90192,-107.81404],[24.27,10384,37.90497,-107.81498],[24.44,10287,37.90735,-107.81457],[24.62,10089,37.90962,-107.81333],[24.72,9977,37.90996,-107.81264],[24.82,9829,37.91066,-107.81161],[24.93,9687,37.91019,-107.81094],[25.21,9485,37.91235,-107.80799],[25.41,9381,37.91511,-107.80785],[25.69,9277,37.91908,-107.80692],[26.05,9178,37.92409,-107.80728],[26.39,9044,37.92892,-107.80597],[26.62,8944,37.93169,-107.80769],[26.88,8835,37.93335,-107.81045],[26.98,8790,37.93366,-107.80869],[27.12,8768,37.93509,-107.80751],[27.41,8834,37.93827,-107.80814],[27.57,9017,37.93904,-107.80625],[27.73,9109,37.94056,-107.80817],[27.87,9242,37.94178,-107.80983],[27.98,9362,37.94263,-107.80982],[28.18,9546,37.94258,-107.80776],[28.37,9679,37.94508,-107.80715],[28.71,9872,37.94792,-107.80248],[29.09,10297,37.95178,-107.79805],[29.38,10669,37.9538,-107.79565],[29.72,11039,37.95786,-107.79438],[30.04,11470,37.95973,-107.7903],[30.41,11831,37.95742,-107.78538],[30.71,12306,37.95685,-107.78056],[30.99,12559,37.95692,-107.77795],[31.32,12888,37.96093,-107.77501],[31.65,12874,37.9634,-107.7724],[31.92,12464,37.96689,-107.77226],[32.13,12175,37.96967,-107.77245],[32.3,12032,37.97165,-107.77218],[32.56,11864,37.97438,-107.76948],[32.8,11730,37.97483,-107.76541],[32.99,11631,37.97581,-107.76286],[33.3,11417,37.97696,-107.76264],[33.48,11284,37.9777,-107.76319],[33.79,11122,37.97846,-107.76739],[34.08,10960,37.98082,-107.76353],[34.27,10867,37.98139,-107.76242],[34.5,10784,37.98012,-107.75996],[34.84,10713,37.97656,-107.75593],[35.16,10622,37.9757,-107.7505],[35.54,10510,37.97518,-107.74352],[35.83,10288,37.97357,-107.73886],[36.07,10113,37.97283,-107.73506],[36.44,9945,37.97341,-107.72892],[36.81,9731,37.9752,-107.7227],[37.22,9598,37.97848,-107.71675],[37.62,9340,37.98295,-107.71225],[37.86,9156,37.9842,-107.71021],[38.15,9003,37.98705,-107.70655],[38.54,8866,37.99163,-107.70292],[38.9,8721,37.99554,-107.69902],[39.3,8621,38.00042,-107.69638],[39.55,8523,38.00256,-107.69279],[39.9,8544,38.00695,-107.68975],[40.16,8412,38.01009,-107.68773],[40.42,8336,38.01254,-107.68496],[40.71,8258,38.01479,-107.68102],[40.97,8133,38.01586,-107.67687],[41.22,8049,38.01686,-107.67735],[41.38,7991,38.01838,-107.67936],[41.57,7865,38.02017,-107.67717],[41.87,7757,38.02301,-107.67523],[42.29,7702,38.02837,-107.67318],[42.47,7714,38.02599,-107.67283],[42.92,7761,38.0205,-107.67422],[43.16,7825,38.01893,-107.67676],[43.38,7899,38.01699,-107.67548],[43.52,7961,38.01621,-107.67359],[43.63,8071,38.01563,-107.67206],[43.85,8223,38.01456,-107.66845],[43.99,8217,38.01352,-107.66702],[44.06,8196,38.01294,-107.66687],[44.21,8195,38.01184,-107.66492],[44.4,8174,38.00922,-107.66424],[44.52,8248,38.00767,-107.66369],[44.64,8205,38.00623,-107.66396],[44.78,8343,38.00457,-107.66284],[44.93,8438,38.00275,-107.66232],[45.04,8563,38.00354,-107.66119],[45.24,8711,38.00387,-107.6602],[45.5,8915,38.00528,-107.65918],[45.73,9199,38.00392,-107.65805],[45.91,9386,38.00309,-107.6573],[46.07,9510,38.00359,-107.65554],[46.26,9563,38.00272,-107.65272],[46.37,9561,38.0022,-107.65102],[46.54,9594,38.00064,-107.64995],[46.83,9728,37.99979,-107.64507],[47.07,9898,37.99913,-107.6414],[47.25,9993,37.99887,-107.63871],[47.47,10037,37.99943,-107.63508],[47.61,10129,37.99982,-107.63307],[47.74,10209,37.99967,-107.63084],[47.93,10300,37.9994,-107.62761],[48.09,10425,37.99914,-107.62483],[48.26,10614,37.99888,-107.62277],[48.44,10748,37.99804,-107.61995],[48.55,10856,37.99796,-107.61856],[48.79,11028,37.99669,-107.61503],[48.92,11085,37.9965,-107.6127],[49.07,11184,37.99534,-107.61073],[49.28,11244,37.99281,-107.60898],[49.38,11277,37.99179,-107.60795],[49.47,11322,37.99068,-107.60791],[49.56,11412,37.98957,-107.60746],[49.68,11433,37.98798,-107.60674],[49.8,11563,37.98662,-107.60591],[49.96,11671,37.98568,-107.60401],[50.19,11823,37.98451,-107.6003],[50.39,11932,37.98281,-107.59783],[50.62,12097,37.97981,-107.59671],[50.87,12256,37.97669,-107.59489],[51.17,12519,37.97303,-107.59239],[51.33,12765,37.97117,-107.5909],[51.49,12938,37.96982,-107.59023],[51.73,12830,37.96738,-107.58754],[51.91,12694,37.96604,-107.58472],[52.2,12774,37.9661,-107.57981],[52.4,12649,37.9646,-107.57666],[52.61,12522,37.96357,-107.57613],[52.81,12420,37.96284,-107.57733],[52.99,12300,37.96139,-107.57603],[53.09,12237,37.96038,-107.57509],[53.2,12162,37.95984,-107.57558],[53.41,12037,37.95695,-107.57531],[53.79,11907,37.95156,-107.57406],[54.03,11863,37.9487,-107.57615],[54.22,11753,37.94946,-107.57325],[54.45,11677,37.94642,-107.57406],[54.87,11570,37.94037,-107.57361],[55.35,11363,37.93454,-107.5692],[55.66,11238,37.93068,-107.56641],[56.07,10955,37.92583,-107.56309],[56.57,10797,37.91963,-107.55888],[57.06,10933,37.91773,-107.55571],[57.43,11190,37.91846,-107.55326],[57.7,11865,37.91748,-107.5489],[57.92,11865,37.91641,-107.54545],[58.09,11957,37.91562,-107.54265],[58.34,12493,37.91399,-107.5386],[58.5,12493,37.91258,-107.5362],[58.67,12493,37.91209,-107.53374],[58.86,12493,37.91021,-107.53144],[58.96,12786,37.91045,-107.53077],[59.16,12786,37.91069,-107.52773],[59.34,12786,37.90954,-107.52517],[59.5,12786,37.90913,-107.52253],[59.67,12465,37.90797,-107.51993],[59.83,12465,37.90737,-107.51739],[59.95,12465,37.90734,-107.51613],[60.08,12465,37.90681,-107.51411],[60.2,12945,37.90661,-107.51214],[60.3,12945,37.90585,-107.51187],[60.38,12945,37.90497,-107.5118],[60.44,12945,37.90485,-107.51107],[60.53,12976,37.90543,-107.50981],[60.68,12976,37.90716,-107.5088],[60.84,13463,37.90798,-107.50821],[61.0,13463,37.90794,-107.5067],[61.13,13546,37.90863,-107.50567],[61.26,13774,37.90999,-107.50607],[61.38,13897,37.91124,-107.50547],[61.47,13901,37.91239,-107.50462],[61.53,13904,37.91304,-107.50441],[61.67,13910,37.91476,-107.50534],[61.74,13911,37.91565,-107.50516],[61.85,13911,37.91718,-107.50499],[61.98,13911,37.91743,-107.50427],[62.12,12963,37.91887,-107.50305],[62.32,12963,37.9211,-107.50117],[62.48,12787,37.92224,-107.49898],[62.67,12601,37.92172,-107.49563],[62.78,12508,37.92182,-107.49437],[62.97,12373,37.91926,-107.4945],[63.13,12201,37.92061,-107.4924],[63.24,12055,37.92147,-107.4908],[63.41,11953,37.92237,-107.48824],[63.62,11820,37.92376,-107.4851],[63.78,11713,37.92552,-107.48327],[63.98,11559,37.92786,-107.48152],[64.17,11375,37.9292,-107.47875],[64.35,11259,37.93084,-107.47651],[64.5,11143,37.93165,-107.47386],[64.59,11111,37.93239,-107.47266],[64.73,11012,37.93255,-107.47028],[64.93,10822,37.9336,-107.46743],[65.17,10533,37.93481,-107.46357],[65.33,10405,37.93626,-107.46164],[65.62,10416,37.93445,-107.45821],[66.13,10345,37.92727,-107.45659],[66.41,10335,37.92374,-107.45455],[66.75,10257,37.9198,-107.4509],[67.05,10229,37.9167,-107.44732],[67.27,10195,37.91427,-107.44481],[67.58,10164,37.91109,-107.4411],[67.72,10169,37.90957,-107.44006],[68.03,10078,37.90745,-107.43529],[68.26,10039,37.90595,-107.43256],[68.55,9937,37.9041,-107.42802],[68.8,9591,37.90241,-107.42602],[69.18,9597,37.90092,-107.43281],[69.36,9632,37.89872,-107.43355],[69.62,9857,37.89654,-107.4332],[69.82,9857,37.89608,-107.43264],[70.05,10291,37.89463,-107.43354],[70.24,10303,37.89325,-107.43314],[70.49,10466,37.88997,-107.43417],[70.63,10592,37.88818,-107.43402],[70.89,10821,37.88481,-107.43475],[71.05,10980,37.88269,-107.43515],[71.24,11103,37.88091,-107.43667],[71.42,11240,37.8792,-107.43605],[71.56,11340,37.87784,-107.43675],[71.73,11451,37.87566,-107.43648],[71.94,11562,37.87386,-107.43917],[72.06,11562,37.87273,-107.44013],[72.15,11627,37.87196,-107.4402],[72.27,11744,37.87134,-107.43864],[72.37,11789,37.8717,-107.43703],[72.54,11914,37.86962,-107.43666],[72.83,12077,37.86556,-107.43654],[73.0,12070,37.86327,-107.43711],[73.2,12040,37.86052,-107.43724],[73.34,12007,37.85867,-107.43791],[73.51,12066,37.8567,-107.43948],[73.76,12093,37.85337,-107.44091],[74.15,12175,37.84893,-107.44476],[74.35,12237,37.8472,-107.44476],[74.56,12399,37.84465,-107.44433],[74.78,12379,37.84459,-107.44048],[75.01,12323,37.84398,-107.43953],[75.3,12190,37.84064,-107.44249],[75.46,12127,37.84052,-107.4453],[75.65,12006,37.83961,-107.44799],[75.76,11895,37.83915,-107.4493],[76.03,11836,37.83653,-107.45252],[76.41,11766,37.83198,-107.4564],[76.64,11695,37.82894,-107.4581],[76.93,11675,37.82572,-107.46084],[77.17,11656,37.82275,-107.46303],[77.41,11604,37.8194,-107.46412],[77.66,11484,37.81586,-107.4647],[77.81,11407,37.81384,-107.46437],[78.03,11403,37.81122,-107.46599],[78.26,11258,37.80841,-107.46769],[78.46,11249,37.80579,-107.46626],[78.63,11221,37.80366,-107.46491],[78.86,11199,37.80085,-107.46295],[79.07,11175,37.80166,-107.46509],[79.22,11214,37.80263,-107.46724],[79.39,11271,37.80446,-107.46916],[79.69,11457,37.8029,-107.47361],[79.94,11457,37.80189,-107.47758],[80.2,11497,37.8011,-107.48224],[80.47,11495,37.79984,-107.4868],[80.76,11527,37.80018,-107.49198],[81.0,11470,37.80077,-107.49622],[81.29,11555,37.80036,-107.50142],[81.55,11648,37.80075,-107.5058],[81.83,11746,37.80298,-107.50955],[82.05,11931,37.8048,-107.51246],[82.18,12010,37.80516,-107.51465],[82.4,12090,37.80771,-107.51644],[82.59,12237,37.80971,-107.51863],[82.82,12490,37.81149,-107.52208],[83.03,12540,37.81381,-107.52442],[83.32,12311,37.81552,-107.52877],[83.47,12216,37.81465,-107.53086],[83.69,11994,37.81297,-107.53413],[83.86,11881,37.81262,-107.5365],[84.03,11967,37.81076,-107.5379],[84.12,12051,37.81114,-107.53938],[84.25,12212,37.81237,-107.54057],[84.55,12459,37.81142,-107.54473],[84.77,12744,37.8099,-107.54769],[85.05,13034,37.80763,-107.55007],[85.29,13125,37.80477,-107.55127],[85.42,13061,37.80322,-107.55002],[85.57,13002,37.80112,-107.55011],[85.81,12870,37.7979,-107.54846],[86.0,12630,37.79589,-107.54765],[86.15,12622,37.79442,-107.54958],[86.34,12701,37.79337,-107.55262],[86.48,12801,37.79241,-107.55405],[86.7,13002,37.78959,-107.55476],[87.03,12594,37.78606,-107.5579],[87.25,12269,37.78561,-107.56158],[87.6,12110,37.78915,-107.56578],[87.83,12000,37.79166,-107.56829],[88.11,11897,37.79508,-107.57071],[88.3,11592,37.79766,-107.5717],[88.52,11238,37.7974,-107.57406],[88.85,10844,37.79319,-107.5754],[89.11,10537,37.78976,-107.57635],[89.41,10383,37.79348,-107.57796],[89.57,10468,37.79475,-107.5801],[89.84,10822,37.79656,-107.58118],[90.0,11029,37.7948,-107.58234],[90.12,11206,37.79554,-107.58329],[90.27,11433,37.79458,-107.58463],[90.35,11559,37.79444,-107.58525],[90.48,11752,37.79481,-107.5866],[90.67,12025,37.79441,-107.5892],[90.81,12249,37.79459,-107.59022],[90.99,12554,37.79446,-107.59304],[91.13,12776,37.79594,-107.59363],[91.26,12979,37.79718,-107.5944],[91.42,12950,37.79924,-107.59448],[91.66,12746,37.8026,-107.59434],[91.9,12423,37.80558,-107.5965],[92.01,12285,37.80648,-107.59807],[92.21,12099,37.80812,-107.60092],[92.33,11976,37.80911,-107.60258],[92.58,11735,37.81215,-107.60348],[92.88,11517,37.81348,-107.6054],[93.12,11378,37.81564,-107.60643],[93.53,11025,37.81967,-107.61194],[93.83,10797,37.82008,-107.61445],[94.12,10578,37.82369,-107.614],[94.57,10242,37.81872,-107.61719],[94.91,9998,37.8202,-107.61946],[95.19,9859,37.81897,-107.62237],[95.55,9764,37.82402,-107.62358],[95.71,9645,37.82506,-107.62582],[96.0,9595,37.82424,-107.63052],[96.25,9526,37.8225,-107.63419],[96.44,9539,37.82149,-107.63714],[96.81,9496,37.81873,-107.64273],[97.2,9545,37.81525,-107.64813],[97.58,9397,37.81252,-107.65399],[97.87,9305,37.81113,-107.65901],[98.44,9308,37.81221,-107.66538],[98.46,9310,37.8124,-107.66571]];  // [mile, ele_ft, lat, lon]
+
 /* ---------------- State ---------------- */
-let map, fireWMS, perimeterLayer, aqiLayer;
+let map, fireWMS, perimeterLayer, aqiLayer, aidLayer, hoverMarker;
 let fireDate = new Date();          // satellite detection day
 let latestWeather = [], latestAir = [], latestAlerts = [], latestPerims = [];
 let autoTimer = null;
@@ -546,12 +607,27 @@ function initMap(){
 
   aqiLayer = L.layerGroup();
 
+  // Aid stations (snapped to official track)
+  aidLayer = L.layerGroup();
+  AID_STATIONS.forEach(a=>{
+    L.circleMarker([a.lat,a.lon],{
+      radius:5, color:"#0c1117", weight:2, fillColor:"#f5a623", fillOpacity:1
+    }).bindTooltip(`${a.name} · ${a.mile} mi`,{direction:"top",offset:[0,-4]})
+      .bindPopup(`<b>${a.name}</b><br>≈ mile ${a.mile}`).addTo(aidLayer);
+  });
+  aidLayer.addTo(map);
+
+  // moving cursor marker driven by the elevation profile
+  hoverMarker = L.circleMarker([37.91,-107.62],{radius:7,color:"#ffffff",weight:2,fillColor:"#3fb6c9",fillOpacity:1});
+  hoverMarker.addTo(map); hoverMarker.setStyle({opacity:0,fillOpacity:0});
+
   L.control.layers(
     { "Terrain (OpenTopoMap)":topo, "Dark":dark, "Satellite":sat },
     {
       "Course corridor + aid towns":courseGroup,
       "Fire detections (VIIRS)":fireWMS,
       "Fire perimeters (NIFC)":perimeterLayer,
+      "Aid stations":aidLayer,
       "Air quality (towns)":aqiLayer
     },
     { collapsed:false }
@@ -792,14 +868,205 @@ async function loadAll(){
   catch(e){ /* keep map clean; sources panel covers fallback */ }
 
   computePosture();
+
+  // refresh NWS forecast for the active location
+  Object.keys(fcCache).forEach(k=>delete fcCache[k]);
+  selectForecast(fcActive);
+
   $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
   $("#refreshBtn").disabled = false;
+}
+
+/* ---------------- Elevation profile ---------------- */
+let _profPx = [];  // [{x,y,d,e,lat,lon}]
+function buildProfile(){
+  const wrap = document.getElementById("profWrap");
+  if(!wrap || !ELEV_PROFILE.length) return;
+  const W = wrap.clientWidth || 820, H = 230;
+  const m = {l:48,r:14,t:16,b:30}, pw = W-m.l-m.r, ph = H-m.t-m.b;
+  const xmax = ELEV_PROFILE[ELEV_PROFILE.length-1][0];
+  const es = ELEV_PROFILE.map(p=>p[1]);
+  const ymin = Math.floor(Math.min(...es)/1000)*1000;
+  const ymax = Math.ceil(Math.max(...es)/1000)*1000;
+  const X = d => m.l + d/xmax*pw;
+  const Y = e => m.t + ph - (e-ymin)/(ymax-ymin)*ph;
+  const treeline = 11800, yTree = Y(treeline);
+
+  _profPx = ELEV_PROFILE.map(p=>({x:X(p[0]),y:Y(p[1]),d:p[0],e:p[1],lat:p[2],lon:p[3]}));
+  let line=""; _profPx.forEach((p,i)=> line += (i?"L":"M")+p.x.toFixed(1)+" "+p.y.toFixed(1)+" ");
+  const area = line + `L ${X(xmax).toFixed(1)} ${(m.t+ph).toFixed(1)} L ${m.l} ${(m.t+ph).toFixed(1)} Z`;
+
+  // y gridlines (every 2000 ft)
+  let grid="";
+  for(let e=ymin;e<=ymax;e+=2000){
+    const y=Y(e).toFixed(1);
+    grid += `<line x1="${m.l}" y1="${y}" x2="${m.l+pw}" y2="${y}" stroke="rgba(255,255,255,.06)"/>`;
+    grid += `<text x="${m.l-8}" y="${(+y+3)}" text-anchor="end" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${(e/1000)}k</text>`;
+  }
+  // x mile labels
+  let xax="";
+  for(let d=0; d<=Math.floor(xmax); d+=20){
+    const x=X(d).toFixed(1);
+    xax += `<text x="${x}" y="${H-9}" text-anchor="middle" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${d} mi</text>`;
+  }
+  xax += `<text x="${X(xmax).toFixed(1)}" y="${H-9}" text-anchor="end" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${Math.round(xmax)}</text>`;
+
+  // aid station ticks + rotated labels
+  let aid="";
+  AID_STATIONS.forEach(a=>{
+    if(a.mile>xmax) return;
+    const x=X(a.mile).toFixed(1);
+    // nearest profile elevation for the dot
+    let near=_profPx[0]; for(const p of _profPx){ if(Math.abs(p.d-a.mile)<Math.abs(near.d-a.mile)) near=p; }
+    aid += `<line x1="${x}" y1="${m.t}" x2="${x}" y2="${m.t+ph}" stroke="rgba(245,166,35,.22)" stroke-dasharray="2 3"/>`;
+    aid += `<circle cx="${x}" cy="${near.y.toFixed(1)}" r="2.6" fill="#f5a623" stroke="#0c1117" stroke-width="1"/>`;
+    const short=a.name.replace(/ \(.*\)/,"").replace(" / Virginius","");
+    aid += `<text x="${x}" y="${m.t-4}" transform="rotate(-40 ${x} ${m.t-4})" font-size="8.5" fill="#a6b7c6" font-family="Oswald,sans-serif" letter-spacing=".04em">${short}</text>`;
+  });
+
+  const svg = `
+  <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Course elevation profile">
+    <defs>
+      <linearGradient id="profGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3fb6c9" stop-opacity=".34"/>
+        <stop offset="100%" stop-color="#3fb6c9" stop-opacity=".03"/>
+      </linearGradient>
+      <clipPath id="profClip"><path d="${area}"/></clipPath>
+    </defs>
+    ${grid}
+    <path d="${area}" fill="url(#profGrad)"/>
+    <rect x="${m.l}" y="${m.t}" width="${pw}" height="${(yTree-m.t).toFixed(1)}" fill="rgba(239,83,80,.16)" clip-path="url(#profClip)"/>
+    <line x1="${m.l}" y1="${yTree.toFixed(1)}" x2="${m.l+pw}" y2="${yTree.toFixed(1)}" stroke="#ef5350" stroke-opacity=".55" stroke-dasharray="5 4"/>
+    <text x="${m.l+pw}" y="${(yTree-5).toFixed(1)}" text-anchor="end" font-size="9" fill="#ec5b54" font-family="Oswald,sans-serif" letter-spacing=".08em">TREELINE · EXPOSED ABOVE</text>
+    ${aid}
+    <path d="${line}" fill="none" stroke="#3fb6c9" stroke-width="1.8"/>
+    ${xax}
+    <line id="profCursor" x1="0" y1="${m.t}" x2="0" y2="${m.t+ph}" stroke="#e9eef3" stroke-opacity=".0"/>
+    <circle id="profCursorDot" cx="0" cy="0" r="4" fill="#fff" stroke="#3fb6c9" stroke-width="2" opacity="0"/>
+    <rect id="profHit" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair"/>
+  </svg>`;
+  const tip = wrap.querySelector("#profTip");
+  wrap.innerHTML = svg;
+  wrap.appendChild(tip);
+
+  const hit = wrap.querySelector("#profHit");
+  const cur = wrap.querySelector("#profCursor");
+  const dot = wrap.querySelector("#profCursorDot");
+  const scaleX = () => wrap.clientWidth / W; // svg scaled to wrap width
+
+  function move(ev){
+    const rect = wrap.getBoundingClientRect();
+    const px = (ev.clientX - rect.left) / (scaleX()||1); // back to viewBox coords
+    let best=_profPx[0]; for(const p of _profPx){ if(Math.abs(p.x-px)<Math.abs(best.x-px)) best=p; }
+    cur.setAttribute("x1",best.x); cur.setAttribute("x2",best.x); cur.setAttribute("stroke-opacity",".5");
+    dot.setAttribute("cx",best.x); dot.setAttribute("cy",best.y); dot.setAttribute("opacity","1");
+    tip.style.opacity="1";
+    tip.style.left = (best.x*scaleX()) + "px";
+    tip.style.top  = (best.y*scaleX()) + "px";
+    tip.innerHTML = `<b>${best.e.toLocaleString()} ft</b> · mile ${best.d.toFixed(1)}`;
+    if(hoverMarker){ hoverMarker.setLatLng([best.lat,best.lon]); hoverMarker.setStyle({opacity:1,fillOpacity:1}); }
+  }
+  function leave(){
+    cur.setAttribute("stroke-opacity","0"); dot.setAttribute("opacity","0"); tip.style.opacity="0";
+    if(hoverMarker) hoverMarker.setStyle({opacity:0,fillOpacity:0});
+  }
+  hit.addEventListener("pointermove",move);
+  hit.addEventListener("pointerleave",leave);
+
+  const hi = Math.max(...ELEV_PROFILE.map(p=>p[1]));
+  document.getElementById("profStats").textContent =
+    `${xmax.toFixed(1)} mi · +32,500 ft climb · high pt 14,048 ft (Handies)`;
+}
+let _profRz;
+window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(buildProfile,180); });
+
+/* ---------------- NWS forecast ---------------- */
+const fcCache = {};
+let fcActive = 0;
+
+function buildFcPills(){
+  const host = $("#fcPills"); host.innerHTML = "";
+  LOCATIONS.forEach((l,i)=>{
+    const b = document.createElement("button");
+    b.className = "fc-pill" + (i===fcActive?" active":"");
+    b.textContent = l.name;
+    b.addEventListener("click", ()=>selectForecast(i));
+    host.appendChild(b);
+  });
+}
+
+async function fetchForecast(loc){
+  const pr = await fetch(`https://api.weather.gov/points/${loc.lat.toFixed(4)},${loc.lon.toFixed(4)}`,
+    { headers:{ "Accept":"application/geo+json" } });
+  if(!pr.ok) throw new Error("points");
+  const pj = await pr.json();
+  const url = pj.properties && pj.properties.forecast;
+  if(!url) throw new Error("no forecast url");
+  const rel = pj.properties.relativeLocation && pj.properties.relativeLocation.properties;
+  const place = rel ? `${rel.city}, ${rel.state}` : "";
+  const fr = await fetch(url, { headers:{ "Accept":"application/geo+json" } });
+  if(!fr.ok) throw new Error("forecast");
+  const fj = await fr.json();
+  return { periods:(fj.properties && fj.properties.periods)||[], place };
+}
+
+async function selectForecast(i){
+  fcActive = i;
+  document.querySelectorAll(".fc-pill").forEach((b,idx)=>b.classList.toggle("active", idx===i));
+  const body = $("#fcBody");
+  if(fcCache[i]){ renderForecast(fcCache[i]); return; }
+  $("#fcPlace").textContent = LOCATIONS[i].name;
+  body.innerHTML = `<div class="skel">Loading NWS forecast for ${LOCATIONS[i].name}…</div>`;
+  try{
+    const d = await fetchForecast(LOCATIONS[i]);
+    fcCache[i] = d;
+    if(fcActive===i) renderForecast(d);
+  }catch(e){
+    if(fcActive===i) body.innerHTML =
+      `<div class="err">NWS forecast unavailable for this point right now. Retry, or see `
+      + `<a href="https://forecast.weather.gov/MapClick.php?lat=${LOCATIONS[i].lat}&lon=${LOCATIONS[i].lon}" target="_blank" rel="noopener" style="color:var(--teal)">weather.gov</a>.</div>`;
+  }
+}
+
+function renderForecast(d){
+  const body = $("#fcBody");
+  if(!d.periods.length){ body.innerHTML = `<div class="empty">No forecast periods returned for this point.</div>`; return; }
+  $("#fcPlace").textContent = `${LOCATIONS[fcActive].name}${d.place?` · NWS grid near ${d.place}`:""}`;
+  const ic = u => u ? `<img src="${u}" alt="" loading="lazy" onerror="this.style.display='none'">` : "";
+  const p0 = d.periods[0];
+  const rest = d.periods.slice(1,7);
+  let html = `
+    <div class="fc-now">
+      <div class="ic">
+        ${ic(p0.icon)}
+        <div class="nm">${p0.name||""}</div>
+        <div class="tp num">${p0.temperature}°${p0.temperatureUnit||""}</div>
+      </div>
+      <div>
+        <div class="det">${p0.detailedForecast || p0.shortForecast || ""}</div>
+        <div class="wind">Wind ${p0.windDirection||""} ${p0.windSpeed||""}</div>
+      </div>
+    </div>
+    <div class="fc-row">`;
+  rest.forEach(p=>{
+    html += `<div class="fc-card">
+      <div class="nm">${p.name||""}</div>
+      ${ic(p.icon)}
+      <div class="tp num">${p.temperature}°</div>
+      <div class="sf">${p.shortForecast||""}</div>
+      <div class="wd">${p.windDirection||""} ${p.windSpeed||""}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  body.innerHTML = html;
 }
 
 /* ---------------- Wire up ---------------- */
 document.addEventListener("DOMContentLoaded", ()=>{
   initMap();
   refreshFireDate();
+  buildProfile();
+  buildFcPills();
   loadAll();
 
   $("#refreshBtn").addEventListener("click", loadAll);
