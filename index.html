@@ -270,6 +270,85 @@
   .fc-card .sf{font-size:11px;color:var(--ink-2);margin-top:4px;line-height:1.35;min-height:46px}
   .fc-card .wd{font-size:10.5px;color:var(--ink-3);margin-top:5px;border-top:1px solid var(--line);padding-top:5px}
   @media (max-width:560px){ .fc-now{grid-template-columns:1fr} .fc-now .ic{flex-direction:row;justify-content:flex-start;gap:14px;min-width:0} }
+  /* ---- decision matrix ---- */
+  .dm{margin-bottom:22px}
+  .dm-rec{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;padding:18px;border-bottom:1px solid var(--line);position:relative}
+  .dm-rec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ink-3)}
+  #decision[data-rec="proceed"] .dm-rec::before{background:var(--go)}
+  #decision[data-rec="review"] .dm-rec::before{background:var(--hold)}
+  #decision[data-rec="cancel"] .dm-rec::before{background:var(--nogo)}
+  .dm-rec-word{display:flex;flex-direction:column;gap:5px;padding-left:8px;min-width:220px}
+  .dm-rec-word .label{font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .dm-rec-word .word{font-family:var(--display);font-weight:700;font-size:clamp(23px,3.4vw,36px);line-height:.95;color:var(--ink-3)}
+  #decision[data-rec="proceed"] .dm-rec-word .word{color:var(--go)}
+  #decision[data-rec="review"] .dm-rec-word .word{color:var(--hold)}
+  #decision[data-rec="cancel"] .dm-rec-word .word{color:var(--nogo)}
+  .dm-rec-word .advisory{font-size:11px;color:var(--ink-3);max-width:34ch}
+  .dm-rec-tr{display:flex;flex-direction:column;gap:9px}
+  .dm-rec-tr .dh{font-family:var(--display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .dm-body{padding:4px 16px 16px}
+  .dm-sec{font-family:var(--display);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:17px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .dm-row{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.045)}
+  .dm-row:last-child{border-bottom:none}
+  .dm-f .t{font-weight:600;font-size:14px}
+  .dm-f .d{font-size:11.5px;color:var(--ink-3);margin-top:3px;max-width:66ch}
+  .dm-f .d2{font-size:11px;color:var(--ink-3);margin-top:4px;max-width:66ch;line-height:1.45}
+  .dm-c{justify-self:end}
+  .aqiscale-mini{font-size:11px;color:var(--ink-3);text-align:right;max-width:28ch;line-height:1.5}
+  .aqiscale-mini b{color:var(--nogo)}
+  .dm-s{justify-self:end;font-family:var(--display);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;text-align:right;min-width:108px;color:var(--ink-3)}
+  .dm-s.met{color:var(--nogo)}
+  .dm-s.ok{color:var(--go)}
+  .dm-s.adv{color:var(--ink-3)}
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+  .seg button{background:var(--panel-2);border:none;color:var(--ink-2);font-family:var(--body);font-weight:600;font-size:12.5px;padding:6px 15px;cursor:pointer;transition:.12s}
+  .seg button:hover{color:#fff}
+  .seg button.active{background:var(--teal-deep);color:#fff}
+  .seg button[data-v="yes"].active{background:var(--nogo-deep);color:#fff}
+  .dm-c.money{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px}
+  .dm-num{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13px;padding:6px 9px;width:130px;font-variant-numeric:tabular-nums}
+  .dm-num.sm{width:72px;text-align:center}
+  .dm-num:focus,.dm-txt:focus{outline:none;border-color:var(--teal)}
+  .dm-txt{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13.5px;font-weight:600;padding:7px 11px;width:min(340px,72vw)}
+  .dm-txt::placeholder{color:var(--ink-3);font-weight:500}
+  @media (max-width:760px){
+    .dm-rec{grid-template-columns:1fr}
+    .dm-row{grid-template-columns:1fr;gap:10px}
+    .dm-c,.dm-s{justify-self:start;text-align:left}
+    .aqiscale-mini{text-align:left}
+  }
+  /* ---- tabs ---- */
+  .tabs{display:flex;gap:4px;margin:0 0 20px;border-bottom:1px solid var(--line-strong)}
+  .tab{appearance:none;background:none;border:none;cursor:pointer;font-family:var(--display);font-size:14px;
+    letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-3);padding:11px 18px;
+    border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px 6px 0 0}
+  .tabpanel[hidden]{display:none}
+  /* ---- decision flow diagram ---- */
+  .flowwrap{overflow-x:auto;padding-bottom:6px}
+  #flow svg{display:block;width:100%;min-width:640px;height:auto}
+  .flow-start rect{fill:var(--panel-3);stroke:var(--line-strong);stroke-width:1.5}
+  .flow-start text{fill:var(--ink-2)}
+  .flow-gate rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
+  .flow-gate.clear rect{stroke:var(--go)}
+  .flow-gate.met rect{stroke:var(--nogo);fill:rgba(239,83,80,.12)}
+  .flow-gate .gnum{fill:#0c1117;font-weight:700}
+  .flow-gate .glabel{fill:var(--ink)}
+  .flow-edge{fill:none;stroke:var(--line-strong);stroke-width:2;transition:.18s}
+  .flow-edge.on{stroke:var(--go);stroke-width:2.6}
+  .flow-edge.cancel{stroke:var(--nogo);stroke-width:2.6}
+  .flow-elabel{fill:var(--ink-3);font-family:var(--display);letter-spacing:.08em}
+  .flow-term rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
+  .flow-term text{font-family:var(--display);font-weight:700;letter-spacing:.06em}
+  .flow-term.proceed.on rect{fill:rgba(93,199,122,.16);stroke:var(--go)}
+  .flow-term.review.on rect{fill:rgba(240,168,48,.16);stroke:var(--hold)}
+  .flow-term.cancel.on rect{fill:var(--nogo-deep);stroke:var(--nogo)}
+  .mapstatus{display:flex;flex-wrap:wrap;gap:8px 18px;padding:11px 16px 2px;font-size:11.5px;color:var(--ink-2)}
+  .mapstatus span{display:inline-flex;align-items:center;gap:7px}
+  .mapstatus i.sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+  .mapstatus b{color:var(--ink);font-weight:600}
   .full{grid-column:1 / -1}
   .stack{display:flex;flex-direction:column;gap:20px;margin-top:20px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
@@ -334,6 +413,13 @@
     </div>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab active" role="tab" aria-selected="true" aria-controls="tab-data" id="tabbtn-data" data-tab="data">Conditions &amp; data</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-logic" id="tabbtn-logic" data-tab="logic">Decision logic</button>
+  </nav>
+
+  <div class="tabpanel" id="tab-data" role="tabpanel" aria-labelledby="tabbtn-data">
+
   <!-- POSTURE BANNER -->
   <section class="posture" id="posture" data-level="loading" aria-live="polite">
     <div class="verdict">
@@ -363,6 +449,7 @@
         </div>
       </div>
       <div id="map"></div>
+      <div class="mapstatus" id="mapStatus"></div>
       <div class="maphint">Toggle layers (top-right): NASA/FIRMS satellite fire detections (≈12–24 h latency), NIFC live fire perimeters (refreshed ~5 min), and town air-quality. Course = official Hardrock 100 <b>clockwise</b> route from the sanctioned GPX (≈100 mi, 13 passes, high point Handies Peak 14,048 ft).</div>
     </section>
 
@@ -482,6 +569,90 @@
     </section>
   </div>
 
+  </div><!-- /tab-data -->
+
+  <div class="tabpanel" id="tab-logic" role="tabpanel" aria-labelledby="tabbtn-logic" hidden>
+  <section class="panel" style="margin-bottom:22px">
+      <div class="panel-head"><h2>Decision path</h2><div class="meta">Any one hard trigger &rArr; cancel</div></div>
+      <div class="panel-body">
+        <div class="flowwrap"><div id="flow"></div></div>
+        <div class="maphint">Live evaluation: a gate turns red when its cancel trigger is met and the path routes to <b>CANCEL</b>; all-clear routes to <b>PROCEED</b>. Advisory factors (community financial impact, 2026 net revenue) are non-gating and live in the matrix below.</div>
+      </div>
+    </section>
+
+  <!-- DECISION MATRIX -->
+  <section class="panel dm" id="decision" data-rec="proceed">
+    <div class="panel-head">
+      <h2>Cancellation decision matrix</h2>
+      <div class="meta">Event window: <b id="dmWindow">Jul 9 6:00 AM – Jul 12 6:00 PM MT</b></div>
+    </div>
+
+    <div class="dm-rec">
+      <div class="dm-rec-word">
+        <span class="label">Recommendation</span>
+        <span class="word" id="dmWord">Evaluating…</span>
+        <span class="advisory">Decision support — the Board decides. Any one hard trigger ⇒ cancel.</span>
+      </div>
+      <div class="dm-rec-tr">
+        <span class="dh">Triggered criteria</span>
+        <div class="chips" id="dmTriggers"><span class="chip"><span class="pip"></span>Evaluating live data…</span></div>
+      </div>
+    </div>
+
+    <div class="dm-body">
+      <div class="dm-sec">1 · Fire</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Fire on course</div><div class="d" id="dmFireVal">—</div></div>
+        <div class="dm-c"><div class="seg three" data-key="fire"><button data-v="auto" class="active">Auto</button><button data-v="yes">Yes</button><button data-v="no">No</button></div></div>
+        <div class="dm-s" id="dmFireStatus">—</div>
+      </div>
+
+      <div class="dm-sec">2 · Safety to the Hardrock community</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Max course AQI · event window</div><div class="d2" id="dmAqiNote"></div></div>
+        <div class="dm-c"><div class="aqiscale-mini" id="dmAqiVal">—</div><div class="aqiscale-mini">Moderate 51–100 · USG 101–150 · <b>Unhealthy &gt;150 ⇒ cancel</b></div></div>
+        <div class="dm-s" id="dmAqiStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><input class="dm-txt" id="dmExtraLabel" placeholder="Additional safety factor (board-defined)"><div class="d">Optional hard trigger the Board can name and arm</div></div>
+        <div class="dm-c"><div class="seg" data-key="extra"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmExtraStatus">—</div>
+      </div>
+
+      <div class="dm-sec">3 · San Juan communities</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Impacts on emergency response</div></div>
+        <div class="dm-c"><div class="seg" data-key="emerg"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmEmergStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="soft">
+        <div class="dm-f"><div class="t">Financial impact on local community</div><div class="d">Context — likely superseded by safety triggers</div></div>
+        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmCommFin" type="number" min="0" placeholder="0"></div>
+        <div class="dm-s adv">Advisory</div>
+      </div>
+
+      <div class="dm-sec">4 · Financial</div>
+      <div class="dm-row" data-kind="soft">
+        <div class="dm-f"><div class="t">Hardrock 2026 net revenue if cancelled</div><div class="d">Context — likely superseded by safety triggers</div></div>
+        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmRev" type="number" placeholder="0"></div>
+        <div class="dm-s adv">Advisory</div>
+      </div>
+
+      <div class="dm-sec">5 · Road closures</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Aid stations with no crew access</div><div class="d">Cancel trigger if 1 or more</div></div>
+        <div class="dm-c"><input class="dm-num sm" id="dmAid" type="number" min="0" value="0"></div>
+        <div class="dm-s" id="dmAidStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Emergency-response access impacts</div></div>
+        <div class="dm-c"><div class="seg" data-key="access"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmAccessStatus">—</div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /tab-logic -->
+
   <footer>
     <div class="src">
       <span>Data:</span>
@@ -560,10 +731,12 @@ function haversineMi(a,b,c,d){
 function initMap(){
   map = L.map("map",{ zoomControl:true, attributionControl:true }).setView([37.91,-107.62], 11);
 
-  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-    maxZoom:17, subdomains:"abc",
-    attribution:'© OpenTopoMap · OpenStreetMap contributors'
+  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:19, subdomains:"abc", attribution:'© OpenStreetMap contributors'
   }).addTo(map);
+  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+    maxZoom:17, subdomains:"abc", attribution:'© OpenTopoMap (CC-BY-SA) · OpenStreetMap'
+  });
   const dark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
     maxZoom:19, subdomains:"abcd", attribution:'© CARTO · OpenStreetMap contributors'
   });
@@ -605,7 +778,7 @@ function initMap(){
     }
   }).addTo(map);
 
-  aqiLayer = L.layerGroup();
+  aqiLayer = L.layerGroup().addTo(map);
 
   // Aid stations (snapped to official track)
   aidLayer = L.layerGroup();
@@ -622,7 +795,7 @@ function initMap(){
   hoverMarker.addTo(map); hoverMarker.setStyle({opacity:0,fillOpacity:0});
 
   L.control.layers(
-    { "Terrain (OpenTopoMap)":topo, "Dark":dark, "Satellite":sat },
+    { "Streets (OSM)":osm, "Terrain":topo, "Dark":dark, "Satellite":sat },
     {
       "Course corridor + aid towns":courseGroup,
       "Fire detections (VIIRS)":fireWMS,
@@ -656,7 +829,7 @@ async function fetchAir(){
   const lats = LOCATIONS.map(l=>l.lat).join(",");
   const lons = LOCATIONS.map(l=>l.lon).join(",");
   const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}`
-    + `&current=us_aqi,pm2_5,pm10&timezone=America%2FDenver`;
+    + `&current=us_aqi,pm2_5,pm10&hourly=us_aqi&forecast_days=7&timezone=America%2FDenver`;
   const r = await fetch(url);
   if(!r.ok) throw new Error("air");
   const j = await r.json();
@@ -692,6 +865,19 @@ async function fetchPerimeters(){
 }
 
 /* ---------------- Renderers ---------------- */
+function renderLayerStatus(){
+  const el = document.getElementById("mapStatus"); if(!el) return;
+  const nP = Array.isArray(latestPerims) ? latestPerims.length : 0;
+  const cur = (typeof currentMaxAqi==="function") ? currentMaxAqi() : null;
+  const aqiCol = cur ? aqiInfo(cur.max).color : "#6f8497";
+  const aqiTxt = cur ? `${Math.round(cur.max)} ${aqiInfo(cur.max).cat}` : "loading…";
+  el.innerHTML =
+      `<span><i class="sw" style="background:#ef5350"></i>Fire perimeters (NIFC): <b>${nP?`${nP} in region`:"none currently"}</b></span>`
+    + `<span><i class="sw" style="background:#f5a623"></i>Satellite detections (VIIRS): <b>${prettyDate(fireDate)}</b> · 12–24 h latency</span>`
+    + `<span><i class="sw" style="background:${aqiCol}"></i>Air quality: <b>course max ${aqiTxt}</b></span>`
+    + `<span><i class="sw" style="background:#3fb6c9"></i>Course + <b>${AID_STATIONS.length} aid stations</b></span>`;
+}
+
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
@@ -762,28 +948,28 @@ function renderAlerts(alerts){
 function renderPerimeters(geo){
   perimeterLayer.clearLayers();
   latestPerims = [];
+  latestFire = { nearestCourseMi:null, nearestName:"", onCourse:false };
   if(!geo || !geo.features) return;
   perimeterLayer.addData(geo);
+  let bestCourse = Infinity, bestName = "";
   geo.features.forEach(f=>{
     const p=f.properties||{};
     const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
     const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
-    // nearest distance from any course point to any vertex (approx)
-    let minMi = Infinity;
     const coords = [];
-    const collect = arr => {
-      if(typeof arr[0]==="number"){ coords.push(arr); }
-      else arr.forEach(collect);
-    };
+    const collect = arr => { if(typeof arr[0]==="number") coords.push(arr); else arr.forEach(collect); };
     if(f.geometry && f.geometry.coordinates) collect(f.geometry.coordinates);
-    coords.forEach(c=>{
-      LOCATIONS.forEach(l=>{
-        const d = haversineMi(l.lat,l.lon,c[1],c[0]);
-        if(d<minMi) minMi=d;
-      });
-    });
-    latestPerims.push({ name, acres, minMi:isFinite(minMi)?minMi:null });
+    const stride = coords.length>500 ? Math.ceil(coords.length/500) : 1;
+    let minLoc = Infinity, minCourse = Infinity;
+    for(let i=0;i<coords.length;i+=stride){
+      const c=coords[i];
+      for(const l of LOCATIONS){ const d=haversineMi(l.lat,l.lon,c[1],c[0]); if(d<minLoc) minLoc=d; }
+      for(let pi=0; pi<COURSE.length; pi+=2){ const d=haversineMi(COURSE[pi][0],COURSE[pi][1],c[1],c[0]); if(d<minCourse) minCourse=d; }
+    }
+    latestPerims.push({ name, acres, minMi:isFinite(minLoc)?minLoc:null });
+    if(isFinite(minCourse) && minCourse<bestCourse){ bestCourse=minCourse; bestName=name; }
   });
+  if(isFinite(bestCourse)) latestFire = { nearestCourseMi:bestCourse, nearestName:bestName, onCourse: bestCourse<=FIRE_ON_COURSE_MI };
 }
 
 /* ---------------- Posture engine (advisory) ---------------- */
@@ -857,6 +1043,7 @@ async function loadAll(){
     const [w,a] = await Promise.all([fetchWeather(), fetchAir()]);
     latestWeather = w; latestAir = a;
     renderCards(w,a);
+    latestAqiWindow = aqiWindowMax(a);
   }catch(e){
     $("#cards").innerHTML = `<div class="err">Could not load wind/AQI from Open-Meteo. Retry shortly.</div>`;
   }
@@ -868,11 +1055,13 @@ async function loadAll(){
   catch(e){ /* keep map clean; sources panel covers fallback */ }
 
   computePosture();
+  renderDecision();
 
   // refresh NWS forecast for the active location
   Object.keys(fcCache).forEach(k=>delete fcCache[k]);
   selectForecast(fcActive);
 
+  renderLayerStatus();
   $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
   $("#refreshBtn").disabled = false;
 }
@@ -1061,12 +1250,242 @@ function renderForecast(d){
   body.innerHTML = html;
 }
 
+/* ---------------- Cancellation decision matrix ---------------- */
+const EVENT_WINDOW = { startISO:"2026-07-09T06:00", endISO:"2026-07-12T18:00",
+  label:"Jul 9, 6:00 AM \u2013 Jul 12, 6:00 PM MT" };
+const FIRE_ON_COURSE_MI = 1.0;
+
+const board = { fire:"auto", extra:false, extraLabel:"", emerg:false, access:false, aid:0, commFin:"", rev:"" };
+let latestAqiWindow = null;
+let latestFire = { nearestCourseMi:null, nearestName:"", onCourse:false };
+
+function aqiWindowMax(air){
+  let max=-1, loc="", when="", covered=0, lastTime="";
+  (air||[]).forEach((a,i)=>{
+    const t=a&&a.hourly&&a.hourly.time, v=a&&a.hourly&&a.hourly.us_aqi;
+    if(!t||!v) return;
+    if(t.length && t[t.length-1]>lastTime) lastTime=t[t.length-1];
+    for(let k=0;k<t.length;k++){
+      if(t[k]>=EVENT_WINDOW.startISO && t[k]<=EVENT_WINDOW.endISO){
+        covered++;
+        if(v[k]!=null && v[k]>max){ max=v[k]; loc=LOCATIONS[i].name; when=t[k]; }
+      }
+    }
+  });
+  return { max: max>=0?max:null, loc, when, covered, lastTime };
+}
+function currentMaxAqi(){
+  let m=-1,loc=""; (latestAir||[]).forEach((a,i)=>{ const v=a&&a.current&&a.current.us_aqi; if(v!=null&&v>m){m=v;loc=LOCATIONS[i].name;} });
+  return m>=0?{max:m,loc}:null;
+}
+function shortWhen(iso){ if(!iso) return ""; const d=new Date(iso.replace(" ","T")); if(isNaN(d)) return iso; return d.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric"}); }
+
+function computeDecision(){
+  const fireAuto = latestFire.onCourse;
+  const fire = board.fire==="yes" ? true : board.fire==="no" ? false : fireAuto;
+  const aqiMax = latestAqiWindow ? latestAqiWindow.max : null;
+  const aqiTrigger = aqiMax!=null && aqiMax>150;
+  const triggers=[];
+  if(fire){
+    const lbl = (board.fire==="auto") ? `Fire on/near course${latestFire.nearestName?` \u2014 ${latestFire.nearestName}`:""}`
+              : "Fire on course (Board)";
+    triggers.push(lbl);
+  }
+  if(aqiTrigger) triggers.push(`Course AQI ${Math.round(aqiMax)} \u00b7 Unhealthy (>150)`);
+  if(board.extra) triggers.push(board.extraLabel.trim()||"Board-defined safety factor");
+  if(board.emerg) triggers.push("Emergency-response impact (San Juan communities)");
+  if(board.aid>0) triggers.push(`${board.aid} aid station(s) without crew access`);
+  if(board.access) triggers.push("Emergency-response access impacted by closures");
+  const rec = triggers.length ? "cancel" : "proceed";
+  let review=false;
+  if(rec==="proceed"){
+    if(aqiMax!=null && aqiMax>100) review=true;
+    if(latestFire.nearestCourseMi!=null && latestFire.nearestCourseMi<=25) review=true;
+  }
+  return { fire, fireAuto, aqiMax, aqiTrigger, triggers, rec, review };
+}
+
+function setDmStatus(sel, met){
+  const el=$(sel); if(!el) return;
+  el.textContent = met ? "\u25cf Trigger met" : "\u25cb Clear";
+  el.className = "dm-s " + (met?"met":"ok");
+}
+
+function renderDecision(){
+  const D = computeDecision();
+  const panel = $("#decision");
+  panel.dataset.rec = D.rec==="cancel" ? "cancel" : (D.review ? "review" : "proceed");
+  $("#dmWord").textContent = D.rec==="cancel" ? "RECOMMEND CANCEL" : D.review ? "PROCEED \u2014 REVIEW" : "NO CANCEL TRIGGER";
+  $("#dmTriggers").innerHTML = D.triggers.length
+    ? D.triggers.map(t=>`<span class="chip" data-sev="nogo"><span class="pip"></span>${t}</span>`).join("")
+    : `<span class="chip" data-sev="go"><span class="pip"></span>No hard trigger met</span>`;
+
+  // Fire
+  const f = latestFire;
+  let fv;
+  if(f.nearestCourseMi==null) fv = "No mapped fire perimeters in region \u00b7 satellite/perimeter data lags \u2014 confirm with incident command";
+  else if(f.onCourse) fv = `Perimeter on/near course \u2014 ${f.nearestName||"incident"} (\u2248${f.nearestCourseMi.toFixed(1)} mi from route)`;
+  else fv = `Nearest perimeter \u2248${f.nearestCourseMi.toFixed(1)} mi off route${f.nearestName?` \u2014 ${f.nearestName}`:""}`;
+  const mode = board.fire==="auto" ? `Auto \u2192 ${f.onCourse?"YES":"no"}` : `Override \u2192 ${board.fire.toUpperCase()}`;
+  $("#dmFireVal").innerHTML = `${fv} <span style="color:var(--ink-3)">\u00b7 ${mode}</span>`;
+  setDmStatus("#dmFireStatus", D.fire);
+
+  // AQI
+  const w = latestAqiWindow;
+  if(w && w.max!=null){
+    const info = aqiInfo(w.max);
+    $("#dmAqiVal").innerHTML = `<b style="color:${info.color};font-size:14px">${Math.round(w.max)}</b> \u00b7 ${info.cat} <span style="color:var(--ink-3)">@ ${w.loc}</span>`;
+    $("#dmAqiNote").textContent = `Max over ${w.covered} forecast hours inside the event window (peak ${shortWhen(w.when)}).`;
+  } else {
+    const cur = currentMaxAqi();
+    $("#dmAqiVal").innerHTML = `<span style="color:var(--ink-3)">Window forecast not available yet</span>`;
+    $("#dmAqiNote").innerHTML = `Event window opens beyond the ~7-day AQI forecast horizon`
+      + (w&&w.lastTime?` (forecast reaches ${shortWhen(w.lastTime)})` : "")
+      + `. Interim \u2014 current max on course: `
+      + (cur?`<b style="color:${aqiInfo(cur.max).color}">${Math.round(cur.max)}</b> ${aqiInfo(cur.max).cat} @ ${cur.loc}`:"\u2014")
+      + `. The trigger arms automatically once the window enters the forecast.`;
+  }
+  setDmStatus("#dmAqiStatus", D.aqiTrigger);
+
+  setDmStatus("#dmExtraStatus", board.extra);
+  setDmStatus("#dmEmergStatus", board.emerg);
+  setDmStatus("#dmAccessStatus", board.access);
+  setDmStatus("#dmAidStatus", board.aid>0);
+  updateFlow();
+}
+
+function wireDecision(){
+  document.querySelectorAll("#decision .seg").forEach(seg=>{
+    seg.addEventListener("click", e=>{
+      const btn=e.target.closest("button"); if(!btn) return;
+      const key=seg.dataset.key, v=btn.dataset.v;
+      seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active", b===btn));
+      if(key==="fire") board.fire=v; else board[key]=(v==="yes");
+      renderDecision();
+    });
+  });
+  const bind=(id,fn)=>{ const el=$("#"+id); if(el) el.addEventListener("input",()=>{ fn(el.value); renderDecision(); }); };
+  bind("dmAid", v=>board.aid=Math.max(0, parseInt(v||"0",10)||0));
+  bind("dmCommFin", v=>board.commFin=v);
+  bind("dmRev", v=>board.rev=v);
+  bind("dmExtraLabel", v=>board.extraLabel=v);
+}
+
+/* ---------------- Decision flow diagram ---------------- */
+const FLOW = [
+  {id:"fire",  n:"1", t:"Fire on course?"},
+  {id:"aqi",   n:"2", t:"Max course AQI > 150 (Unhealthy)?"},
+  {id:"extra", n:"2", t:"Board-defined safety factor?"},
+  {id:"emerg", n:"3", t:"Impacts on emergency response?"},
+  {id:"aid",   n:"5", t:"Aid stations: no crew access \u2265 1?"},
+  {id:"access",n:"5", t:"Emergency-response access impact?"}
+];
+function buildFlow(){
+  const wrap = document.getElementById("flow"); if(!wrap) return;
+  const gx=30, gw=400, gh=54, gap=26, top0=70, cx=230, railX=540, W=820;
+  const cy = i => top0 + i*(gh+gap) + gh/2;
+  const termTop = top0 + FLOW.length*(gh+gap) + 14, termH=52, H=termTop+termH+16;
+  const cancelCx=630, procCx=190;
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cancellation decision path">`;
+  s += `<defs>
+    <marker id="arN" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#2c3a49"/></marker>
+    <marker id="arG" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#5dc77a"/></marker>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ef5350"/></marker>
+  </defs>`;
+  s += `<g class="flow-start"><rect x="${cx-70}" y="20" width="140" height="34" rx="17"/><text x="${cx}" y="42" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12">START</text></g>`;
+  s += `<path id="sp_0" class="flow-edge" d="M${cx} 54 L${cx} ${cy(0)-gh/2}" marker-end="url(#arN)"/>`;
+  FLOW.forEach((g,i)=>{
+    const y=cy(i), top=y-gh/2;
+    s += `<g class="flow-gate" id="g_${g.id}">
+      <rect x="${gx}" y="${top}" width="${gw}" height="${gh}" rx="10"/>
+      <circle cx="${gx+22}" cy="${y}" r="11" fill="#3fb6c9"/>
+      <text class="gnum" x="${gx+22}" y="${y+3.5}" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11">${g.n}</text>
+      <text class="glabel" x="${gx+42}" y="${y+4.5}" font-family="Inter,sans-serif" font-size="12.5">${g.t}</text>
+      <text class="gval" id="gv_${g.id}" x="${gx+gw-14}" y="${y+4.5}" text-anchor="end" font-family="Oswald,sans-serif" font-size="12.5" font-weight="700" fill="#6f8497">\u2014</text>
+    </g>`;
+    s += `<text class="flow-elabel" x="${gx+gw+12}" y="${y-6}" font-size="9.5">YES</text>`;
+    s += `<path id="ye_${g.id}" class="flow-edge" d="M${gx+gw} ${y} L${railX} ${y}"/>`;
+    if(i<FLOW.length-1){
+      s += `<text class="flow-elabel" x="${cx+9}" y="${y+gh/2+18}" font-size="9.5">No</text>`;
+      s += `<path id="sp_${i+1}" class="flow-edge" d="M${cx} ${y+gh/2} L${cx} ${cy(i+1)-gh/2}" marker-end="url(#arN)"/>`;
+    }
+  });
+  s += `<path id="railEdge" class="flow-edge" d="M${railX} ${cy(0)} L${railX} ${termTop-12} L${cancelCx} ${termTop-12} L${cancelCx} ${termTop}" marker-end="url(#arN)"/>`;
+  const lastB = cy(FLOW.length-1)+gh/2;
+  s += `<text class="flow-elabel" x="${cx+9}" y="${lastB+16}" font-size="9.5">No</text>`;
+  s += `<path id="sp_${FLOW.length}" class="flow-edge" d="M${cx} ${lastB} L${cx} ${termTop-12} L${procCx} ${termTop-12} L${procCx} ${termTop}" marker-end="url(#arN)"/>`;
+  s += `<g class="flow-term proceed" id="termProceed"><rect x="30" y="${termTop}" width="320" height="${termH}" rx="12"/><text id="termProceedTxt" x="190" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#5dc77a">PROCEED</text></g>`;
+  s += `<g class="flow-term cancel" id="termCancel"><rect x="470" y="${termTop}" width="320" height="${termH}" rx="12"/><text x="630" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#ef5350">CANCEL EVENT</text></g>`;
+  s += `</svg>`;
+  wrap.innerHTML = s;
+}
+function setSpine(id,on){
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.remove("on","cancel"); if(on) el.classList.add("on");
+  el.setAttribute("marker-end", on?"url(#arG)":"url(#arN)");
+}
+function updateFlow(){
+  if(!document.getElementById("flow") || !document.getElementById("g_fire")) return;
+  const D = computeDecision();
+  const met = {fire:D.fire, aqi:D.aqiTrigger, extra:board.extra, emerg:board.emerg, aid:board.aid>0, access:board.access};
+  let firstMet=-1; FLOW.forEach((g,i)=>{ if(firstMet<0 && met[g.id]) firstMet=i; });
+  const anyMet = firstMet>=0;
+  FLOW.forEach(g=>{
+    const gate=document.getElementById("g_"+g.id), val=document.getElementById("gv_"+g.id), ye=document.getElementById("ye_"+g.id);
+    const on=met[g.id];
+    gate.classList.remove("met","clear"); gate.classList.add(on?"met":"clear");
+    val.textContent = on?"YES":"NO"; val.setAttribute("fill", on?"#ef5350":"#5dc77a");
+    ye.classList.remove("cancel","on"); if(on){ ye.classList.add("cancel"); ye.setAttribute("marker-end","url(#arR)"); } else { ye.removeAttribute("marker-end"); }
+  });
+  const reached = i => (firstMet<0) || (i<=firstMet);
+  setSpine("sp_0", reached(0));
+  for(let i=1;i<FLOW.length;i++){ setSpine("sp_"+i, reached(i) && !met[FLOW[i-1].id]); }
+  setSpine("sp_"+FLOW.length, !anyMet);
+  const rail=document.getElementById("railEdge");
+  rail.classList.remove("cancel","on"); if(anyMet) rail.classList.add("cancel");
+  rail.setAttribute("marker-end", anyMet?"url(#arR)":"url(#arN)");
+  const tc=document.getElementById("termCancel"), tp=document.getElementById("termProceed");
+  tc.classList.toggle("on", anyMet);
+  tp.classList.remove("on","review");
+  if(!anyMet){ tp.classList.add("on"); if(D.review) tp.classList.add("review"); }
+  const tpt=document.getElementById("termProceedTxt");
+  if(tpt){ const rev=!anyMet&&D.review; tpt.textContent = rev?"PROCEED \u00b7 REVIEW":"PROCEED"; tpt.setAttribute("fill", rev?"#f0a830":"#5dc77a"); }
+}
+
+/* ---------------- Tabs ---------------- */
+function activateTab(name){
+  document.querySelectorAll(".tab").forEach(b=>{
+    const on=b.dataset.tab===name;
+    b.classList.toggle("active",on); b.setAttribute("aria-selected", on?"true":"false");
+  });
+  const d=document.getElementById("tab-data"), l=document.getElementById("tab-logic");
+  if(d) d.hidden = name!=="data";
+  if(l) l.hidden = name!=="logic";
+  if(name==="data" && map){ setTimeout(()=>{ map.invalidateSize(); buildProfile(); },60); }
+}
+function wireTabs(){
+  const btns=[...document.querySelectorAll(".tab")];
+  btns.forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
+  const bar=document.querySelector(".tabs");
+  if(bar) bar.addEventListener("keydown",e=>{
+    if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
+    let i=btns.findIndex(b=>b.classList.contains("active"));
+    i=(i+(e.key==="ArrowRight"?1:-1)+btns.length)%btns.length;
+    btns[i].focus(); activateTab(btns[i].dataset.tab);
+  });
+}
+
 /* ---------------- Wire up ---------------- */
 document.addEventListener("DOMContentLoaded", ()=>{
   initMap();
   refreshFireDate();
   buildProfile();
   buildFcPills();
+  buildFlow();
+  wireTabs();
+  wireDecision();
+  renderDecision();
+  renderLayerStatus();
   loadAll();
 
   $("#refreshBtn").addEventListener("click", loadAll);
