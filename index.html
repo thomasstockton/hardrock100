@@ -1032,8 +1032,8 @@ function computePosture(){
     const nearest = latestPerims.reduce((m,p)=> (p.minMi!=null && p.minMi<(m.minMi??Infinity))?p:m, {minMi:Infinity});
     const d = nearest.minMi;
     let sev="hold";
-    if(d!=null && d<=8 && redFlag) sev="nogo";
-    else if(d!=null && d<=8) sev="nogo";
+    if(d!=null && d<=20 && redFlag) sev="nogo";
+    else if(d!=null && d<=20) sev="nogo";
     else if(d!=null && d<=25) sev="hold";
     bump(sev);
     chips.push({sev, html:`<b>${latestPerims.length} fire perimeter${latestPerims.length>1?"s":""}</b> in region${d!=null&&isFinite(d)?` · nearest ≈${Math.round(d)} mi`:""}`});
