@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hardrock 100 · Conditions Watch</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#10161d;
+    --bg-2:#0c1117;
+    --panel:#19212c;
+    --panel-2:#1e2833;
+    --panel-3:#243140;
+    --line:rgba(255,255,255,.08);
+    --line-strong:#2c3a49;
+    --ink:#e9eef3;
+    --ink-2:#a6b7c6;
+    --ink-3:#6f8497;
+    --teal:#3fb6c9;
+    --teal-deep:#2a8090;
+    --amber:#f5a623;
+    --amber-soft:#ffc266;
+    --go:#5dc77a;
+    --hold:#f0a830;
+    --nogo:#ef5350;
+    --nogo-deep:#c63a36;
+    /* AQI scale (tuned for dark bg) */
+    --aqi-good:#56c46e;
+    --aqi-mod:#e9d04a;
+    --aqi-usg:#ef9b3a;
+    --aqi-unh:#ec5b54;
+    --aqi-vunh:#a974d4;
+    --aqi-haz:#b15359;
+    --radius:14px;
+    --radius-sm:9px;
+    --shadow:0 10px 34px rgba(0,0,0,.42);
+    --display:'Oswald','Arial Narrow',system-ui,sans-serif;
+    --body:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(1100px 520px at 82% -8%, rgba(63,182,201,.10), transparent 60%),
+      radial-gradient(900px 480px at 6% 4%, rgba(245,166,35,.06), transparent 55%);
+    background-attachment:fixed;
+  }
+  .wrap{max-width:1280px;margin:0 auto;padding:22px 20px 60px}
+
+  .eyebrow{
+    font-family:var(--display);
+    text-transform:uppercase;
+    letter-spacing:.22em;
+    font-weight:600;
+    font-size:11.5px;
+    color:var(--teal);
+  }
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+
+  /* ---------- Header ---------- */
+  header.topbar{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:18px;flex-wrap:wrap;
+    padding-bottom:16px;margin-bottom:18px;
+    border-bottom:1px solid var(--line-strong);
+    position:relative;
+  }
+  .brandblock .kicker{color:var(--amber);}
+  .brandblock h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(26px,4.4vw,40px);
+    line-height:.98;
+    margin:4px 0 4px;
+    letter-spacing:.01em;
+  }
+  .brandblock h1 .lo{color:var(--teal)}
+  .brandblock .sub{color:var(--ink-2);font-size:13.5px;max-width:60ch}
+  .statusbox{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:200px}
+  .live{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);
+    letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--ink-2)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--go);box-shadow:0 0 0 0 rgba(93,199,122,.7);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(93,199,122,.55)}70%{box-shadow:0 0 0 9px rgba(93,199,122,0)}100%{box-shadow:0 0 0 0 rgba(93,199,122,0)}}
+  .updated{font-size:12px;color:var(--ink-3)}
+  .updated b{color:var(--ink-2);font-weight:600}
+  .btn{
+    font-family:var(--body);font-weight:600;font-size:13px;
+    background:var(--panel-3);color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:999px;
+    padding:8px 16px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{border-color:var(--teal);color:#fff}
+  .btn:active{transform:translateY(1px)}
+  .btn svg{width:14px;height:14px}
+
+  /* ---------- Posture banner (signature element) ---------- */
+  .posture{
+    border-radius:var(--radius);
+    padding:20px 22px;margin-bottom:22px;
+    border:1px solid var(--line-strong);
+    background:var(--panel);
+    box-shadow:var(--shadow);
+    display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .posture::before{
+    content:"";position:absolute;inset:0;left:0;width:6px;background:var(--teal);
+  }
+  .posture[data-level="go"]::before{background:var(--go)}
+  .posture[data-level="hold"]::before{background:var(--hold)}
+  .posture[data-level="nogo"]::before{background:var(--nogo)}
+  .posture[data-level="loading"]::before{background:var(--ink-3)}
+  .verdict{display:flex;flex-direction:column;gap:6px;padding-left:8px;min-width:190px}
+  .verdict .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-family:var(--display);font-weight:600}
+  .verdict .word{
+    font-family:var(--display);font-weight:700;line-height:.9;
+    font-size:clamp(30px,4.6vw,46px);letter-spacing:.02em;
+  }
+  .posture[data-level="go"] .word{color:var(--go)}
+  .posture[data-level="hold"] .word{color:var(--hold)}
+  .posture[data-level="nogo"] .word{color:var(--nogo)}
+  .posture[data-level="loading"] .word{color:var(--ink-3);font-size:24px}
+  .verdict .advisory{font-size:11px;color:var(--ink-3);letter-spacing:.02em;max-width:24ch}
+  .drivers{display:flex;flex-direction:column;gap:10px}
+  .drivers .dh{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);font-family:var(--display);font-weight:600}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--panel-2);border:1px solid var(--line-strong);
+    border-radius:999px;padding:6px 13px;font-size:12.5px;color:var(--ink-2);
+  }
+  .chip b{color:var(--ink);font-weight:600}
+  .chip .pip{width:8px;height:8px;border-radius:50%;background:var(--ink-3);flex:none}
+  .chip[data-sev="go"] .pip{background:var(--go)}
+  .chip[data-sev="hold"] .pip{background:var(--hold)}
+  .chip[data-sev="nogo"] .pip{background:var(--nogo)}
+
+  /* ---------- Grid ---------- */
+  .grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;align-items:start}
+  .panel{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+  }
+  .panel-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:14px 16px;border-bottom:1px solid var(--line);
+  }
+  .panel-head h2{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:.04em;margin:0;text-transform:uppercase}
+  .panel-head .meta{font-size:11.5px;color:var(--ink-3)}
+  .panel-body{padding:14px 16px}
+
+  /* map */
+  #map{height:540px;width:100%;background:var(--bg-2)}
+  .mapbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .datestep{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+  .datestep button{background:var(--panel-3);border:none;color:var(--ink);padding:6px 11px;cursor:pointer;font-size:14px;line-height:1}
+  .datestep button:hover{background:#2c3c4d;color:#fff}
+  .datestep .dval{padding:6px 12px;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:106px;text-align:center}
+  .maphint{font-size:11px;color:var(--ink-3);padding:9px 16px 0}
+
+  /* location cards */
+  .cards{display:flex;flex-direction:column;gap:11px;max-height:560px;overflow:auto}
+  .cards::-webkit-scrollbar{width:9px}
+  .cards::-webkit-scrollbar-thumb{background:var(--panel-3);border-radius:9px}
+  .loc{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:12px 13px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+    border-left:4px solid var(--ink-3);
+  }
+  .loc .name{font-family:var(--display);font-weight:600;font-size:15.5px;letter-spacing:.03em;text-transform:uppercase}
+  .loc .role{font-size:11px;color:var(--ink-3);margin-top:1px}
+  .loc .role .elev{color:var(--teal)}
+  .loc .metrics{display:flex;gap:16px;align-items:center}
+  .metric{text-align:right;min-width:54px}
+  .metric .v{font-size:18px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+  .metric .u{font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-top:3px}
+  .aqibadge{
+    display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+    min-width:54px;padding:6px 8px;border-radius:9px;color:#0c1117;font-weight:700;
+  }
+  .aqibadge .a{font-size:19px;line-height:1;font-variant-numeric:tabular-nums}
+  .aqibadge .c{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;font-weight:700}
+  .gust{font-size:11px;color:var(--ink-3);margin-top:3px}
+  .gust b{color:var(--amber-soft);font-weight:600}
+  .wdir{font-size:11px;color:var(--ink-3)}
+
+  /* alerts */
+  .alert{
+    border:1px solid var(--line-strong);border-radius:var(--radius-sm);
+    padding:11px 13px;margin-bottom:10px;background:var(--panel-2);
+    border-left:4px solid var(--teal);
+  }
+  .alert[data-sev="extreme"],.alert[data-sev="severe"]{border-left-color:var(--nogo)}
+  .alert[data-sev="moderate"]{border-left-color:var(--hold)}
+  .alert .et{font-weight:600;font-size:14px;display:flex;justify-content:space-between;gap:8px}
+  .alert .et .sev{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);font-family:var(--display)}
+  .alert .area{font-size:12px;color:var(--ink-2);margin-top:3px}
+  .alert .exp{font-size:11px;color:var(--ink-3);margin-top:4px}
+  .empty{color:var(--ink-3);font-size:13px;padding:6px 2px}
+  .empty.good{color:var(--go)}
+
+  /* closures / sources lists */
+  .corridor{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+  .corridor .row{display:grid;grid-template-columns:auto 1fr;gap:11px;align-items:start;font-size:13px}
+  .corridor .rd{font-family:var(--display);font-weight:600;color:var(--amber-soft);letter-spacing:.04em;white-space:nowrap}
+  .corridor .desc{color:var(--ink-2)}
+  .linklist{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .linklist a{
+    display:block;text-decoration:none;color:var(--ink);
+    background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:9px 11px;font-size:12.5px;transition:.15s;
+  }
+  .linklist a:hover{border-color:var(--teal);background:var(--panel-3)}
+  .linklist a .t{font-weight:600;display:flex;align-items:center;gap:6px}
+  .linklist a .d{font-size:11px;color:var(--ink-3);margin-top:2px}
+  .linklist a .t::after{content:"↗";color:var(--ink-3);font-size:11px}
+
+  /* thresholds */
+  .thresh{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px}
+  .tcard{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px}
+  .tcard h3{font-family:var(--display);font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 8px;color:var(--ink-2)}
+  .scale{display:flex;flex-direction:column;gap:4px;font-size:11.5px}
+  .scale .s{display:flex;align-items:center;gap:8px;color:var(--ink-2)}
+  .scale .sw{width:13px;height:13px;border-radius:3px;flex:none}
+  .tcard p{font-size:12px;color:var(--ink-2);margin:0}
+  .tcard p+p{margin-top:7px}
+
+  .full{grid-column:1 / -1}
+  .stack{display:flex;flex-direction:column;gap:20px;margin-top:20px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+
+  footer{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px}
+  footer .src{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+  footer .src a{color:var(--ink-2);text-decoration:none;border-bottom:1px dotted var(--line-strong)}
+  footer .src a:hover{color:var(--teal)}
+  .disclaimer{background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:13px 15px;color:var(--ink-2);line-height:1.55}
+  .disclaimer b{color:var(--amber-soft)}
+
+  .skel{color:var(--ink-3);font-size:13px}
+  .err{color:var(--nogo);font-size:12px}
+
+  /* leaflet dark popups */
+  .leaflet-popup-content-wrapper{background:var(--panel-2);color:var(--ink);border-radius:10px;box-shadow:var(--shadow)}
+  .leaflet-popup-tip{background:var(--panel-2)}
+  .leaflet-popup-content{font-family:var(--body);font-size:13px;margin:11px 13px}
+  .leaflet-popup-content b{font-family:var(--display);letter-spacing:.03em}
+  .leaflet-container a.leaflet-popup-close-button{color:var(--ink-3)}
+  .leaflet-bar a{background:var(--panel-2);color:var(--ink);border-bottom-color:var(--line)}
+  .leaflet-bar a:hover{background:var(--panel-3)}
+  .leaflet-control-layers{background:var(--panel-2);color:var(--ink);border:1px solid var(--line-strong)!important;border-radius:10px}
+  .leaflet-control-layers-expanded{padding:10px 12px}
+  .leaflet-control-layers label{font-size:12.5px;margin:3px 0}
+  .leaflet-control-attribution{background:rgba(16,22,29,.75)!important;color:var(--ink-3)!important}
+  .leaflet-control-attribution a{color:var(--ink-2)!important}
+
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .two{grid-template-columns:1fr}
+    .posture{grid-template-columns:1fr}
+    .verdict{flex-direction:row;align-items:center;justify-content:space-between}
+    .cards{max-height:none}
+    #map{height:420px}
+    .statusbox{align-items:flex-start;text-align:left}
+    header.topbar{align-items:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .dot{animation:none}
+    *{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <div class="brandblock">
+      <div class="eyebrow kicker">Board of Directors · Go / No-Go Support</div>
+      <h1>HARDROCK <span class="lo">100</span> · CONDITIONS WATCH</h1>
+      <div class="sub">Live wildfire, smoke / air-quality, wind, and alert monitoring across the San Juan Mountains course corridor — Silverton · Lake City · Ouray · Telluride · Ophir.</div>
+    </div>
+    <div class="statusbox">
+      <span class="live"><span class="dot" id="liveDot"></span> Live monitoring</span>
+      <span class="updated">Updated <b id="updatedAt">—</b></span>
+      <button class="btn" id="refreshBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6"/></svg>
+        Refresh data
+      </button>
+    </div>
+  </header>
+
+  <!-- POSTURE BANNER -->
+  <section class="posture" id="posture" data-level="loading" aria-live="polite">
+    <div class="verdict">
+      <span class="label">Conditions posture</span>
+      <span class="word" id="postureWord">Assessing…</span>
+      <span class="advisory">Advisory only — the Board makes the call.</span>
+    </div>
+    <div class="drivers">
+      <span class="dh">What's driving it right now</span>
+      <div class="chips" id="postureChips">
+        <span class="chip"><span class="pip"></span> Loading live conditions…</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN GRID: MAP + LOCATION CARDS -->
+  <div class="grid">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Course map &amp; fire overlay</h2>
+        <div class="mapbar">
+          <div class="datestep" title="Satellite fire-detection day">
+            <button id="dPrev" aria-label="Previous day">‹</button>
+            <span class="dval" id="fireDateLabel">—</span>
+            <button id="dNext" aria-label="Next day">›</button>
+          </div>
+        </div>
+      </div>
+      <div id="map"></div>
+      <div class="maphint">Toggle layers (top-right): NASA/FIRMS satellite fire detections (≈12–24 h latency), NIFC live fire perimeters (refreshed ~5 min), and town air-quality. Course corridor is an <b>approximate</b> outline of the official route — verify against the sanctioned GPX.</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Course conditions</h2>
+        <div class="meta">Wind · gusts · US AQI</div>
+      </div>
+      <div class="panel-body">
+        <div class="cards" id="cards">
+          <div class="skel">Loading wind &amp; air-quality for each location…</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ALERTS + CLOSURES -->
+  <div class="two">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Active weather alerts</h2>
+        <div class="meta">NWS · fire / wind / air quality</div>
+      </div>
+      <div class="panel-body" id="alerts">
+        <div class="skel">Checking National Weather Service alerts…</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Access corridors &amp; official sources</h2>
+        <div class="meta">Verify before deciding</div>
+      </div>
+      <div class="panel-body">
+        <div class="corridor">
+          <div class="row"><span class="rd">US-550</span><span class="desc">Million Dollar Hwy — Silverton ⇄ Ouray. Primary crew/medical/evac link to the north.</span></div>
+          <div class="row"><span class="rd">CO-145</span><span class="desc">Ophir ⇄ Telluride ⇄ the south. Western course access.</span></div>
+          <div class="row"><span class="rd">CO-149</span><span class="desc">Lake City corridor — eastern aid-station access.</span></div>
+          <div class="row"><span class="rd">US-50</span><span class="desc">Gunnison ⇄ Montrose regional throughput; smoke / closure detours.</span></div>
+        </div>
+        <div class="linklist">
+          <a href="https://maps.cotrip.org/" target="_blank" rel="noopener"><span class="t">CDOT / COtrip live</span><span class="d">Road closures &amp; conditions</span></a>
+          <a href="https://inciweb.wildfire.gov/" target="_blank" rel="noopener"><span class="t">InciWeb</span><span class="d">Incident reports &amp; evac orders</span></a>
+          <a href="https://www.airnow.gov/?city=Silverton&state=CO&country=USA" target="_blank" rel="noopener"><span class="t">AirNow (EPA)</span><span class="d">Official AQI &amp; smoke</span></a>
+          <a href="https://www.weather.gov/gjt/" target="_blank" rel="noopener"><span class="t">NWS Grand Junction</span><span class="d">Forecasts &amp; fire weather</span></a>
+          <a href="https://fire.airnow.gov/" target="_blank" rel="noopener"><span class="t">Fire &amp; Smoke Map</span><span class="d">AirNow smoke plumes</span></a>
+          <a href="https://hardrock100.com/" target="_blank" rel="noopener"><span class="t">Hardrock 100</span><span class="d">Official event ops</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- THRESHOLDS -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>How to read this — reference thresholds</h2>
+        <div class="meta">Set your own Board criteria</div>
+      </div>
+      <div class="panel-body">
+        <div class="thresh">
+          <div class="tcard">
+            <h3>US Air Quality Index</h3>
+            <div class="scale">
+              <div class="s"><span class="sw" style="background:var(--aqi-good)"></span>0–50 · Good</div>
+              <div class="s"><span class="sw" style="background:var(--aqi-mod)"></span>51–100 · Moderate</div>
+              <div class="s"><span class="sw" style="background:var(--aqi-usg)"></span>101–150 · Sensitive groups</div>
+              <div class="s"><span class="sw" style="background:var(--aqi-unh)"></span>151–200 · Unhealthy</div>
+              <div class="s"><span class="sw" style="background:var(--aqi-vunh)"></span>201–300 · Very unhealthy</div>
+              <div class="s"><span class="sw" style="background:var(--aqi-haz)"></span>301+ · Hazardous</div>
+            </div>
+          </div>
+          <div class="tcard">
+            <h3>Why AQI matters here</h3>
+            <p>Runners sustain hard effort 24–48 h at 9,000–14,000 ft, where ventilation rates are already extreme. Smoke risk that's "moderate" at sea level is amplified by altitude and exposure time.</p>
+            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p>
+          </div>
+          <div class="tcard">
+            <h3>Wind &amp; alpine exposure</h3>
+            <p>Thirteen passes above treeline; the high point is Handies Peak at 14,048 ft. Gusts ≥35 mph on exposed ridgelines raise hypothermia and lightning-staging risk; ≥55 mph is a serious exposure hazard.</p>
+          </div>
+          <div class="tcard">
+            <h3>Fire posture logic</h3>
+            <p><b>No-go signals:</b> AQI ≥201 on course, a fire perimeter on/adjacent to the route, or extreme wind under a Red Flag Warning.</p>
+            <p><b>Heightened:</b> AQI 101–200, a Red Flag Warning, a perimeter within ≈25 mi, or alpine gusts 35–55 mph.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <div class="src">
+      <span>Data:</span>
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo (wind &amp; US AQI)</a>
+      <a href="https://firms.modaps.eosdis.nasa.gov/" target="_blank" rel="noopener">NASA FIRMS / GIBS (fire detections)</a>
+      <a href="https://data-nifc.opendata.arcgis.com/" target="_blank" rel="noopener">NIFC WFIGS (fire perimeters)</a>
+      <a href="https://www.weather.gov/documentation/services-web-api" target="_blank" rel="noopener">NWS API (alerts)</a>
+      <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap · OpenTopoMap · CARTO</a>
+    </div>
+    <div class="disclaimer">
+      <b>Decision-support only.</b> This dashboard aggregates third-party live data and applies illustrative thresholds to suggest a conditions posture. It is <b>not</b> an authoritative safety determination and does not replace direct coordination with the NWS, San Juan / Hinsdale / Ouray / San Miguel County emergency management, the BLM/USFS, CDOT, and the event medical and operations teams. Satellite fire detections lag real time; always confirm with InciWeb and local incident command. Final go / no-go authority rests with the Board.
+    </div>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+"use strict";
+
+/* ---------------- Course locations (real town coords; alpine point for exposure) ---------------- */
+const LOCATIONS = [
+  { name:"Silverton",   role:"Start / Finish",        elev:9318,  lat:37.8119, lon:-107.6645 },
+  { name:"Lake City",   role:"Eastern access / host", elev:8661,  lat:38.0302, lon:-107.3151 },
+  { name:"Ouray",       role:"North aid · US-550",    elev:7792,  lat:38.0228, lon:-107.6712 },
+  { name:"Telluride",   role:"West aid · CO-145",     elev:8750,  lat:37.9375, lon:-107.8123 },
+  { name:"Ophir",       role:"Southwest aid",         elev:9695,  lat:37.8558, lon:-107.8298 },
+  { name:"Handies Peak",role:"Course high point",     elev:14048, lat:37.9131, lon:-107.5042 }
+];
+
+/* Approximate course corridor (NOT the official GPX) */
+const COURSE = [
+  [37.8119,-107.6645],[37.8270,-107.5930],[37.8650,-107.5300],[37.9100,-107.4600],
+  [37.9131,-107.5042],[37.9500,-107.5450],[37.9950,-107.5780],[38.0228,-107.6712],
+  [37.9720,-107.7400],[37.9375,-107.8123],[37.8800,-107.8350],[37.8558,-107.8298],
+  [37.8350,-107.7700],[37.8050,-107.7150],[37.8119,-107.6645]
+];
+
+const COURSE_BBOX = { xmin:-108.30, ymin:37.40, xmax:-106.80, ymax:38.40 }; // perimeter query box
+
+/* ---------------- State ---------------- */
+let map, fireWMS, perimeterLayer, aqiLayer;
+let fireDate = new Date();          // satellite detection day
+let latestWeather = [], latestAir = [], latestAlerts = [], latestPerims = [];
+let autoTimer = null;
+
+/* ---------------- Helpers ---------------- */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,"0");
+const fmtDate = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const prettyDate = d => d.toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+
+function aqiInfo(v){
+  if(v==null||isNaN(v)) return {cat:"—",color:"var(--ink-3)",sev:0};
+  if(v<=50)  return {cat:"Good",       color:"var(--aqi-good)", sev:0};
+  if(v<=100) return {cat:"Moderate",   color:"var(--aqi-mod)",  sev:1};
+  if(v<=150) return {cat:"Sensitive",  color:"var(--aqi-usg)",  sev:2};
+  if(v<=200) return {cat:"Unhealthy",  color:"var(--aqi-unh)",  sev:3};
+  if(v<=300) return {cat:"V.Unhealthy",color:"var(--aqi-vunh)", sev:4};
+  return       {cat:"Hazardous", color:"var(--aqi-haz)",  sev:5};
+}
+const DIRS = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+const windDir = d => (d==null)?"—":DIRS[Math.round(d/22.5)%16];
+
+const WMO = {0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Rime fog",
+  51:"Lt drizzle",53:"Drizzle",55:"Hvy drizzle",61:"Lt rain",63:"Rain",65:"Hvy rain",
+  71:"Lt snow",73:"Snow",75:"Hvy snow",77:"Snow grains",80:"Showers",81:"Showers",82:"Violent showers",
+  85:"Snow showers",86:"Snow showers",95:"Thunderstorm",96:"T-storm + hail",99:"Severe t-storm"};
+const wmoText = c => WMO[c] || "—";
+
+function haversineMi(a,b,c,d){
+  const R=3958.8, toR=x=>x*Math.PI/180;
+  const dLat=toR(c-a), dLon=toR(d-b);
+  const s=Math.sin(dLat/2)**2 + Math.cos(toR(a))*Math.cos(toR(c))*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+}
+
+/* ---------------- Map ---------------- */
+function initMap(){
+  map = L.map("map",{ zoomControl:true, attributionControl:true }).setView([37.93,-107.62], 10);
+
+  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+    maxZoom:17, subdomains:"abc",
+    attribution:'© OpenTopoMap · OpenStreetMap contributors'
+  }).addTo(map);
+  const dark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
+    maxZoom:19, subdomains:"abcd", attribution:'© CARTO · OpenStreetMap contributors'
+  });
+  const sat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{
+    maxZoom:18, attribution:'© Esri World Imagery'
+  });
+
+  // Course corridor + aid towns
+  const courseLine = L.polyline(COURSE,{ color:"#3fb6c9", weight:3.5, opacity:.9, dashArray:"1 0" });
+  const courseGroup = L.layerGroup([courseLine]);
+  LOCATIONS.forEach(l=>{
+    const isPeak = l.name==="Handies Peak";
+    L.circleMarker([l.lat,l.lon],{
+      radius:isPeak?5:6, color:"#0c1117", weight:2,
+      fillColor:isPeak?"#f5a623":"#e9eef3", fillOpacity:1
+    }).bindPopup(`<b>${l.name}</b><br>${l.role}<br>${l.elev.toLocaleString()} ft`).addTo(courseGroup);
+  });
+  courseGroup.addTo(map);
+
+  // NASA GIBS / FIRMS satellite fire detections (keyless WMS)
+  fireWMS = L.tileLayer.wms("https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi",{
+    layers:"VIIRS_NOAA20_Thermal_Anomalies_375m_All,VIIRS_SNPP_Thermal_Anomalies_375m_All",
+    format:"image/png", transparent:true, version:"1.3.0",
+    time: fmtDate(fireDate), opacity:.95,
+    attribution:"NASA EOSDIS GIBS / FIRMS"
+  }).addTo(map);
+
+  perimeterLayer = L.geoJSON(null,{
+    style:{ color:"#ef5350", weight:2, fillColor:"#ef5350", fillOpacity:.22 },
+    onEachFeature:(f,layer)=>{
+      const p=f.properties||{};
+      const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed incident";
+      const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize;
+      const cont=p.attr_PercentContained;
+      layer.bindPopup(`<b>${name}</b><br>${acres?Math.round(acres).toLocaleString()+" acres":"size n/a"}`
+        + (cont!=null?`<br>${Math.round(cont)}% contained`:"")
+        + `<br><span style="color:#9fb0c0">NIFC live perimeter</span>`);
+    }
+  }).addTo(map);
+
+  aqiLayer = L.layerGroup();
+
+  L.control.layers(
+    { "Terrain (OpenTopoMap)":topo, "Dark":dark, "Satellite":sat },
+    {
+      "Course corridor + aid towns":courseGroup,
+      "Fire detections (VIIRS)":fireWMS,
+      "Fire perimeters (NIFC)":perimeterLayer,
+      "Air quality (towns)":aqiLayer
+    },
+    { collapsed:false }
+  ).addTo(map);
+}
+
+function refreshFireDate(){
+  $("#fireDateLabel").textContent = prettyDate(fireDate);
+  if(fireWMS) fireWMS.setParams({ time: fmtDate(fireDate) });
+}
+
+/* ---------------- Fetchers ---------------- */
+async function fetchWeather(){
+  const lats = LOCATIONS.map(l=>l.lat).join(",");
+  const lons = LOCATIONS.map(l=>l.lon).join(",");
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}`
+    + `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code`
+    + `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("weather");
+  const j = await r.json();
+  return Array.isArray(j) ? j : [j];
+}
+
+async function fetchAir(){
+  const lats = LOCATIONS.map(l=>l.lat).join(",");
+  const lons = LOCATIONS.map(l=>l.lon).join(",");
+  const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}`
+    + `&current=us_aqi,pm2_5,pm10&timezone=America%2FDenver`;
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("air");
+  const j = await r.json();
+  return Array.isArray(j) ? j : [j];
+}
+
+async function fetchAlerts(){
+  // unique town points (skip Handies — same zone as Silverton)
+  const pts = LOCATIONS.filter(l=>l.name!=="Handies Peak");
+  const seen = new Map();
+  await Promise.all(pts.map(async l=>{
+    try{
+      const r = await fetch(`https://api.weather.gov/alerts/active?point=${l.lat},${l.lon}`,
+        { headers:{ "Accept":"application/geo+json" } });
+      if(!r.ok) return;
+      const j = await r.json();
+      (j.features||[]).forEach(f=>{ if(f.id && !seen.has(f.id)) seen.set(f.id,f.properties); });
+    }catch(e){/* per-point failure ok */}
+  }));
+  return [...seen.values()];
+}
+
+async function fetchPerimeters(){
+  const b = COURSE_BBOX;
+  const url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/"
+    + "WFIGS_Interagency_Perimeters_Current/FeatureServer/0/query"
+    + `?where=1%3D1&geometry=${b.xmin}%2C${b.ymin}%2C${b.xmax}%2C${b.ymax}`
+    + "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects"
+    + "&outFields=*&outSR=4326&f=geojson";
+  const r = await fetch(url);
+  if(!r.ok) throw new Error("perim");
+  return await r.json();
+}
+
+/* ---------------- Renderers ---------------- */
+function renderCards(weather, air){
+  const host = $("#cards");
+  host.innerHTML = "";
+  LOCATIONS.forEach((l,i)=>{
+    const w = weather[i]?.current || {};
+    const a = air[i]?.current || {};
+    const aqi = a.us_aqi;
+    const info = aqiInfo(aqi);
+    const gust = w.wind_gusts_10m;
+    const wind = w.wind_speed_10m;
+    const card = document.createElement("div");
+    card.className = "loc";
+    card.style.borderLeftColor = info.color;
+    card.innerHTML = `
+      <div>
+        <div class="name">${l.name}</div>
+        <div class="role">${l.role} · <span class="elev">${l.elev.toLocaleString()} ft</span></div>
+        <div class="gust">${wmoText(w.weather_code)} · gust <b class="num">${gust!=null?Math.round(gust):"—"}</b> mph · ${w.relative_humidity_2m!=null?Math.round(w.relative_humidity_2m)+"% RH":""}</div>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="v num">${wind!=null?Math.round(wind):"—"}</div>
+          <div class="u">${windDir(w.wind_direction_10m)} wind</div>
+        </div>
+        <div class="aqibadge" style="background:${info.color}">
+          <div class="a num">${aqi!=null?Math.round(aqi):"—"}</div>
+          <div class="c">${info.cat}</div>
+        </div>
+      </div>`;
+    host.appendChild(card);
+  });
+
+  // AQI markers on map
+  if(aqiLayer){
+    aqiLayer.clearLayers();
+    LOCATIONS.forEach((l,i)=>{
+      const aqi = air[i]?.current?.us_aqi;
+      const info = aqiInfo(aqi);
+      const pm = air[i]?.current?.pm2_5;
+      L.circleMarker([l.lat,l.lon],{
+        radius:11, color:"#0c1117", weight:2, fillColor:info.color, fillOpacity:.92
+      }).bindPopup(`<b>${l.name}</b><br>US AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
+        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")).addTo(aqiLayer);
+    });
+  }
+}
+
+function renderAlerts(alerts){
+  const host = $("#alerts");
+  if(!alerts){ host.innerHTML = `<div class="err">Could not reach the NWS alerts service. Check <a href="https://www.weather.gov/gjt/" target="_blank" rel="noopener" style="color:var(--teal)">weather.gov/gjt</a>.</div>`; return; }
+  if(alerts.length===0){ host.innerHTML = `<div class="empty good">✓ No active NWS alerts for the course corridor.</div>`; return; }
+  const order = {Extreme:0,Severe:1,Moderate:2,Minor:3,Unknown:4};
+  alerts.sort((a,b)=>(order[a.severity]??9)-(order[b.severity]??9));
+  host.innerHTML = "";
+  alerts.forEach(p=>{
+    const sev = (p.severity||"").toLowerCase();
+    const el = document.createElement("div");
+    el.className = "alert"; el.dataset.sev = sev;
+    const exp = p.expires ? new Date(p.expires).toLocaleString(undefined,{weekday:"short",hour:"numeric",minute:"2-digit"}) : "";
+    el.innerHTML = `
+      <div class="et"><span>${p.event||"Alert"}</span><span class="sev">${p.severity||""}</span></div>
+      <div class="area">${p.areaDesc||""}</div>
+      ${exp?`<div class="exp">Until ${exp}</div>`:""}`;
+    host.appendChild(el);
+  });
+}
+
+function renderPerimeters(geo){
+  perimeterLayer.clearLayers();
+  latestPerims = [];
+  if(!geo || !geo.features) return;
+  perimeterLayer.addData(geo);
+  geo.features.forEach(f=>{
+    const p=f.properties||{};
+    const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
+    const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
+    // nearest distance from any course point to any vertex (approx)
+    let minMi = Infinity;
+    const coords = [];
+    const collect = arr => {
+      if(typeof arr[0]==="number"){ coords.push(arr); }
+      else arr.forEach(collect);
+    };
+    if(f.geometry && f.geometry.coordinates) collect(f.geometry.coordinates);
+    coords.forEach(c=>{
+      LOCATIONS.forEach(l=>{
+        const d = haversineMi(l.lat,l.lon,c[1],c[0]);
+        if(d<minMi) minMi=d;
+      });
+    });
+    latestPerims.push({ name, acres, minMi:isFinite(minMi)?minMi:null });
+  });
+}
+
+/* ---------------- Posture engine (advisory) ---------------- */
+function computePosture(){
+  const chips = [];
+  let level = "go";
+  const bump = lv => { if(lv==="nogo") level="nogo"; else if(lv==="hold" && level!=="nogo") level="hold"; };
+
+  // Air quality
+  let worstAqi = -1, worstLoc = "";
+  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
+  if(worstAqi>=0){
+    const info = aqiInfo(worstAqi);
+    let sev="go";
+    if(worstAqi>=201) sev="nogo"; else if(worstAqi>=101) sev="hold";
+    bump(sev);
+    chips.push({sev, html:`<b>AQI ${Math.round(worstAqi)}</b> ${info.cat} · ${worstLoc}`});
+  }
+
+  // Wind (alpine exposure — Handies + max gust)
+  let maxGust=-1, gustLoc="";
+  latestWeather.forEach((w,i)=>{ const g=w?.current?.wind_gusts_10m; if(g!=null && g>maxGust){maxGust=g; gustLoc=LOCATIONS[i].name;} });
+  if(maxGust>=0){
+    let sev="go";
+    if(maxGust>=55) sev="nogo"; else if(maxGust>=35) sev="hold";
+    bump(sev);
+    chips.push({sev, html:`<b>Gusts ${Math.round(maxGust)} mph</b> · ${gustLoc}`});
+  }
+
+  // NWS alerts
+  const redFlag = latestAlerts && latestAlerts.some(a=>/red flag/i.test(a.event||""));
+  const fireWatch = latestAlerts && latestAlerts.some(a=>/fire weather/i.test(a.event||""));
+  const aqAlert = latestAlerts && latestAlerts.some(a=>/air quality|smoke/i.test(a.event||""));
+  if(redFlag){ bump("hold"); chips.push({sev:"hold", html:`<b>Red Flag Warning</b> active`}); }
+  else if(fireWatch){ bump("hold"); chips.push({sev:"hold", html:`<b>Fire Weather Watch</b>`}); }
+  if(aqAlert){ bump("hold"); chips.push({sev:"hold", html:`<b>Air Quality alert</b>`}); }
+
+  // Fire perimeters
+  if(latestPerims.length){
+    const nearest = latestPerims.reduce((m,p)=> (p.minMi!=null && p.minMi<(m.minMi??Infinity))?p:m, {minMi:Infinity});
+    const d = nearest.minMi;
+    let sev="hold";
+    if(d!=null && d<=8 && redFlag) sev="nogo";
+    else if(d!=null && d<=8) sev="nogo";
+    else if(d!=null && d<=25) sev="hold";
+    bump(sev);
+    chips.push({sev, html:`<b>${latestPerims.length} fire perimeter${latestPerims.length>1?"s":""}</b> in region${d!=null&&isFinite(d)?` · nearest ≈${Math.round(d)} mi`:""}`});
+  } else {
+    chips.push({sev:"go", html:`No mapped fire perimeters near course`});
+  }
+
+  // No data fallback
+  if(chips.length===0){ chips.push({sev:"go", html:`Awaiting data`}); }
+
+  const words = { go:"NOMINAL", hold:"HEIGHTENED", nogo:"CRITICAL" };
+  const p = $("#posture");
+  p.dataset.level = level;
+  $("#postureWord").textContent = words[level];
+  $("#postureChips").innerHTML = chips.map(c=>`<span class="chip" data-sev="${c.sev}"><span class="pip"></span>${c.html}</span>`).join("");
+
+  // live dot mirrors posture
+  const dot = $("#liveDot");
+  dot.style.background = level==="nogo"?"var(--nogo)":level==="hold"?"var(--hold)":"var(--go)";
+}
+
+/* ---------------- Orchestration ---------------- */
+async function loadAll(){
+  $("#refreshBtn").disabled = true;
+  // Weather + AQI (one combined render)
+  try{
+    const [w,a] = await Promise.all([fetchWeather(), fetchAir()]);
+    latestWeather = w; latestAir = a;
+    renderCards(w,a);
+  }catch(e){
+    $("#cards").innerHTML = `<div class="err">Could not load wind/AQI from Open-Meteo. Retry shortly.</div>`;
+  }
+  // Alerts
+  try{ latestAlerts = await fetchAlerts(); renderAlerts(latestAlerts); }
+  catch(e){ latestAlerts = null; renderAlerts(null); }
+  // Perimeters
+  try{ const geo = await fetchPerimeters(); renderPerimeters(geo); }
+  catch(e){ /* keep map clean; sources panel covers fallback */ }
+
+  computePosture();
+  $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
+  $("#refreshBtn").disabled = false;
+}
+
+/* ---------------- Wire up ---------------- */
+document.addEventListener("DOMContentLoaded", ()=>{
+  initMap();
+  refreshFireDate();
+  loadAll();
+
+  $("#refreshBtn").addEventListener("click", loadAll);
+  $("#dPrev").addEventListener("click", ()=>{ fireDate.setDate(fireDate.getDate()-1); refreshFireDate(); });
+  $("#dNext").addEventListener("click", ()=>{
+    const t=new Date(); if(fmtDate(fireDate)>=fmtDate(t)) return; // don't go to future
+    fireDate.setDate(fireDate.getDate()+1); refreshFireDate();
+  });
+
+  // auto-refresh every 10 min
+  autoTimer = setInterval(loadAll, 10*60*1000);
+});
+</script>
+</body>
+</html>
