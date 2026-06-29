@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <Style id="Category0">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi0circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category1">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi1circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category2">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi2circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category3">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi3circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category4">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi4circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category5">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi5circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Style id="Category6">
+            <IconStyle>
+                <scale>1.0</scale>
+                <heading>0.0</heading>
+                <Icon>
+                    <href>https://www.airnowapi.org/img/CategoryIcons/aqi6circle.png</href>
+                    <refreshInterval>0.0</refreshInterval>
+                    <viewRefreshTime>0.0</viewRefreshTime>
+                    <viewBoundScale>0.0</viewBoundScale>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <color>00000000</color>
+                <scale>0.0</scale>
+            </LabelStyle>
+            <BalloonStyle>
+                <bgColor>ffffffff</bgColor>
+            </BalloonStyle>
+        </Style>
+        <Folder>
+            <name>PM2.5</name>
+            <Placemark>
+                <description>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;style&gt;
+        * {font-family: sans-serif,Arial;}
+        h1, h2, h3 {margin-bottom: 0; padding-bottom: 0;}
+        p {padding: 0; margin: 0;}
+        td {padding-right: 1rem;}
+        table {width: 325px;}
+        .title {color: #0f79b9; margin-top: 0; padding-top: 0;}
+        .bold {font-weight: bold;}
+        .footnote {font-size: 12px; text-align: right; padding-top: 1.5rem; padding-right: 0;}
+        .center {text-align: center; padding-left: 1rem; padding-right: 1rem;}
+    &lt;/style&gt;
+    &lt;title&gt;Air Quality Index (AQI) Information&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td colspan="3"&gt;
+            &lt;h2 class="title"&gt;Air Quality Index (AQI) Information&lt;/h2&gt;
+        &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;!-- Repeated --&gt;
+    &lt;tr&gt;
+    &lt;td colspan="3"&gt;
+        &lt;h3&gt;Telluride Health Department&lt;/h3&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+    &lt;td colspan="3"&gt;
+        &lt;p&gt;Colorado Department of Public Health and Environment&lt;/p&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;
+    &lt;!-- Repeated --&gt;
+&lt;/table&gt;
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;&lt;h3&gt;PM2.5&lt;/h3&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;!-- $hasAQI --&gt;
+    &lt;tr&gt;
+        &lt;td&gt;&lt;p&gt;NowCast AQI&lt;/p&gt;&lt;/td&gt;
+        &lt;td&gt;&lt;p class="bold"&gt;48&lt;/p&gt;&lt;/td&gt;
+        &lt;td style="background-color: #00E400;padding: 0;"&gt;&lt;p class="bold center"&gt;Good&lt;/p&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;!-- $hasAQI --&gt;
+    &lt;!--  --&gt;
+    &lt;!--  --&gt;
+    &lt;!--  --&gt;
+    &lt;!--  --&gt;
+    &lt;tr&gt;
+        &lt;td colspan="3" class="footnote"&gt;&lt;p&gt;06/29/2026 11:00 (UTC)&lt;/p&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</description>
+                <TimeSpan>
+                    <begin>2026-06-29T11:00:00</begin>
+                    <end>2026-06-29T11:59:00</end>
+                </TimeSpan>
+                <styleUrl>#Category1</styleUrl>
+                <Point>
+                    <altitudeMode>relativeToGround</altitudeMode>
+                    <coordinates>-107.813188,37.937952,100.0</coordinates>
+                </Point>
+            </Placemark>
+        </Folder>
+    </Document>
+</kml>

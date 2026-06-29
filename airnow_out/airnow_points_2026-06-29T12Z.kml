@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <Document>
+        <Style id="Category0"><IconStyle><color>ff888888</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff888888</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category1"><IconStyle><color>ff00e400</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff00e400</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category2"><IconStyle><color>ff00ffff</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff00ffff</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category3"><IconStyle><color>ff007eff</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff007eff</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category4"><IconStyle><color>ff0000ff</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff0000ff</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category5"><IconStyle><color>ff973f8f</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff973f8f</color><scale>0.8</scale></LabelStyle></Style>
+        <Style id="Category6"><IconStyle><color>ff23007e</color><scale>1.2</scale></IconStyle><LabelStyle><color>ff23007e</color><scale>0.8</scale></LabelStyle></Style>
+        <Folder>
+            <name>PM2.5</name>
+            <Placemark>
+                <name>Telluride Health Department — PM2.5 AQI 42 (Good)</name>
+                <description>Colorado Department of Public Health and Environment
+PM2.5: AQI 42 (Good)
+06/29/2026 12:00 (UTC)</description>
+                <TimeSpan>
+                    <begin>2026-06-29T12:00:00</begin>
+                    <end>2026-06-29T12:59:00</end>
+                </TimeSpan>
+                <styleUrl>#Category1</styleUrl>
+                <Point>
+                    <altitudeMode>relativeToGround</altitudeMode>
+                    <coordinates>-107.813188,37.937952,100.0</coordinates>
+                </Point>
+            </Placemark>
+        </Folder>
+    </Document>
+</kml>
