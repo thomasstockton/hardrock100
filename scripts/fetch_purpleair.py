@@ -13,17 +13,26 @@ def get(url):
 sensor_ids_env = os.environ.get("PURPLEAIR_SENSOR_ID")
 if sensor_ids_env:
     ids = [s.strip() for s in sensor_ids_env.split(",") if s.strip()]
-    sensors = {"fields": ["sensor_index", "name"], "data": []}
+    sensors = {"fields": ["sensor_index", "name", "latitude", "longitude", "pm2.5_atm", "pm2.5_atm_a", "pm2.5_atm_b", "humidity", "temperature", "last_seen"], "data": []}
     for sid in ids:
         try:
-            # Try to fetch the sensor to get its name; fall back to ID if request fails
             s = get(
                 f"https://api.purpleair.com/v1/sensors/{sid}?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
             )
-            name = s.get("name") or f"sensor-{sid}"
+            sensors["data"].append([
+                s.get("sensor_index") or int(sid),
+                s.get("name") or f"sensor-{sid}",
+                s.get("latitude"),
+                s.get("longitude"),
+                s.get("pm2.5_atm"),
+                s.get("pm2.5_atm_a"),
+                s.get("pm2.5_atm_b"),
+                s.get("humidity"),
+                s.get("temperature"),
+                s.get("last_seen")
+            ])
         except Exception:
-            name = f"sensor-{sid}"
-        sensors["data"].append([int(sid), name])
+            sensors["data"].append([int(sid), f"sensor-{sid}", None, None, None, None, None, None, None, None])
 else:
     # bounding box covers entire course corridor (default behavior)
     sensors = get(
