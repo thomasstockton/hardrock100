@@ -512,6 +512,20 @@
     </section>
   </div>
 
+  <!-- PURPLEAIR CHART -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Air quality · PurpleAir sensors</h2>
+        <div class="meta" id="paStats">—</div>
+      </div>
+      <div class="panel-body">
+        <div class="profwrap" id="paWrap"><div class="prof-tip" id="paTip"></div></div>
+        <div class="maphint">PM2.5-based US AQI from local PurpleAir monitors · 72 h · 30-min averages. Each line is one sensor; dashed line is the average across all sensors. Updated every 10 min.</div>
+      </div>
+    </section>
+  </div>
+
   <!-- NWS FORECAST -->
   <div class="stack">
     <section class="panel">
@@ -749,6 +763,8 @@ const ELEV_PROFILE = [[0.0,9310,37.81242,-107.66573],[0.37,9475,37.81284,-107.67
 
 /* ---------------- State ---------------- */
 let map, fireWMS, perimeterLayer, aqiLayer, purpleairLayer, aidLayer, hoverMarker;
+let latestPurpleAir = null;
+let _paPx = [];
 let fireDate = new Date();          // satellite detection day
 let latestWeather = [], latestAir = [], latestAlerts = [], latestPerims = [];
 let autoTimer = null;
@@ -1222,7 +1238,7 @@ async function loadAll(){
   try{ const geo = await fetchPerimeters(); renderPerimeters(geo); }
   catch(e){ /* keep map clean; sources panel covers fallback */ }
   // PurpleAir (static JSON committed by GitHub Action every 10 min)
-  try{ const pa = await fetchPurpleAir(); renderPurpleAir(pa); }
+  try{ const pa = await fetchPurpleAir(); latestPurpleAir=pa; renderPurpleAir(pa); buildPurpleAirChart(); }
   catch(e){ /* optional layer — silent fail if file not yet generated */ }
 
   computePosture();
@@ -1339,7 +1355,7 @@ function buildProfile(){
     `${xmax.toFixed(1)} mi · +32,500 ft climb · high pt 14,048 ft (Handies)`;
 }
 let _profRz;
-window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(()=>{ buildProfile(); buildAqiChart(); },180); });
+window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(()=>{ buildProfile(); buildAqiChart(); buildPurpleAirChart(); },180); });
 
 /* ---------------- NWS forecast ---------------- */
 const fcCache = {};
@@ -1758,6 +1774,113 @@ function buildAqiChart(){
     tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} \u00b7 ${best.t.slice(11,16)}`;
   });
   if(hit) hit.addEventListener("pointerleave",()=>{ cur2.setAttribute("stroke-opacity","0"); dot.setAttribute("opacity","0"); tp.style.opacity="0"; });
+}
+
+function buildPurpleAirChart(){
+  const wrap=document.getElementById("paWrap"); if(!wrap) return;
+  const tip=wrap.querySelector("#paTip");
+  const j=latestPurpleAir;
+  if(!j||!j.history||!j.history.length){
+    wrap.innerHTML=`<div class="skel">Loading PurpleAir history…</div>`; if(tip) wrap.appendChild(tip); return;
+  }
+  const W=wrap.clientWidth||820,H=230,m={l:40,r:14,t:14,b:30},pw=W-m.l-m.r,ph=H-m.t-m.b;
+  const COLORS=["#3fb6c9","#f5a623","#56c46e","#e96060","#a974d4","#e9d04a","#60a4e9","#ef9b3a"];
+
+  // Build per-sensor time series
+  const allTimes=new Set();
+  const series=[];
+  j.history.forEach((h,si)=>{
+    if(!h.data||!h.data.length) return;
+    const fi=f=>h.fields.indexOf(f);
+    const iTs=fi("time_stamp"),iA=fi("pm2.5_atm_a"),iB=fi("pm2.5_atm_b");
+    if(iTs<0) return;
+    const pts={};
+    h.data.forEach(row=>{
+      const ts=row[iTs],a=iA>=0?row[iA]:null,b=iB>=0?row[iB]:null;
+      const pm=(a!=null&&b!=null)?(a+b)/2:(a??b);
+      if(pm!=null&&ts!=null){allTimes.add(ts);pts[ts]=pm25toAqi(pm);}
+    });
+    series.push({name:h.name,pts,col:COLORS[si%COLORS.length]});
+  });
+
+  if(!allTimes.size){wrap.innerHTML=`<div class="skel">No PurpleAir history yet — check back in 10 min.</div>`;if(tip)wrap.appendChild(tip);return;}
+
+  const times=[...allTimes].sort((a,b)=>a-b);
+  const n=times.length;
+  const avgByTime={};
+  times.forEach(ts=>{
+    const vals=series.map(s=>s.pts[ts]).filter(v=>v!=null);
+    if(vals.length) avgByTime[ts]=vals.reduce((a,b)=>a+b,0)/vals.length;
+  });
+
+  const peak=Math.max(50,...Object.values(avgByTime).filter(v=>v!=null));
+  const ymax=Math.max(150,Math.ceil(peak/50)*50);
+  const X=i=>n<=1?m.l+pw/2:m.l+i/(n-1)*pw;
+  const Y=v=>m.t+ph-(Math.min(v,ymax)/ymax)*ph;
+
+  const bands=[[0,50,"rgba(86,196,110,.13)"],[50,100,"rgba(233,208,74,.13)"],[100,150,"rgba(239,155,58,.15)"],[150,200,"rgba(236,91,84,.16)"],[200,300,"rgba(169,116,212,.16)"]];
+  let bg=""; bands.forEach(([lo,hi,c])=>{if(lo>=ymax)return;const y1=Y(Math.min(hi,ymax)),y2=Y(lo);bg+=`<rect x="${m.l}" y="${y1.toFixed(1)}" width="${pw}" height="${(y2-y1).toFixed(1)}" fill="${c}"/>`;});
+  let grid=""; for(let v=0;v<=ymax;v+=50){const y=Y(v).toFixed(1);grid+=`<line x1="${m.l}" y1="${y}" x2="${m.l+pw}" y2="${y}" stroke="rgba(255,255,255,.05)"/><text x="${m.l-6}" y="${+y+3}" text-anchor="end" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${v}</text>`;}
+
+  let xax=""; times.forEach((ts,i)=>{
+    if(i===0||i===n-1||i%Math.max(1,Math.round(n/8))===0){
+      const d=new Date(ts*1000);
+      const lbl=d.toLocaleDateString(undefined,{month:"numeric",day:"numeric"})+" "+d.toLocaleTimeString(undefined,{hour:"numeric",hour12:false});
+      xax+=`<text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#6f8497" font-family="Inter,sans-serif">${lbl}</text>`;
+    }
+  });
+
+  let sensorLines="";
+  series.forEach(s=>{
+    let d="",st=false;
+    times.forEach((ts,i)=>{const v=s.pts[ts];if(v==null){st=false;return;}d+=(st?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)+" ";st=true;});
+    if(d) sensorLines+=`<path d="${d}" fill="none" stroke="${s.col}" stroke-width="1.5" opacity=".75"/>`;
+  });
+
+  let dAvg="",st=false; _paPx=[];
+  times.forEach((ts,i)=>{
+    const v=avgByTime[ts];
+    if(v==null){st=false;return;}
+    const x=X(i),y=Y(v);
+    dAvg+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";st=true;
+    _paPx.push({x,y,v,ts});
+  });
+
+  const curAvg=avgByTime[times[times.length-1]];
+  const col=curAvg!=null?aqiInfo(Math.round(curAvg)).color:"#aaa";
+  const last=_paPx[_paPx.length-1];
+
+  const svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="PurpleAir PM2.5 AQI 72h">
+    ${bg}${grid}${sensorLines}
+    <path d="${dAvg}" fill="none" stroke="${col}" stroke-width="2.2" stroke-dasharray="6 3"/>
+    ${last?`<circle cx="${last.x.toFixed(1)}" cy="${last.y.toFixed(1)}" r="3.6" fill="${col}"/>`:""}
+    ${xax}
+    <line id="paCursor" y1="${m.t}" y2="${m.t+ph}" stroke="#e9eef3" stroke-opacity="0"/>
+    <circle id="paDot" r="4" fill="#fff" stroke="${col}" stroke-width="2" opacity="0"/>
+    <rect id="paHit" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair"/>
+  </svg>`;
+  wrap.innerHTML=svg; if(tip) wrap.appendChild(tip);
+
+  const st2=document.getElementById("paStats");
+  if(st2&&curAvg!=null){
+    const pk=Math.max(...Object.values(avgByTime).filter(v=>v!=null));
+    const ci=aqiInfo(Math.round(curAvg)),pi=aqiInfo(Math.round(pk));
+    st2.innerHTML=`Avg now <b style="color:${ci.color}">${Math.round(curAvg)}</b> ${ci.cat} &middot; 72 h peak <b style="color:${pi.color}">${Math.round(pk)}</b> &middot; ${series.length} sensors`;
+  }
+
+  const hit=wrap.querySelector("#paHit"),cur2=wrap.querySelector("#paCursor"),dot=wrap.querySelector("#paDot"),tp=wrap.querySelector("#paTip");
+  const sx=()=>(wrap.clientWidth/W)||1;
+  if(hit) hit.addEventListener("pointermove",ev=>{
+    const r=wrap.getBoundingClientRect(),px=(ev.clientX-r.left)/sx();
+    let best=_paPx[0]; for(const p of _paPx){if(Math.abs(p.x-px)<Math.abs(best.x-px))best=p;}
+    cur2.setAttribute("x1",best.x);cur2.setAttribute("x2",best.x);cur2.setAttribute("stroke-opacity",".5");
+    dot.setAttribute("cx",best.x);dot.setAttribute("cy",best.y);dot.setAttribute("opacity","1");
+    const inf=aqiInfo(Math.round(best.v));
+    const d=new Date(best.ts*1000).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+    tp.style.opacity="1";tp.style.left=(best.x*sx())+"px";tp.style.top=(best.y*sx())+"px";
+    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} avg &middot; ${d}`;
+  });
+  if(hit) hit.addEventListener("pointerleave",()=>{cur2.setAttribute("stroke-opacity","0");dot.setAttribute("opacity","0");tp.style.opacity="0";});
 }
 
 /* ---------------- Wire up ---------------- */
