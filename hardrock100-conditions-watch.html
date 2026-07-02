@@ -173,6 +173,9 @@
   .datestep .dval{padding:6px 12px;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:106px;text-align:center}
   .maphint{font-size:11px;color:var(--ink-3);padding:9px 16px 0}
 
+  .pa-row{font-size:11px;color:var(--ink-3);margin-top:4px;display:flex;align-items:center;gap:5px}
+  .pa-row .pa-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .pa-row .pa-txt{font-variant-numeric:tabular-nums}
   /* location cards */
   .cards{display:flex;flex-direction:column;gap:11px;max-height:560px;overflow:auto}
   .cards::-webkit-scrollbar{width:9px}
@@ -1046,24 +1049,51 @@ function pm25toAqi(pm){
 }
 
 function renderPurpleAir(j){
-  if(!purpleairLayer||!j||!j.fields||!j.data) return;
-  purpleairLayer.clearLayers();
+  if(!j||!j.fields||!j.data) return;
   const fi=f=>j.fields.indexOf(f);
   const iName=fi("name"),iLat=fi("latitude"),iLon=fi("longitude");
   const iPm=fi("pm2.5_atm"),iSeen=fi("last_seen");
-  j.data.forEach(row=>{
-    const lat=row[iLat],lon=row[iLon];
-    if(lat==null||lon==null) return;
-    const pm=row[iPm],name=row[iName]||"Sensor";
-    const aqi=pm25toAqi(pm);
-    const info=aqiInfo(aqi);
-    const seen=iSeen>=0&&row[iSeen]?new Date(row[iSeen]*1000).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"";
-    L.circleMarker([lat,lon],{
-      radius:6,color:"#0c1117",weight:1.5,fillColor:info.color,fillOpacity:.85
-    }).bindPopup(`<b>${name}</b><br>PM2.5 ${pm!=null?pm.toFixed(1):"—"} µg/m³`
-      +(aqi!=null?`<br>AQI ~${aqi} · ${info.cat}`:"")
-      +(seen?`<br><span style="color:#9fb0c0">Updated ${seen}</span>`:""
-    )).addTo(purpleairLayer);
+
+  const sensors=j.data.map(row=>({
+    name:row[iName]||"Sensor", lat:row[iLat], lon:row[iLon],
+    pm:row[iPm], seen:iSeen>=0?row[iSeen]:null
+  })).filter(s=>s.lat!=null&&s.lon!=null);
+
+  // map markers
+  if(purpleairLayer){
+    purpleairLayer.clearLayers();
+    sensors.forEach(s=>{
+      const aqi=pm25toAqi(s.pm), info=aqiInfo(aqi);
+      const seen=s.seen?new Date(s.seen*1000).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"";
+      L.circleMarker([s.lat,s.lon],{
+        radius:6,color:"#0c1117",weight:1.5,fillColor:info.color,fillOpacity:.85
+      }).bindPopup(`<b>${s.name}</b><br>PM2.5 ${s.pm!=null?s.pm.toFixed(1):"—"} µg/m³`
+        +(aqi!=null?`<br>AQI ~${aqi} · ${info.cat}`:"")
+        +(seen?`<br><span style="color:#9fb0c0">Updated ${seen}</span>`:"")
+      ).addTo(purpleairLayer);
+    });
+  }
+
+  // nearest sensor per location → inject into each card
+  const cards=document.querySelectorAll("#cards .loc");
+  LOCATIONS.forEach((loc,i)=>{
+    if(!cards[i]) return;
+    let best=null, bestDist=Infinity;
+    sensors.forEach(s=>{
+      const d=haversineMi(loc.lat,loc.lon,s.lat,s.lon);
+      if(d<bestDist){bestDist=d;best=s;}
+    });
+    // remove stale row
+    const old=cards[i].querySelector(".pa-row"); if(old) old.remove();
+    if(!best||bestDist>50) return;
+    const aqi=pm25toAqi(best.pm), info=aqiInfo(aqi);
+    const row=document.createElement("div");
+    row.className="pa-row";
+    row.title=`PurpleAir: ${best.name} · ${bestDist.toFixed(1)} mi`;
+    row.innerHTML=`<span class="pa-dot" style="background:${info.color}"></span>`
+      +`<span class="pa-txt">PA&thinsp;${aqi!=null?aqi:"—"} · ${best.pm!=null?best.pm.toFixed(1)+" µg/m³":""}`
+      +` · ${info.cat}</span>`;
+    cards[i].querySelector("div").appendChild(row);
   });
 }
 
