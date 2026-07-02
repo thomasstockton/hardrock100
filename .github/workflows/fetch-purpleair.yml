@@ -8,25 +8,36 @@ on:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Fetch PurpleAir sensors + 72h history
         env:
           PURPLEAIR_API_KEY: ${{ secrets.PURPLEAIR_API_KEY }}
         run: python3 scripts/fetch_purpleair.py
 
-      - name: Commit and push if changed
+      - name: Push data/purpleair.json via GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin
-          git reset --hard origin/main
-          git add data/purpleair.json
-          git diff --cached --quiet || git commit -m "chore: update PurpleAir data [skip ci]"
-          git push origin main
+          CONTENT=$(base64 -w 0 data/purpleair.json)
+          # Get current file SHA (needed for updates; empty string for first create)
+          FILE_SHA=$(curl -sf \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || echo "")
+
+          # Build JSON body
+          if [ -n "$FILE_SHA" ]; then
+            BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1],'sha':sys.argv[2]}))" "$CONTENT" "$FILE_SHA")
+          else
+            BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1]}))" "$CONTENT")
+          fi
+
+          curl -sf -X PUT \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
+            -d "$BODY"
+          echo "Done."
