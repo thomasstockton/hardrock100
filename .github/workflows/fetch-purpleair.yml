@@ -20,6 +20,7 @@ jobs:
       - name: Fetch PurpleAir sensors + 72h history
         env:
           PURPLEAIR_API_KEY: ${{ secrets.PURPLEAIR_API_KEY }}
+          PURPLEAIR_SENSOR_ID: "121669"
         run: python3 scripts/fetch_purpleair.py
 
       - name: Push data/purpleair.json via GitHub API

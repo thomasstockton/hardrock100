@@ -8,12 +8,29 @@ def get(url):
     with urllib.request.urlopen(req, timeout=15) as r:
         return json.loads(r.read())
 
-# Current sensor readings (bounding box covers entire course corridor)
-sensors = get(
-    "https://api.purpleair.com/v1/sensors"
-    "?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
-    "&location_type=0&nwlat=38.15&selat=37.75&nwlng=-108.05&selng=-107.20"
-)
+# Current sensor readings
+# If PURPLEAIR_SENSOR_ID is set (comma-separated), fetch only those sensors
+sensor_ids_env = os.environ.get("PURPLEAIR_SENSOR_ID")
+if sensor_ids_env:
+    ids = [s.strip() for s in sensor_ids_env.split(",") if s.strip()]
+    sensors = {"fields": ["sensor_index", "name"], "data": []}
+    for sid in ids:
+        try:
+            # Try to fetch the sensor to get its name; fall back to ID if request fails
+            s = get(
+                f"https://api.purpleair.com/v1/sensors/{sid}?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
+            )
+            name = s.get("name") or f"sensor-{sid}"
+        except Exception:
+            name = f"sensor-{sid}"
+        sensors["data"].append([int(sid), name])
+else:
+    # bounding box covers entire course corridor (default behavior)
+    sensors = get(
+        "https://api.purpleair.com/v1/sensors"
+        "?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
+        "&location_type=0&nwlat=38.15&selat=37.75&nwlng=-108.05&selng=-107.20"
+    )
 
 # 72h history per sensor at 30-min averages
 now = int(time.time())
