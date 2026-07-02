@@ -23,7 +23,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add data/purpleair.json
           git diff --cached --quiet || git commit -m "chore: update PurpleAir data [skip ci]"
-          git pull --rebase origin main
           git push origin HEAD:main
