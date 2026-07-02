@@ -270,100 +270,6 @@
   .fc-card .sf{font-size:11px;color:var(--ink-2);margin-top:4px;line-height:1.35;min-height:46px}
   .fc-card .wd{font-size:10.5px;color:var(--ink-3);margin-top:5px;border-top:1px solid var(--line);padding-top:5px}
   @media (max-width:560px){ .fc-now{grid-template-columns:1fr} .fc-now .ic{flex-direction:row;justify-content:flex-start;gap:14px;min-width:0} }
-  /* ---- decision matrix ---- */
-  .dm{margin-bottom:22px}
-  .dm-rec{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;padding:18px;border-bottom:1px solid var(--line);position:relative}
-  .dm-rec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ink-3)}
-  #decision[data-rec="proceed"] .dm-rec::before{background:var(--go)}
-  #decision[data-rec="review"] .dm-rec::before{background:var(--hold)}
-  #decision[data-rec="cancel"] .dm-rec::before{background:var(--nogo)}
-  .dm-rec-word{display:flex;flex-direction:column;gap:5px;padding-left:8px;min-width:220px}
-  .dm-rec-word .label{font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-  .dm-rec-word .word{font-family:var(--display);font-weight:700;font-size:clamp(23px,3.4vw,36px);line-height:.95;color:var(--ink-3)}
-  #decision[data-rec="proceed"] .dm-rec-word .word{color:var(--go)}
-  #decision[data-rec="review"] .dm-rec-word .word{color:var(--hold)}
-  #decision[data-rec="cancel"] .dm-rec-word .word{color:var(--nogo)}
-  .dm-rec-word .advisory{font-size:11px;color:var(--ink-3);max-width:34ch}
-  .dm-rec-tr{display:flex;flex-direction:column;gap:9px}
-  .dm-rec-tr .dh{font-family:var(--display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
-  .dm-body{padding:4px 16px 16px}
-  .dm-sec{font-family:var(--display);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:17px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
-  .dm-row{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.045)}
-  .dm-row:last-child{border-bottom:none}
-  .dm-f .t{font-weight:600;font-size:14px}
-  .dm-f .d{font-size:11.5px;color:var(--ink-3);margin-top:3px;max-width:66ch}
-  .dm-f .d2{font-size:11px;color:var(--ink-3);margin-top:4px;max-width:66ch;line-height:1.45}
-  .dm-c{justify-self:end}
-  .aqiscale-mini{font-size:11px;color:var(--ink-3);text-align:right;max-width:28ch;line-height:1.5}
-  .aqiscale-mini b{color:var(--nogo)}
-  .dm-s{justify-self:end;font-family:var(--display);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;text-align:right;min-width:108px;color:var(--ink-3)}
-  .dm-s.met{color:var(--nogo)}
-  .dm-s.ok{color:var(--go)}
-  .dm-s.adv{color:var(--ink-3)}
-  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
-  .seg button{background:var(--panel-2);border:none;color:var(--ink-2);font-family:var(--body);font-weight:600;font-size:12.5px;padding:6px 15px;cursor:pointer;transition:.12s}
-  .seg button:hover{color:#fff}
-  .seg button.active{background:var(--teal-deep);color:#fff}
-  .seg button[data-v="yes"].active{background:var(--nogo-deep);color:#fff}
-  .dm-c.money{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px}
-  .dm-num{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13px;padding:6px 9px;width:130px;font-variant-numeric:tabular-nums}
-  .dm-num.sm{width:72px;text-align:center}
-  .dm-num:focus,.dm-txt:focus{outline:none;border-color:var(--teal)}
-  .dm-txt{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13.5px;font-weight:600;padding:7px 11px;width:min(340px,72vw)}
-  .dm-txt::placeholder{color:var(--ink-3);font-weight:500}
-  @media (max-width:760px){
-    .dm-rec{grid-template-columns:1fr}
-    .dm-row{grid-template-columns:1fr;gap:10px}
-    .dm-c,.dm-s{justify-self:start;text-align:left}
-    .aqiscale-mini{text-align:left}
-  }
-  /* ---- tabs ---- */
-  .tabs{display:flex;gap:4px;margin:0 0 20px;border-bottom:1px solid var(--line-strong)}
-  .tab{appearance:none;background:none;border:none;cursor:pointer;font-family:var(--display);font-size:14px;
-    letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-3);padding:11px 18px;
-    border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
-  .tab:hover{color:var(--ink)}
-  .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
-  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px 6px 0 0}
-  .tabpanel[hidden]{display:none}
-  /* ---- decision flow diagram ---- */
-  .flowwrap{overflow-x:auto;padding-bottom:6px}
-  #flow svg{display:block;width:100%;min-width:640px;height:auto}
-  .flow-start rect{fill:var(--panel-3);stroke:var(--line-strong);stroke-width:1.5}
-  .flow-start text{fill:var(--ink-2)}
-  .flow-gate rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
-  .flow-gate.clear rect{stroke:var(--go)}
-  .flow-gate.met rect{stroke:var(--nogo);fill:rgba(239,83,80,.12)}
-  .flow-gate .gnum{fill:#0c1117;font-weight:700}
-  .flow-gate .glabel{fill:var(--ink)}
-  .flow-edge{fill:none;stroke:var(--line-strong);stroke-width:2;transition:.18s}
-  .flow-edge.on{stroke:var(--go);stroke-width:2.6}
-  .flow-edge.cancel{stroke:var(--nogo);stroke-width:2.6}
-  .flow-elabel{fill:var(--ink-3);font-family:var(--display);letter-spacing:.08em}
-  .flow-term rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
-  .flow-term text{font-family:var(--display);font-weight:700;letter-spacing:.06em}
-  .flow-term.proceed.on rect{fill:rgba(93,199,122,.16);stroke:var(--go)}
-  .flow-term.review.on rect{fill:rgba(240,168,48,.16);stroke:var(--hold)}
-  .flow-term.cancel.on rect{fill:var(--nogo-deep);stroke:var(--nogo)}
-  .mapstatus{display:flex;flex-wrap:wrap;gap:8px 18px;padding:11px 16px 2px;font-size:11.5px;color:var(--ink-2)}
-  .mapstatus span{display:inline-flex;align-items:center;gap:7px}
-  .mapstatus i.sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
-  .mapstatus b{color:var(--ink);font-weight:600}
-  /* ---- wildland fire updates ---- */
-  .fu{background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--ink-3);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px}
-  .fu[data-on="true"]{border-left-color:var(--nogo)}
-  .fu-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .fu-name{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.02em}
-  .fu-ag{font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink-2);white-space:nowrap}
-  .fu-ag.usfs{background:rgba(46,125,79,.18);border-color:#2e7d4f;color:#7fd6a0}
-  .fu-ag.blm{background:rgba(176,122,53,.20);border-color:#b07a35;color:#e0b277}
-  .fu-m{font-size:12px;color:var(--ink-2);margin-top:5px}
-  .fu-type{font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;font-size:10.5px;font-weight:600}
-  .fu-type.prescribed{color:var(--amber-soft)}
-  .fu-type.wildfire,.fu-type.complex{color:var(--nogo)}
-  .fu-type.unknown{color:var(--ink-2)}
-  .fu-d{font-size:11.5px;color:var(--ink-3);margin-top:3px}
-  .fu-x{font-size:11.5px;color:var(--ink-2);margin-top:6px;padding-top:6px;border-top:1px solid var(--line);line-height:1.45}
   .full{grid-column:1 / -1}
   .stack{display:flex;flex-direction:column;gap:20px;margin-top:20px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
@@ -414,7 +320,7 @@
   <!-- HEADER -->
   <header class="topbar">
     <div class="brandblock">
-      <div class="eyebrow kicker">Board of Directors &amp; Run Committee · Go / No-Go Support</div>
+      <div class="eyebrow kicker">Board of Directors · Go / No-Go Support</div>
       <h1>HARDROCK <span class="lo">100</span> · CONDITIONS WATCH</h1>
       <div class="sub">Live wildfire, smoke / air-quality, wind, and alert monitoring across the San Juan Mountains course corridor — Silverton · Lake City · Ouray · Telluride · Ophir.</div>
     </div>
@@ -427,13 +333,6 @@
       </button>
     </div>
   </header>
-
-  <nav class="tabs" role="tablist" aria-label="Views">
-    <button class="tab active" role="tab" aria-selected="true" aria-controls="tab-data" id="tabbtn-data" data-tab="data">Conditions &amp; data</button>
-    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-logic" id="tabbtn-logic" data-tab="logic">Decision logic</button>
-  </nav>
-
-  <div class="tabpanel" id="tab-data" role="tabpanel" aria-labelledby="tabbtn-data">
 
   <!-- POSTURE BANNER -->
   <section class="posture" id="posture" data-level="loading" aria-live="polite">
@@ -464,14 +363,13 @@
         </div>
       </div>
       <div id="map"></div>
-      <div class="mapstatus" id="mapStatus"></div>
       <div class="maphint">Toggle layers (top-right): NASA/FIRMS satellite fire detections (≈12–24 h latency), NIFC live fire perimeters (refreshed ~5 min), and town air-quality. Course = official Hardrock 100 <b>clockwise</b> route from the sanctioned GPX (≈100 mi, 13 passes, high point Handies Peak 14,048 ft).</div>
     </section>
 
     <section class="panel">
       <div class="panel-head">
         <h2>Course conditions</h2>
-        <div class="meta">Wind · gusts · US AQI (PM2.5)</div>
+        <div class="meta">Wind · gusts · US AQI</div>
       </div>
       <div class="panel-body">
         <div class="cards" id="cards">
@@ -495,20 +393,6 @@
     </section>
   </div>
 
-  <!-- AQI 24H -->
-  <div class="stack">
-    <section class="panel">
-      <div class="panel-head">
-        <h2>Air quality · last 24 hours</h2>
-        <div class="meta" id="aqiStats">—</div>
-      </div>
-      <div class="panel-body">
-        <div class="profwrap" id="aqiWrap"><div class="prof-tip" id="aqiTip"></div></div>
-        <div class="maphint">PM2.5-based US AQI over the past 24 h. <b>Bold line</b> = worst value across the course each hour; thin gray lines are individual towns. Shaded bands mark AQI categories (green &rarr; red). Hover to read a value.</div>
-      </div>
-    </section>
-  </div>
-
   <!-- NWS FORECAST -->
   <div class="stack">
     <section class="panel">
@@ -519,31 +403,6 @@
       <div class="panel-body">
         <div class="fc-pills" id="fcPills"></div>
         <div id="fcBody"><div class="skel">Loading National Weather Service forecast…</div></div>
-      </div>
-    </section>
-  </div>
-
-  <!-- WILDLAND FIRE UPDATES -->
-  <div class="stack">
-    <section class="panel">
-      <div class="panel-head">
-        <h2>Wildland fire updates · USFS / BLM</h2>
-        <div class="meta">NIFC interagency feed · nearest to route first</div>
-      </div>
-      <div class="panel-body">
-        <div class="linklist" style="margin-bottom:13px">
-          <a href="https://www.fs.usda.gov/r02/sanjuan/fire/info" target="_blank" rel="noopener"><span class="t">San Juan National Forest</span><span class="d">USFS fire info, restrictions &amp; prescribed burns</span></a>
-          <a href="https://www.blm.gov/colorado" target="_blank" rel="noopener"><span class="t">BLM Colorado</span><span class="d">Tres Rios &amp; Gunnison field offices</span></a>
-          <a href="https://inciweb.wildfire.gov/" target="_blank" rel="noopener"><span class="t">InciWeb</span><span class="d">Incident narratives &amp; evacuations</span></a>
-          <a href="https://gacc.nifc.gov/rmcc/" target="_blank" rel="noopener"><span class="t">Rocky Mtn Coordination Ctr</span><span class="d">Regional situation &amp; resources</span></a>
-        </div>
-        <div class="fc-pills" id="fuPills">
-          <button class="fc-pill active" data-f="all">All agencies</button>
-          <button class="fc-pill" data-f="USFS">USFS</button>
-          <button class="fc-pill" data-f="BLM">BLM</button>
-          <button class="fc-pill" data-f="other">Other</button>
-        </div>
-        <div id="fuList"><div class="skel">Loading interagency incidents for the San Juan region…</div></div>
       </div>
     </section>
   </div>
@@ -607,7 +466,7 @@
           <div class="tcard">
             <h3>Why AQI matters here</h3>
             <p>Runners sustain hard effort 24–48 h at 9,000–14,000 ft, where ventilation rates are already extreme. Smoke risk that's "moderate" at sea level is amplified by altitude and exposure time.</p>
-            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p><p>AQI shown is the <b>PM2.5 (wildfire-smoke) sub-index</b> — not the ozone-driven composite, which runs higher at altitude.</p>
+            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p>
           </div>
           <div class="tcard">
             <h3>Wind &amp; alpine exposure</h3>
@@ -622,90 +481,6 @@
       </div>
     </section>
   </div>
-
-  </div><!-- /tab-data -->
-
-  <div class="tabpanel" id="tab-logic" role="tabpanel" aria-labelledby="tabbtn-logic" hidden>
-  <section class="panel" style="margin-bottom:22px">
-      <div class="panel-head"><h2>Decision path</h2><div class="meta">Any one hard trigger &rArr; cancel</div></div>
-      <div class="panel-body">
-        <div class="flowwrap"><div id="flow"></div></div>
-        <div class="maphint">Live evaluation: a gate turns red when its cancel trigger is met and the path routes to <b>CANCEL</b>; all-clear routes to <b>PROCEED</b>. Advisory factors (community financial impact, 2026 net revenue) are non-gating and live in the matrix below.</div>
-      </div>
-    </section>
-
-  <!-- DECISION MATRIX -->
-  <section class="panel dm" id="decision" data-rec="proceed">
-    <div class="panel-head">
-      <h2>Cancellation decision matrix</h2>
-      <div class="meta">Event window: <b id="dmWindow">Jul 9 6:00 AM – Jul 12 6:00 PM MT</b></div>
-    </div>
-
-    <div class="dm-rec">
-      <div class="dm-rec-word">
-        <span class="label">Recommendation</span>
-        <span class="word" id="dmWord">Evaluating…</span>
-        <span class="advisory">Decision support — the Board decides. Any one hard trigger ⇒ cancel.</span>
-      </div>
-      <div class="dm-rec-tr">
-        <span class="dh">Triggered criteria</span>
-        <div class="chips" id="dmTriggers"><span class="chip"><span class="pip"></span>Evaluating live data…</span></div>
-      </div>
-    </div>
-
-    <div class="dm-body">
-      <div class="dm-sec">1 · Fire</div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Fire on course</div><div class="d" id="dmFireVal">—</div><div class="d" style="margin-top:5px">Auto counts wildfire &amp; complex perimeters within 1 mi of the route; prescribed burns are shown but don’t auto-trigger.</div></div>
-        <div class="dm-c"><div class="seg three" data-key="fire"><button data-v="auto" class="active">Auto</button><button data-v="yes">Yes</button><button data-v="no">No</button></div></div>
-        <div class="dm-s" id="dmFireStatus">—</div>
-      </div>
-
-      <div class="dm-sec">2 · Safety to the Hardrock community</div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Max course AQI (PM2.5) · event window</div><div class="d2" id="dmAqiNote"></div></div>
-        <div class="dm-c"><div class="aqiscale-mini" id="dmAqiVal">—</div><div class="aqiscale-mini">Moderate 51–100 · USG 101–150 · <b>Unhealthy &gt;150 ⇒ cancel</b></div></div>
-        <div class="dm-s" id="dmAqiStatus">—</div>
-      </div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><input class="dm-txt" id="dmExtraLabel" placeholder="Additional safety factor (board-defined)"><div class="d">Optional hard trigger the Board can name and arm</div></div>
-        <div class="dm-c"><div class="seg" data-key="extra"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
-        <div class="dm-s" id="dmExtraStatus">—</div>
-      </div>
-
-      <div class="dm-sec">3 · San Juan communities</div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Impacts on emergency response</div></div>
-        <div class="dm-c"><div class="seg" data-key="emerg"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
-        <div class="dm-s" id="dmEmergStatus">—</div>
-      </div>
-      <div class="dm-row" data-kind="soft">
-        <div class="dm-f"><div class="t">Financial impact on local community</div><div class="d">Context — likely superseded by safety triggers</div></div>
-        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmCommFin" type="number" min="0" placeholder="0"></div>
-        <div class="dm-s adv">Advisory</div>
-      </div>
-
-      <div class="dm-sec">4 · Financial</div>
-      <div class="dm-row" data-kind="soft">
-        <div class="dm-f"><div class="t">Hardrock 2026 net revenue if cancelled</div><div class="d">Context — likely superseded by safety triggers</div></div>
-        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmRev" type="number" placeholder="0"></div>
-        <div class="dm-s adv">Advisory</div>
-      </div>
-
-      <div class="dm-sec">5 · Road closures</div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Aid stations with no crew access</div><div class="d">Cancel trigger if 1 or more</div></div>
-        <div class="dm-c"><input class="dm-num sm" id="dmAid" type="number" min="0" value="0"></div>
-        <div class="dm-s" id="dmAidStatus">—</div>
-      </div>
-      <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Emergency-response access impacts</div></div>
-        <div class="dm-c"><div class="seg" data-key="access"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
-        <div class="dm-s" id="dmAccessStatus">—</div>
-      </div>
-    </div>
-  </section>
-  </div><!-- /tab-logic -->
 
   <footer>
     <div class="src">
@@ -785,12 +560,10 @@ function haversineMi(a,b,c,d){
 function initMap(){
   map = L.map("map",{ zoomControl:true, attributionControl:true }).setView([37.91,-107.62], 11);
 
-  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
-    maxZoom:19, subdomains:"abc", attribution:'© OpenStreetMap contributors'
-  }).addTo(map);
   const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-    maxZoom:17, subdomains:"abc", attribution:'© OpenTopoMap (CC-BY-SA) · OpenStreetMap'
-  });
+    maxZoom:17, subdomains:"abc",
+    attribution:'© OpenTopoMap · OpenStreetMap contributors'
+  }).addTo(map);
   const dark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
     maxZoom:19, subdomains:"abcd", attribution:'© CARTO · OpenStreetMap contributors'
   });
@@ -820,20 +593,19 @@ function initMap(){
   }).addTo(map);
 
   perimeterLayer = L.geoJSON(null,{
-    style:(f)=>{ const c = fireTypeOf(f.properties||{})==="prescribed" ? "#f5a623" : "#ef5350"; return { color:c, weight:2, fillColor:c, fillOpacity:.20 }; },
+    style:{ color:"#ef5350", weight:2, fillColor:"#ef5350", fillOpacity:.22 },
     onEachFeature:(f,layer)=>{
       const p=f.properties||{};
       const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed incident";
       const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize;
       const cont=p.attr_PercentContained;
-      const tl=fireTypeLabel(fireTypeOf(p));
-      layer.bindPopup(`<b>${name}</b><br>${tl}${acres?` \u00b7 ${Math.round(acres).toLocaleString()} acres`:""}`
+      layer.bindPopup(`<b>${name}</b><br>${acres?Math.round(acres).toLocaleString()+" acres":"size n/a"}`
         + (cont!=null?`<br>${Math.round(cont)}% contained`:"")
         + `<br><span style="color:#9fb0c0">NIFC live perimeter</span>`);
     }
   }).addTo(map);
 
-  aqiLayer = L.layerGroup().addTo(map);
+  aqiLayer = L.layerGroup();
 
   // Aid stations (snapped to official track)
   aidLayer = L.layerGroup();
@@ -850,7 +622,7 @@ function initMap(){
   hoverMarker.addTo(map); hoverMarker.setStyle({opacity:0,fillOpacity:0});
 
   L.control.layers(
-    { "Streets (OSM)":osm, "Terrain":topo, "Dark":dark, "Satellite":sat },
+    { "Terrain (OpenTopoMap)":topo, "Dark":dark, "Satellite":sat },
     {
       "Course corridor + aid towns":courseGroup,
       "Fire detections (VIIRS)":fireWMS,
@@ -884,7 +656,7 @@ async function fetchAir(){
   const lats = LOCATIONS.map(l=>l.lat).join(",");
   const lons = LOCATIONS.map(l=>l.lon).join(",");
   const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}`
-    + `&current=us_aqi_pm2_5,us_aqi,us_aqi_o3,pm2_5,pm10&hourly=us_aqi_pm2_5&past_days=1&forecast_days=7&timezone=America%2FDenver`;
+    + `&current=us_aqi,pm2_5,pm10&timezone=America%2FDenver`;
   const r = await fetch(url);
   if(!r.ok) throw new Error("air");
   const j = await r.json();
@@ -920,31 +692,14 @@ async function fetchPerimeters(){
 }
 
 /* ---------------- Renderers ---------------- */
-function renderLayerStatus(){
-  const el = document.getElementById("mapStatus"); if(!el) return;
-  const nP = Array.isArray(latestPerims) ? latestPerims.length : 0;
-  const cur = (typeof currentMaxAqi==="function") ? currentMaxAqi() : null;
-  const aqiCol = cur ? aqiInfo(cur.max).color : "#6f8497";
-  const aqiTxt = cur ? `${Math.round(cur.max)} ${aqiInfo(cur.max).cat}` : "loading…";
-  el.innerHTML =
-      `<span><i class="sw" style="background:#ef5350"></i>Fire perimeters (NIFC): <b>${nP?`${nP} in region`:"none currently"}</b>${(()=>{const rx=(latestPerims||[]).filter(x=>x.type==="prescribed").length;return rx?` \u00b7 ${nP-rx} wildfire/complex, ${rx} prescribed`:"";})()}</span>`
-    + `<span><i class="sw" style="background:#f5a623"></i>Satellite detections (VIIRS): <b>${prettyDate(fireDate)}</b> · 12–24 h latency</span>`
-    + `<span><i class="sw" style="background:${aqiCol}"></i>Air quality: <b>course max ${aqiTxt}</b></span>`
-    + `<span><i class="sw" style="background:#3fb6c9"></i>Course + <b>${AID_STATIONS.length} aid stations</b></span>`;
-}
-
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
     const a = air[i]?.current || {};
-    const aqi = a.us_aqi_pm2_5;
-    const comp = a.us_aqi, o3 = a.us_aqi_o3;
+    const aqi = a.us_aqi;
     const info = aqiInfo(aqi);
-    const badgeTitle = "PM2.5 (smoke) US AQI"
-      + (comp!=null?` \u00b7 composite US AQI ${Math.round(comp)}`:"")
-      + (o3!=null?` \u00b7 ozone AQI ${Math.round(o3)}`:"");
     const gust = w.wind_gusts_10m;
     const wind = w.wind_speed_10m;
     const card = document.createElement("div");
@@ -961,7 +716,7 @@ function renderCards(weather, air){
           <div class="v num">${wind!=null?Math.round(wind):"—"}</div>
           <div class="u">${windDir(w.wind_direction_10m)} wind</div>
         </div>
-        <div class="aqibadge" style="background:${info.color}" title="${badgeTitle}">
+        <div class="aqibadge" style="background:${info.color}">
           <div class="a num">${aqi!=null?Math.round(aqi):"—"}</div>
           <div class="c">${info.cat}</div>
         </div>
@@ -973,16 +728,13 @@ function renderCards(weather, air){
   if(aqiLayer){
     aqiLayer.clearLayers();
     LOCATIONS.forEach((l,i)=>{
-      const aqi = air[i]?.current?.us_aqi_pm2_5;
-      const comp = air[i]?.current?.us_aqi;
-      const o3 = air[i]?.current?.us_aqi_o3;
+      const aqi = air[i]?.current?.us_aqi;
       const info = aqiInfo(aqi);
       const pm = air[i]?.current?.pm2_5;
       L.circleMarker([l.lat,l.lon],{
         radius:11, color:"#0c1117", weight:2, fillColor:info.color, fillOpacity:.92
-      }).bindPopup(`<b>${l.name}</b><br>PM2.5 AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
-        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")
-        + (comp!=null?`<br><span style="color:#9fb0c0">Composite US AQI ${Math.round(comp)}${o3!=null?` · O₃ AQI ${Math.round(o3)}`:""}</span>`:"")).addTo(aqiLayer);
+      }).bindPopup(`<b>${l.name}</b><br>US AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
+        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")).addTo(aqiLayer);
     });
   }
 }
@@ -1007,68 +759,31 @@ function renderAlerts(alerts){
   });
 }
 
-function fireTypeOf(p){
-  const c = String(p.attr_IncidentTypeCategory||p.IncidentTypeCategory||p.poly_FeatureCategory||p.FeatureCategory||"").toUpperCase();
-  if(c.startsWith("RX")||c.indexOf("PRESCRIB")>=0) return "prescribed";
-  if(c.startsWith("CX")||c.indexOf("COMPLEX")>=0) return "complex";
-  if(c.startsWith("WF")||c.indexOf("WILDFIRE")>=0) return "wildfire";
-  return "unknown";
-}
-function fireTypeLabel(t){ return t==="prescribed"?"Prescribed burn":t==="complex"?"Complex":t==="wildfire"?"Wildfire":"Fire"; }
-function fireAgency(p){
-  const raw = String(p.attr_POOProtectingAgency||p.POOProtectingAgency||p.attr_POOLandownerCategory||p.attr_POOJurisdictionalAgency||p.irwin_POOProtectingAgency||"").toUpperCase().trim();
-  const unit = String(p.attr_POOProtectingUnit||p.attr_UnitIdentifier||p.irwin_POOProtectingUnit||"").toUpperCase();
-  const M={USFS:"USFS",FS:"USFS",BLM:"BLM",NPS:"NPS",BIA:"BIA",FWS:"USFWS",DOD:"DoD"};
-  if(M[raw]) return M[raw];
-  if(/USFS|FOREST SERVICE/.test(raw)) return "USFS";
-  if(raw.indexOf("BLM")>=0) return "BLM";
-  if(/\bST\b|C&L|COUNTY|LOCAL|STATE/.test(raw)) return "State/Local";
-  if(/^CO-[A-Z]*F$/.test(unit) || unit.indexOf("SJF")>=0) return "USFS";
-  if(/^CO-[A-Z]*D$/.test(unit)) return "BLM";
-  return raw||"Other";
-}
-function numOrNull(v){ const n=parseFloat(v); return isFinite(n)?n:null; }
-
 function renderPerimeters(geo){
   perimeterLayer.clearLayers();
   latestPerims = [];
-  latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
   if(!geo || !geo.features) return;
   perimeterLayer.addData(geo);
-  let bestTrig=Infinity, bestTrigName="", bestTrigType="", bestRx=Infinity, bestRxName="";
   geo.features.forEach(f=>{
     const p=f.properties||{};
     const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
     const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
-    const type=fireTypeOf(p);
+    // nearest distance from any course point to any vertex (approx)
+    let minMi = Infinity;
     const coords = [];
-    const collect = arr => { if(typeof arr[0]==="number") coords.push(arr); else arr.forEach(collect); };
+    const collect = arr => {
+      if(typeof arr[0]==="number"){ coords.push(arr); }
+      else arr.forEach(collect);
+    };
     if(f.geometry && f.geometry.coordinates) collect(f.geometry.coordinates);
-    const stride = coords.length>500 ? Math.ceil(coords.length/500) : 1;
-    let minLoc = Infinity, minCourse = Infinity;
-    for(let i=0;i<coords.length;i+=stride){
-      const c=coords[i];
-      for(const l of LOCATIONS){ const d=haversineMi(l.lat,l.lon,c[1],c[0]); if(d<minLoc) minLoc=d; }
-      for(let pi=0; pi<COURSE.length; pi+=2){ const d=haversineMi(COURSE[pi][0],COURSE[pi][1],c[1],c[0]); if(d<minCourse) minCourse=d; }
-    }
-    latestPerims.push({ name, acres, type, minMi:isFinite(minLoc)?minLoc:null, courseMi:isFinite(minCourse)?minCourse:null,
-      agency: fireAgency(p),
-      pct: numOrNull(p.attr_PercentContained ?? p.irwin_PercentContained ?? p.PercentContained),
-      discovered: p.attr_FireDiscoveryDateTime || p.irwin_FireDiscoveryDateTime || p.FireDiscoveryDateTime || null,
-      cause: p.attr_FireCause || p.irwin_FireCause || "",
-      desc: p.attr_IncidentShortDescription || p.irwin_IncidentShortDescription || "" });
-    if(isFinite(minCourse)){
-      if(type==="prescribed"){ if(minCourse<bestRx){ bestRx=minCourse; bestRxName=name; } }
-      else { if(minCourse<bestTrig){ bestTrig=minCourse; bestTrigName=name; bestTrigType=type; } }
-    }
+    coords.forEach(c=>{
+      LOCATIONS.forEach(l=>{
+        const d = haversineMi(l.lat,l.lon,c[1],c[0]);
+        if(d<minMi) minMi=d;
+      });
+    });
+    latestPerims.push({ name, acres, minMi:isFinite(minMi)?minMi:null });
   });
-  latestFire = {
-    onCourse: isFinite(bestTrig) && bestTrig<=FIRE_ON_COURSE_MI,
-    nearestCourseMi: isFinite(bestTrig)?bestTrig:null,
-    nearestName: bestTrigName, nearestType: bestTrigType||"",
-    rxOnCourse: isFinite(bestRx) && bestRx<=FIRE_ON_COURSE_MI,
-    rxName: bestRxName, rxMi: isFinite(bestRx)?bestRx:null
-  };
 }
 
 /* ---------------- Posture engine (advisory) ---------------- */
@@ -1079,7 +794,7 @@ function computePosture(){
 
   // Air quality
   let worstAqi = -1, worstLoc = "";
-  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi_pm2_5; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
+  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
   if(worstAqi>=0){
     const info = aqiInfo(worstAqi);
     let sev="go";
@@ -1142,8 +857,6 @@ async function loadAll(){
     const [w,a] = await Promise.all([fetchWeather(), fetchAir()]);
     latestWeather = w; latestAir = a;
     renderCards(w,a);
-    latestAqiWindow = aqiWindowMax(a);
-    buildAqiChart();
   }catch(e){
     $("#cards").innerHTML = `<div class="err">Could not load wind/AQI from Open-Meteo. Retry shortly.</div>`;
   }
@@ -1155,14 +868,11 @@ async function loadAll(){
   catch(e){ /* keep map clean; sources panel covers fallback */ }
 
   computePosture();
-  renderDecision();
-  renderFireUpdates();
 
   // refresh NWS forecast for the active location
   Object.keys(fcCache).forEach(k=>delete fcCache[k]);
   selectForecast(fcActive);
 
-  renderLayerStatus();
   $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
   $("#refreshBtn").disabled = false;
 }
@@ -1268,7 +978,7 @@ function buildProfile(){
     `${xmax.toFixed(1)} mi · +32,500 ft climb · high pt 14,048 ft (Handies)`;
 }
 let _profRz;
-window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(()=>{ buildProfile(); buildAqiChart(); },180); });
+window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(buildProfile,180); });
 
 /* ---------------- NWS forecast ---------------- */
 const fcCache = {};
@@ -1351,358 +1061,12 @@ function renderForecast(d){
   body.innerHTML = html;
 }
 
-/* ---------------- Cancellation decision matrix ---------------- */
-const EVENT_WINDOW = { startISO:"2026-07-09T06:00", endISO:"2026-07-12T18:00",
-  label:"Jul 9, 6:00 AM \u2013 Jul 12, 6:00 PM MT" };
-const FIRE_ON_COURSE_MI = 1.0;
-
-const board = { fire:"auto", extra:false, extraLabel:"", emerg:false, access:false, aid:0, commFin:"", rev:"" };
-let latestAqiWindow = null;
-let latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
-
-function aqiWindowMax(air){
-  let max=-1, loc="", when="", covered=0, lastTime="";
-  (air||[]).forEach((a,i)=>{
-    const t=a&&a.hourly&&a.hourly.time, v=a&&a.hourly&&a.hourly.us_aqi_pm2_5;
-    if(!t||!v) return;
-    if(t.length && t[t.length-1]>lastTime) lastTime=t[t.length-1];
-    for(let k=0;k<t.length;k++){
-      if(t[k]>=EVENT_WINDOW.startISO && t[k]<=EVENT_WINDOW.endISO){
-        covered++;
-        if(v[k]!=null && v[k]>max){ max=v[k]; loc=LOCATIONS[i].name; when=t[k]; }
-      }
-    }
-  });
-  return { max: max>=0?max:null, loc, when, covered, lastTime };
-}
-function currentMaxAqi(){
-  let m=-1,loc=""; (latestAir||[]).forEach((a,i)=>{ const v=a&&a.current&&a.current.us_aqi_pm2_5; if(v!=null&&v>m){m=v;loc=LOCATIONS[i].name;} });
-  return m>=0?{max:m,loc}:null;
-}
-function shortWhen(iso){ if(!iso) return ""; const d=new Date(iso.replace(" ","T")); if(isNaN(d)) return iso; return d.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric"}); }
-
-function computeDecision(){
-  const fireAuto = latestFire.onCourse;
-  const fire = board.fire==="yes" ? true : board.fire==="no" ? false : fireAuto;
-  const aqiMax = latestAqiWindow ? latestAqiWindow.max : null;
-  const aqiTrigger = aqiMax!=null && aqiMax>150;
-  const triggers=[];
-  if(fire){
-    const lbl = (board.fire==="auto")
-      ? `${fireTypeLabel(latestFire.nearestType||"wildfire")} on/near course${latestFire.nearestName?` \u2014 ${latestFire.nearestName}`:""}`
-      : "Fire on course (Board)";
-    triggers.push(lbl);
-  }
-  if(aqiTrigger) triggers.push(`Course AQI ${Math.round(aqiMax)} \u00b7 Unhealthy (>150)`);
-  if(board.extra) triggers.push(board.extraLabel.trim()||"Board-defined safety factor");
-  if(board.emerg) triggers.push("Emergency-response impact (San Juan communities)");
-  if(board.aid>0) triggers.push(`${board.aid} aid station(s) without crew access`);
-  if(board.access) triggers.push("Emergency-response access impacted by closures");
-  const rec = triggers.length ? "cancel" : "proceed";
-  let review=false;
-  if(rec==="proceed"){
-    if(aqiMax!=null && aqiMax>100) review=true;
-    if(latestFire.nearestCourseMi!=null && latestFire.nearestCourseMi<=25) review=true;
-  }
-  return { fire, fireAuto, aqiMax, aqiTrigger, triggers, rec, review };
-}
-
-function setDmStatus(sel, met){
-  const el=$(sel); if(!el) return;
-  el.textContent = met ? "\u25cf Trigger met" : "\u25cb Clear";
-  el.className = "dm-s " + (met?"met":"ok");
-}
-
-function renderDecision(){
-  const D = computeDecision();
-  const panel = $("#decision");
-  panel.dataset.rec = D.rec==="cancel" ? "cancel" : (D.review ? "review" : "proceed");
-  $("#dmWord").textContent = D.rec==="cancel" ? "RECOMMEND CANCEL" : D.review ? "PROCEED \u2014 REVIEW" : "NO CANCEL TRIGGER";
-  $("#dmTriggers").innerHTML = D.triggers.length
-    ? D.triggers.map(t=>`<span class="chip" data-sev="nogo"><span class="pip"></span>${t}</span>`).join("")
-    : `<span class="chip" data-sev="go"><span class="pip"></span>No hard trigger met</span>`;
-
-  // Fire
-  const f = latestFire;
-  let fv;
-  if(f.nearestCourseMi==null && f.rxMi==null) fv = "No mapped fire perimeters in region \u00b7 satellite/perimeter data lags \u2014 confirm with incident command";
-  else if(f.onCourse) fv = `${fireTypeLabel(f.nearestType)} on/near course \u2014 ${f.nearestName||"incident"} (\u2248${f.nearestCourseMi.toFixed(1)} mi from route)`;
-  else if(f.nearestCourseMi!=null) fv = `Nearest ${fireTypeLabel(f.nearestType).toLowerCase()} \u2248${f.nearestCourseMi.toFixed(1)} mi off route${f.nearestName?` \u2014 ${f.nearestName}`:""}`;
-  else fv = "No triggering wildfire perimeters near route";
-  if(f.rxMi!=null) fv += ` <span style="color:var(--amber-soft)">\u00b7 Prescribed burn ${f.rxName} \u2248${f.rxMi.toFixed(1)} mi (not auto-triggering)</span>`;
-  const mode = board.fire==="auto" ? `Auto \u2192 ${f.onCourse?"YES":"no"}` : `Override \u2192 ${board.fire.toUpperCase()}`;
-  $("#dmFireVal").innerHTML = `${fv} <span style="color:var(--ink-3)">\u00b7 ${mode}</span>`;
-  setDmStatus("#dmFireStatus", D.fire);
-
-  // AQI
-  const w = latestAqiWindow;
-  if(w && w.max!=null){
-    const info = aqiInfo(w.max);
-    $("#dmAqiVal").innerHTML = `<b style="color:${info.color};font-size:14px">${Math.round(w.max)}</b> \u00b7 ${info.cat} <span style="color:var(--ink-3)">@ ${w.loc}</span>`;
-    $("#dmAqiNote").textContent = `Max over ${w.covered} forecast hours inside the event window (peak ${shortWhen(w.when)}).`;
-  } else {
-    const cur = currentMaxAqi();
-    $("#dmAqiVal").innerHTML = `<span style="color:var(--ink-3)">Window forecast not available yet</span>`;
-    $("#dmAqiNote").innerHTML = `Event window opens beyond the ~7-day AQI forecast horizon`
-      + (w&&w.lastTime?` (forecast reaches ${shortWhen(w.lastTime)})` : "")
-      + `. Interim \u2014 current max on course: `
-      + (cur?`<b style="color:${aqiInfo(cur.max).color}">${Math.round(cur.max)}</b> ${aqiInfo(cur.max).cat} @ ${cur.loc}`:"\u2014")
-      + `. The trigger arms automatically once the window enters the forecast.`;
-  }
-  setDmStatus("#dmAqiStatus", D.aqiTrigger);
-
-  setDmStatus("#dmExtraStatus", board.extra);
-  setDmStatus("#dmEmergStatus", board.emerg);
-  setDmStatus("#dmAccessStatus", board.access);
-  setDmStatus("#dmAidStatus", board.aid>0);
-  updateFlow();
-}
-
-function wireDecision(){
-  document.querySelectorAll("#decision .seg").forEach(seg=>{
-    seg.addEventListener("click", e=>{
-      const btn=e.target.closest("button"); if(!btn) return;
-      const key=seg.dataset.key, v=btn.dataset.v;
-      seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active", b===btn));
-      if(key==="fire") board.fire=v; else board[key]=(v==="yes");
-      renderDecision();
-    });
-  });
-  const bind=(id,fn)=>{ const el=$("#"+id); if(el) el.addEventListener("input",()=>{ fn(el.value); renderDecision(); }); };
-  bind("dmAid", v=>board.aid=Math.max(0, parseInt(v||"0",10)||0));
-  bind("dmCommFin", v=>board.commFin=v);
-  bind("dmRev", v=>board.rev=v);
-  bind("dmExtraLabel", v=>board.extraLabel=v);
-}
-
-/* ---------------- Decision flow diagram ---------------- */
-const FLOW = [
-  {id:"fire",  n:"1", t:"Fire on course?"},
-  {id:"aqi",   n:"2", t:"Max course AQI > 150 (Unhealthy)?"},
-  {id:"extra", n:"2", t:"Board-defined safety factor?"},
-  {id:"emerg", n:"3", t:"Impacts on emergency response?"},
-  {id:"aid",   n:"5", t:"Aid stations: no crew access \u2265 1?"},
-  {id:"access",n:"5", t:"Emergency-response access impact?"}
-];
-function buildFlow(){
-  const wrap = document.getElementById("flow"); if(!wrap) return;
-  const gx=30, gw=400, gh=54, gap=26, top0=70, cx=230, railX=540, W=820;
-  const cy = i => top0 + i*(gh+gap) + gh/2;
-  const termTop = top0 + FLOW.length*(gh+gap) + 14, termH=52, H=termTop+termH+16;
-  const cancelCx=630, procCx=190;
-  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cancellation decision path">`;
-  s += `<defs>
-    <marker id="arN" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#2c3a49"/></marker>
-    <marker id="arG" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#5dc77a"/></marker>
-    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ef5350"/></marker>
-  </defs>`;
-  s += `<g class="flow-start"><rect x="${cx-70}" y="20" width="140" height="34" rx="17"/><text x="${cx}" y="42" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12">START</text></g>`;
-  s += `<path id="sp_0" class="flow-edge" d="M${cx} 54 L${cx} ${cy(0)-gh/2}" marker-end="url(#arN)"/>`;
-  FLOW.forEach((g,i)=>{
-    const y=cy(i), top=y-gh/2;
-    s += `<g class="flow-gate" id="g_${g.id}">
-      <rect x="${gx}" y="${top}" width="${gw}" height="${gh}" rx="10"/>
-      <circle cx="${gx+22}" cy="${y}" r="11" fill="#3fb6c9"/>
-      <text class="gnum" x="${gx+22}" y="${y+3.5}" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11">${g.n}</text>
-      <text class="glabel" x="${gx+42}" y="${y+4.5}" font-family="Inter,sans-serif" font-size="12.5">${g.t}</text>
-      <text class="gval" id="gv_${g.id}" x="${gx+gw-14}" y="${y+4.5}" text-anchor="end" font-family="Oswald,sans-serif" font-size="12.5" font-weight="700" fill="#6f8497">\u2014</text>
-    </g>`;
-    s += `<text class="flow-elabel" x="${gx+gw+12}" y="${y-6}" font-size="9.5">YES</text>`;
-    s += `<path id="ye_${g.id}" class="flow-edge" d="M${gx+gw} ${y} L${railX} ${y}"/>`;
-    if(i<FLOW.length-1){
-      s += `<text class="flow-elabel" x="${cx+9}" y="${y+gh/2+18}" font-size="9.5">No</text>`;
-      s += `<path id="sp_${i+1}" class="flow-edge" d="M${cx} ${y+gh/2} L${cx} ${cy(i+1)-gh/2}" marker-end="url(#arN)"/>`;
-    }
-  });
-  s += `<path id="railEdge" class="flow-edge" d="M${railX} ${cy(0)} L${railX} ${termTop-12} L${cancelCx} ${termTop-12} L${cancelCx} ${termTop}" marker-end="url(#arN)"/>`;
-  const lastB = cy(FLOW.length-1)+gh/2;
-  s += `<text class="flow-elabel" x="${cx+9}" y="${lastB+16}" font-size="9.5">No</text>`;
-  s += `<path id="sp_${FLOW.length}" class="flow-edge" d="M${cx} ${lastB} L${cx} ${termTop-12} L${procCx} ${termTop-12} L${procCx} ${termTop}" marker-end="url(#arN)"/>`;
-  s += `<g class="flow-term proceed" id="termProceed"><rect x="30" y="${termTop}" width="320" height="${termH}" rx="12"/><text id="termProceedTxt" x="190" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#5dc77a">PROCEED</text></g>`;
-  s += `<g class="flow-term cancel" id="termCancel"><rect x="470" y="${termTop}" width="320" height="${termH}" rx="12"/><text x="630" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#ef5350">CANCEL EVENT</text></g>`;
-  s += `</svg>`;
-  wrap.innerHTML = s;
-}
-function setSpine(id,on){
-  const el=document.getElementById(id); if(!el) return;
-  el.classList.remove("on","cancel"); if(on) el.classList.add("on");
-  el.setAttribute("marker-end", on?"url(#arG)":"url(#arN)");
-}
-function updateFlow(){
-  if(!document.getElementById("flow") || !document.getElementById("g_fire")) return;
-  const D = computeDecision();
-  const met = {fire:D.fire, aqi:D.aqiTrigger, extra:board.extra, emerg:board.emerg, aid:board.aid>0, access:board.access};
-  let firstMet=-1; FLOW.forEach((g,i)=>{ if(firstMet<0 && met[g.id]) firstMet=i; });
-  const anyMet = firstMet>=0;
-  FLOW.forEach(g=>{
-    const gate=document.getElementById("g_"+g.id), val=document.getElementById("gv_"+g.id), ye=document.getElementById("ye_"+g.id);
-    const on=met[g.id];
-    gate.classList.remove("met","clear"); gate.classList.add(on?"met":"clear");
-    val.textContent = on?"YES":"NO"; val.setAttribute("fill", on?"#ef5350":"#5dc77a");
-    ye.classList.remove("cancel","on"); if(on){ ye.classList.add("cancel"); ye.setAttribute("marker-end","url(#arR)"); } else { ye.removeAttribute("marker-end"); }
-  });
-  const reached = i => (firstMet<0) || (i<=firstMet);
-  setSpine("sp_0", reached(0));
-  for(let i=1;i<FLOW.length;i++){ setSpine("sp_"+i, reached(i) && !met[FLOW[i-1].id]); }
-  setSpine("sp_"+FLOW.length, !anyMet);
-  const rail=document.getElementById("railEdge");
-  rail.classList.remove("cancel","on"); if(anyMet) rail.classList.add("cancel");
-  rail.setAttribute("marker-end", anyMet?"url(#arR)":"url(#arN)");
-  const tc=document.getElementById("termCancel"), tp=document.getElementById("termProceed");
-  tc.classList.toggle("on", anyMet);
-  tp.classList.remove("on","review");
-  if(!anyMet){ tp.classList.add("on"); if(D.review) tp.classList.add("review"); }
-  const tpt=document.getElementById("termProceedTxt");
-  if(tpt){ const rev=!anyMet&&D.review; tpt.textContent = rev?"PROCEED \u00b7 REVIEW":"PROCEED"; tpt.setAttribute("fill", rev?"#f0a830":"#5dc77a"); }
-}
-
-/* ---------------- Tabs ---------------- */
-function activateTab(name){
-  document.querySelectorAll(".tab").forEach(b=>{
-    const on=b.dataset.tab===name;
-    b.classList.toggle("active",on); b.setAttribute("aria-selected", on?"true":"false");
-  });
-  const d=document.getElementById("tab-data"), l=document.getElementById("tab-logic");
-  if(d) d.hidden = name!=="data";
-  if(l) l.hidden = name!=="logic";
-  if(name==="data" && map){ setTimeout(()=>{ map.invalidateSize(); buildProfile(); },60); }
-}
-function wireTabs(){
-  const btns=[...document.querySelectorAll(".tab")];
-  btns.forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
-  const bar=document.querySelector(".tabs");
-  if(bar) bar.addEventListener("keydown",e=>{
-    if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
-    let i=btns.findIndex(b=>b.classList.contains("active"));
-    i=(i+(e.key==="ArrowRight"?1:-1)+btns.length)%btns.length;
-    btns[i].focus(); activateTab(btns[i].dataset.tab);
-  });
-}
-
-/* ---------------- Wildland fire updates (USFS / BLM) ---------------- */
-let fuFilter = "all";
-function fmtDisc(d){
-  if(d==null||d==="") return "";
-  const dt = (typeof d==="number") ? new Date(d) : new Date(String(d));
-  return isNaN(dt) ? "" : dt.toLocaleDateString(undefined,{month:"short",day:"numeric"});
-}
-function renderFireUpdates(){
-  const host = document.getElementById("fuList"); if(!host) return;
-  let items = (latestPerims||[]).slice().sort((a,b)=>((a.courseMi==null?1e9:a.courseMi))-((b.courseMi==null?1e9:b.courseMi)));
-  if(fuFilter==="USFS") items = items.filter(i=>i.agency==="USFS");
-  else if(fuFilter==="BLM") items = items.filter(i=>i.agency==="BLM");
-  else if(fuFilter==="other") items = items.filter(i=>i.agency!=="USFS" && i.agency!=="BLM");
-  if(!items.length){
-    host.innerHTML = `<div class="empty">${(latestPerims&&latestPerims.length)?"No mapped incidents match this agency filter.":"No mapped wildland fire incidents in the San Juan region right now."} See the agency links above for the latest narrative updates and any new starts not yet mapped.</div>`;
-    return;
-  }
-  host.innerHTML = items.map(i=>{
-    const ag = i.agency||"Other";
-    const agc = ag==="USFS"?"usfs":ag==="BLM"?"blm":"oth";
-    const onCourse = i.type!=="prescribed" && i.courseMi!=null && i.courseMi<=FIRE_ON_COURSE_MI;
-    const dist = i.courseMi!=null ? `${i.courseMi.toFixed(1)} mi from route` : "distance n/r";
-    const pct = i.pct!=null ? `${Math.round(i.pct)}% contained` : "containment n/r";
-    const acres = i.acres ? `${Math.round(i.acres).toLocaleString()} ac` : "size n/r";
-    const disc = fmtDisc(i.discovered);
-    return `<div class="fu" data-on="${onCourse}">
-      <div class="fu-h"><span class="fu-name">${i.name}</span><span class="fu-ag ${agc}">${ag}</span></div>
-      <div class="fu-m"><span class="fu-type ${i.type}">${fireTypeLabel(i.type)}</span> \u00b7 ${acres} \u00b7 ${pct}${disc?` \u00b7 since ${disc}`:""}</div>
-      <div class="fu-d">${dist}${onCourse?' \u00b7 <b style="color:var(--nogo)">on course</b>':''}${i.cause?` \u00b7 cause: ${i.cause}`:''}</div>
-      ${i.desc?`<div class="fu-x">${i.desc}</div>`:''}
-    </div>`;
-  }).join("");
-}
-function wireFireUpdates(){
-  document.querySelectorAll("#fuPills .fc-pill").forEach(b=>b.addEventListener("click",()=>{
-    fuFilter = b.dataset.f;
-    document.querySelectorAll("#fuPills .fc-pill").forEach(x=>x.classList.toggle("active", x===b));
-    renderFireUpdates();
-  }));
-}
-
-/* ---------------- AQI last-24h chart ---------------- */
-let _aqiPx = [];
-function aqiSeriesData(){
-  const air = latestAir||[];
-  if(!air.length || !air[0] || !air[0].hourly) return null;
-  const t0 = air[0].hourly.time;
-  const ref = (air[0].current && air[0].current.time) || null;
-  let nowIdx = ref ? t0.indexOf(ref) : -1;
-  if(nowIdx<0 && ref){ for(let k=0;k<t0.length;k++){ if(t0[k]<=ref) nowIdx=k; else break; } }
-  if(nowIdx<0) nowIdx = Math.min(t0.length-1, 24);
-  const start = Math.max(0, nowIdx-23);
-  const idxs=[]; for(let k=start;k<=nowIdx;k++) idxs.push(k);
-  const times = idxs.map(k=>t0[k]);
-  const perTown = air.map(a=>{ const v=a.hourly && a.hourly.us_aqi_pm2_5; return idxs.map(k=> (v&&v[k]!=null)?v[k]:null); });
-  const max = idxs.map((k,ii)=>{ let mx=null; perTown.forEach(s=>{ if(s[ii]!=null && (mx==null||s[ii]>mx)) mx=s[ii]; }); return mx; });
-  return { times, perTown, max };
-}
-function buildAqiChart(){
-  const wrap = document.getElementById("aqiWrap"); if(!wrap) return;
-  const tip = wrap.querySelector("#aqiTip");
-  const D = aqiSeriesData();
-  if(!D || !D.max.some(v=>v!=null)){ wrap.innerHTML = `<div class="skel">Loading air-quality history\u2026</div>`; if(tip) wrap.appendChild(tip); return; }
-  const W=wrap.clientWidth||820, H=230, m={l:40,r:14,t:14,b:26}, pw=W-m.l-m.r, ph=H-m.t-m.b;
-  const n=D.times.length;
-  const vals=D.max.filter(v=>v!=null);
-  const peak=Math.max(50,...vals);
-  const ymax=Math.max(150, Math.ceil(peak/50)*50);
-  const X=i=> n<=1 ? m.l+pw/2 : m.l + i/(n-1)*pw;
-  const Y=v=> m.t+ph-(Math.min(v,ymax)/ymax)*ph;
-  const bands=[[0,50,"rgba(86,196,110,.13)"],[50,100,"rgba(233,208,74,.13)"],[100,150,"rgba(239,155,58,.15)"],[150,200,"rgba(236,91,84,.16)"],[200,300,"rgba(169,116,212,.16)"]];
-  let bg=""; bands.forEach(a=>{ const lo=a[0],hi=a[1],c=a[2]; if(lo>=ymax) return; const y1=Y(Math.min(hi,ymax)), y2=Y(lo); bg+=`<rect x="${m.l}" y="${y1.toFixed(1)}" width="${pw}" height="${(y2-y1).toFixed(1)}" fill="${c}"/>`; });
-  let grid=""; for(let v=0;v<=ymax;v+=50){ const y=Y(v).toFixed(1); grid+=`<line x1="${m.l}" y1="${y}" x2="${m.l+pw}" y2="${y}" stroke="rgba(255,255,255,.05)"/>`; grid+=`<text x="${m.l-6}" y="${(+y+3)}" text-anchor="end" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${v}</text>`; }
-  let xax=""; D.times.forEach((t,i)=>{ if(i%6===0 || i===n-1){ xax+=`<text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${t.slice(11,16)}</text>`; } });
-  let towns=""; D.perTown.forEach(s=>{ let d="",st=false; s.forEach((v,i)=>{ if(v==null){st=false;return;} d+=(st?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)+" "; st=true; }); if(d) towns+=`<path d="${d}" fill="none" stroke="rgba(159,176,192,.35)" stroke-width="1"/>`; });
-  let dmax="",st=false; _aqiPx=[]; D.max.forEach((v,i)=>{ if(v==null){st=false;return;} const x=X(i),y=Y(v); dmax+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; st=true; _aqiPx.push({x,y,v,t:D.times[i]}); });
-  const cur=D.max[D.max.length-1];
-  const col=cur!=null?aqiInfo(cur).color:"#3fb6c9";
-  const last=_aqiPx[_aqiPx.length-1];
-  const svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="US AQI last 24 hours">
-    ${bg}${grid}${towns}
-    <path d="${dmax}" fill="none" stroke="${col}" stroke-width="2.4"/>
-    ${last?`<circle cx="${last.x.toFixed(1)}" cy="${last.y.toFixed(1)}" r="3.6" fill="${col}"/>`:""}
-    ${xax}
-    <line id="aqiCursor" y1="${m.t}" y2="${m.t+ph}" stroke="#e9eef3" stroke-opacity="0"/>
-    <circle id="aqiDot" r="4" fill="#fff" stroke="${col}" stroke-width="2" opacity="0"/>
-    <rect id="aqiHit" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair"/>
-  </svg>`;
-  wrap.innerHTML=svg; if(tip) wrap.appendChild(tip);
-  // stats
-  let pk=null; D.max.forEach(v=>{ if(v!=null && (pk==null||v>pk)) pk=v; });
-  const st2=document.getElementById("aqiStats");
-  if(st2) st2.innerHTML = (cur!=null)
-    ? `Now <b style="color:${aqiInfo(cur).color}">${Math.round(cur)}</b> ${aqiInfo(cur).cat} \u00b7 24 h peak <b style="color:${aqiInfo(pk).color}">${Math.round(pk)}</b> ${aqiInfo(pk).cat}`
-    : "\u2014";
-  // hover
-  const hit=wrap.querySelector("#aqiHit"), cur2=wrap.querySelector("#aqiCursor"), dot=wrap.querySelector("#aqiDot"), tp=wrap.querySelector("#aqiTip");
-  const sx=()=> (wrap.clientWidth/W)||1;
-  if(hit) hit.addEventListener("pointermove",ev=>{
-    const r=wrap.getBoundingClientRect(); const px=(ev.clientX-r.left)/sx();
-    let best=_aqiPx[0]; for(const p of _aqiPx){ if(Math.abs(p.x-px)<Math.abs(best.x-px)) best=p; }
-    cur2.setAttribute("x1",best.x); cur2.setAttribute("x2",best.x); cur2.setAttribute("stroke-opacity",".5");
-    dot.setAttribute("cx",best.x); dot.setAttribute("cy",best.y); dot.setAttribute("opacity","1");
-    const inf=aqiInfo(best.v);
-    tp.style.opacity="1"; tp.style.left=(best.x*sx())+"px"; tp.style.top=(best.y*sx())+"px";
-    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} \u00b7 ${best.t.slice(11,16)}`;
-  });
-  if(hit) hit.addEventListener("pointerleave",()=>{ cur2.setAttribute("stroke-opacity","0"); dot.setAttribute("opacity","0"); tp.style.opacity="0"; });
-}
-
 /* ---------------- Wire up ---------------- */
 document.addEventListener("DOMContentLoaded", ()=>{
   initMap();
   refreshFireDate();
   buildProfile();
-  buildAqiChart();
   buildFcPills();
-  buildFlow();
-  wireTabs();
-  wireDecision();
-  renderDecision();
-  wireFireUpdates();
-  renderFireUpdates();
-  renderLayerStatus();
   loadAll();
 
   $("#refreshBtn").addEventListener("click", loadAll);
