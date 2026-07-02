@@ -1,43 +1,24 @@
-name: Fetch PurpleAir data
+- name: Push data/purpleair.json via GitHub API
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    CONTENT=$(base64 -w 0 data/purpleair.json)
+    # Get current file SHA (needed for updates; empty string for first create)
+    FILE_SHA=$(curl -s \
+      -H "Authorization: token $GITHUB_TOKEN" \
+      "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
+      | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('sha','') if 'sha' in d else '')" 2>/dev/null || echo "")
 
-on:
-  schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes
-  workflow_dispatch:           # manual trigger from Actions tab
+    # Build JSON body
+    if [ -n "$FILE_SHA" ]; then
+      BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1],'sha':sys.argv[2]}))" "$CONTENT" "$FILE_SHA")
+    else
+      BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1]}))" "$CONTENT")
+    fi
 
-jobs:
-  fetch:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Fetch PurpleAir sensors + 72h history
-        env:
-          PURPLEAIR_API_KEY: ${{ secrets.PURPLEAIR_API_KEY }}
-        run: python3 scripts/fetch_purpleair.py
-
-      - name: Push data/purpleair.json via GitHub API
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          CONTENT=$(base64 -w 0 data/purpleair.json)
-          # Get current file SHA (needed for updates; empty string for first create)
-          FILE_SHA=$(curl -sf \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
-            | python3 -c "import sys,json; print(json.load(sys.stdin).get('sha',''))" 2>/dev/null || echo "")
-
-          # Build JSON body
-          if [ -n "$FILE_SHA" ]; then
-            BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1],'sha':sys.argv[2]}))" "$CONTENT" "$FILE_SHA")
-          else
-            BODY=$(python3 -c "import json,sys; print(json.dumps({'message':'chore: update PurpleAir data [skip ci]','content':sys.argv[1]}))" "$CONTENT")
-          fi
-
-          curl -sf -X PUT \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Content-Type: application/json" \
-            "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
-            -d "$BODY"
-          echo "Done."
+    curl -s -X PUT \
+      -H "Authorization: token $GITHUB_TOKEN" \
+      -H "Content-Type: application/json" \
+      "https://api.github.com/repos/${{ github.repository }}/contents/data/purpleair.json" \
+      -d "$BODY"
+    echo "Done."
