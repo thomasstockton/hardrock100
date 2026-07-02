@@ -13,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for rebasing
 
       - name: Fetch PurpleAir sensors + 72h history
         env:
@@ -23,7 +25,8 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main
+          git fetch origin main
+          git rebase origin/main
           git add data/purpleair.json
           git diff --cached --quiet || git commit -m "chore: update PurpleAir data [skip ci]"
           git push origin HEAD:main
