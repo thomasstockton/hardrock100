@@ -11,6 +11,7 @@ def get(url):
 # Current sensor readings
 # If PURPLEAIR_SENSOR_ID is set (comma-separated), fetch only those sensors
 sensor_ids_env = os.environ.get("PURPLEAIR_SENSOR_ID")
+bbox_env = os.environ.get("PURPLEAIR_BBOX")
 if sensor_ids_env:
     ids = [s.strip() for s in sensor_ids_env.split(",") if s.strip()]
     sensors = {"fields": ["sensor_index", "name", "latitude", "longitude", "pm2.5_atm", "pm2.5_atm_a", "pm2.5_atm_b", "humidity", "temperature", "last_seen"], "data": []}
@@ -34,12 +35,23 @@ if sensor_ids_env:
         except Exception:
             sensors["data"].append([int(sid), f"sensor-{sid}", None, None, None, None, None, None, None, None])
 else:
-    # bounding box covers entire course corridor (default behavior)
-    sensors = get(
-        "https://api.purpleair.com/v1/sensors"
-        "?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
-        "&location_type=0&nwlat=38.15&selat=37.75&nwlng=-108.05&selng=-107.20"
+    # bounding box covers entire course corridor by default, but can be overridden
+    # by setting PURPLEAIR_BBOX as "nwlat,selat,nwlng,selng" in the environment.
+    if bbox_env:
+        try:
+            parts = [p.strip() for p in bbox_env.split(",")]
+            nwlat, selat, nwlng, selng = parts
+        except Exception:
+            nwlat, selat, nwlng, selng = "38.15", "37.75", "-108.05", "-107.20"
+    else:
+        nwlat, selat, nwlng, selng = "38.15", "37.75", "-108.05", "-107.20"
+
+    url = (
+        f"https://api.purpleair.com/v1/sensors"
+        f"?fields=name,latitude,longitude,pm2.5_atm,pm2.5_atm_a,pm2.5_atm_b,humidity,temperature,last_seen"
+        f"&location_type=0&nwlat={nwlat}&selat={selat}&nwlng={nwlng}&selng={selng}"
     )
+    sensors = get(url)
 
 # 72h history per sensor at 30-min averages
 now = int(time.time())
