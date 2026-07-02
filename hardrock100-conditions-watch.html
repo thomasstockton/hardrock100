@@ -925,7 +925,8 @@ async function fetchAlerts(){
 }
 
 async function fetchPurpleAir(){
-  const r = await fetch("./data/purpleair.json");
+  const ts = Date.now();
+  const r = await fetch(`./data/purpleair.json?t=${ts}`);
   if(!r.ok) throw new Error("purpleair");
   return await r.json();
 }
