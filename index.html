@@ -471,7 +471,7 @@
     <section class="panel">
       <div class="panel-head">
         <h2>Course conditions</h2>
-        <div class="meta">Wind · gusts · US AQI</div>
+        <div class="meta">Wind · gusts · US AQI (PM2.5)</div>
       </div>
       <div class="panel-body">
         <div class="cards" id="cards">
@@ -504,7 +504,7 @@
       </div>
       <div class="panel-body">
         <div class="profwrap" id="aqiWrap"><div class="prof-tip" id="aqiTip"></div></div>
-        <div class="maphint">US AQI over the past 24 h. <b>Bold line</b> = worst value across the course each hour; thin gray lines are individual towns. Shaded bands mark AQI categories (green &rarr; red). Hover to read a value.</div>
+        <div class="maphint">PM2.5-based US AQI over the past 24 h. <b>Bold line</b> = worst value across the course each hour; thin gray lines are individual towns. Shaded bands mark AQI categories (green &rarr; red). Hover to read a value.</div>
       </div>
     </section>
   </div>
@@ -607,7 +607,7 @@
           <div class="tcard">
             <h3>Why AQI matters here</h3>
             <p>Runners sustain hard effort 24–48 h at 9,000–14,000 ft, where ventilation rates are already extreme. Smoke risk that's "moderate" at sea level is amplified by altitude and exposure time.</p>
-            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p>
+            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p><p>AQI shown is the <b>PM2.5 (wildfire-smoke) sub-index</b> — not the ozone-driven composite, which runs higher at altitude.</p>
           </div>
           <div class="tcard">
             <h3>Wind &amp; alpine exposure</h3>
@@ -663,7 +663,7 @@
 
       <div class="dm-sec">2 · Safety to the Hardrock community</div>
       <div class="dm-row" data-kind="hard">
-        <div class="dm-f"><div class="t">Max course AQI · event window</div><div class="d2" id="dmAqiNote"></div></div>
+        <div class="dm-f"><div class="t">Max course AQI (PM2.5) · event window</div><div class="d2" id="dmAqiNote"></div></div>
         <div class="dm-c"><div class="aqiscale-mini" id="dmAqiVal">—</div><div class="aqiscale-mini">Moderate 51–100 · USG 101–150 · <b>Unhealthy &gt;150 ⇒ cancel</b></div></div>
         <div class="dm-s" id="dmAqiStatus">—</div>
       </div>
@@ -884,7 +884,7 @@ async function fetchAir(){
   const lats = LOCATIONS.map(l=>l.lat).join(",");
   const lons = LOCATIONS.map(l=>l.lon).join(",");
   const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}`
-    + `&current=us_aqi,pm2_5,pm10&hourly=us_aqi&past_days=1&forecast_days=7&timezone=America%2FDenver`;
+    + `&current=us_aqi_pm2_5,us_aqi,us_aqi_o3,pm2_5,pm10&hourly=us_aqi_pm2_5&past_days=1&forecast_days=7&timezone=America%2FDenver`;
   const r = await fetch(url);
   if(!r.ok) throw new Error("air");
   const j = await r.json();
@@ -939,8 +939,12 @@ function renderCards(weather, air){
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
     const a = air[i]?.current || {};
-    const aqi = a.us_aqi;
+    const aqi = a.us_aqi_pm2_5;
+    const comp = a.us_aqi, o3 = a.us_aqi_o3;
     const info = aqiInfo(aqi);
+    const badgeTitle = "PM2.5 (smoke) US AQI"
+      + (comp!=null?` \u00b7 composite US AQI ${Math.round(comp)}`:"")
+      + (o3!=null?` \u00b7 ozone AQI ${Math.round(o3)}`:"");
     const gust = w.wind_gusts_10m;
     const wind = w.wind_speed_10m;
     const card = document.createElement("div");
@@ -957,7 +961,7 @@ function renderCards(weather, air){
           <div class="v num">${wind!=null?Math.round(wind):"—"}</div>
           <div class="u">${windDir(w.wind_direction_10m)} wind</div>
         </div>
-        <div class="aqibadge" style="background:${info.color}">
+        <div class="aqibadge" style="background:${info.color}" title="${badgeTitle}">
           <div class="a num">${aqi!=null?Math.round(aqi):"—"}</div>
           <div class="c">${info.cat}</div>
         </div>
@@ -969,13 +973,16 @@ function renderCards(weather, air){
   if(aqiLayer){
     aqiLayer.clearLayers();
     LOCATIONS.forEach((l,i)=>{
-      const aqi = air[i]?.current?.us_aqi;
+      const aqi = air[i]?.current?.us_aqi_pm2_5;
+      const comp = air[i]?.current?.us_aqi;
+      const o3 = air[i]?.current?.us_aqi_o3;
       const info = aqiInfo(aqi);
       const pm = air[i]?.current?.pm2_5;
       L.circleMarker([l.lat,l.lon],{
         radius:11, color:"#0c1117", weight:2, fillColor:info.color, fillOpacity:.92
-      }).bindPopup(`<b>${l.name}</b><br>US AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
-        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")).addTo(aqiLayer);
+      }).bindPopup(`<b>${l.name}</b><br>PM2.5 AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
+        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")
+        + (comp!=null?`<br><span style="color:#9fb0c0">Composite US AQI ${Math.round(comp)}${o3!=null?` · O₃ AQI ${Math.round(o3)}`:""}</span>`:"")).addTo(aqiLayer);
     });
   }
 }
@@ -1072,7 +1079,7 @@ function computePosture(){
 
   // Air quality
   let worstAqi = -1, worstLoc = "";
-  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
+  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi_pm2_5; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
   if(worstAqi>=0){
     const info = aqiInfo(worstAqi);
     let sev="go";
@@ -1356,7 +1363,7 @@ let latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearest
 function aqiWindowMax(air){
   let max=-1, loc="", when="", covered=0, lastTime="";
   (air||[]).forEach((a,i)=>{
-    const t=a&&a.hourly&&a.hourly.time, v=a&&a.hourly&&a.hourly.us_aqi;
+    const t=a&&a.hourly&&a.hourly.time, v=a&&a.hourly&&a.hourly.us_aqi_pm2_5;
     if(!t||!v) return;
     if(t.length && t[t.length-1]>lastTime) lastTime=t[t.length-1];
     for(let k=0;k<t.length;k++){
@@ -1369,7 +1376,7 @@ function aqiWindowMax(air){
   return { max: max>=0?max:null, loc, when, covered, lastTime };
 }
 function currentMaxAqi(){
-  let m=-1,loc=""; (latestAir||[]).forEach((a,i)=>{ const v=a&&a.current&&a.current.us_aqi; if(v!=null&&v>m){m=v;loc=LOCATIONS[i].name;} });
+  let m=-1,loc=""; (latestAir||[]).forEach((a,i)=>{ const v=a&&a.current&&a.current.us_aqi_pm2_5; if(v!=null&&v>m){m=v;loc=LOCATIONS[i].name;} });
   return m>=0?{max:m,loc}:null;
 }
 function shortWhen(iso){ if(!iso) return ""; const d=new Date(iso.replace(" ","T")); if(isNaN(d)) return iso; return d.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric"}); }
@@ -1626,7 +1633,7 @@ function aqiSeriesData(){
   const start = Math.max(0, nowIdx-23);
   const idxs=[]; for(let k=start;k<=nowIdx;k++) idxs.push(k);
   const times = idxs.map(k=>t0[k]);
-  const perTown = air.map(a=>{ const v=a.hourly && a.hourly.us_aqi; return idxs.map(k=> (v&&v[k]!=null)?v[k]:null); });
+  const perTown = air.map(a=>{ const v=a.hourly && a.hourly.us_aqi_pm2_5; return idxs.map(k=> (v&&v[k]!=null)?v[k]:null); });
   const max = idxs.map((k,ii)=>{ let mx=null; perTown.forEach(s=>{ if(s[ii]!=null && (mx==null||s[ii]>mx)) mx=s[ii]; }); return mx; });
   return { times, perTown, max };
 }
