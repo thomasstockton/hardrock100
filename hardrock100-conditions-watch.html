@@ -1806,11 +1806,13 @@ function buildPurpleAirChart(){
   const W=wrap.clientWidth||820,H=230,m={l:40,r:14,t:14,b:30},pw=W-m.l-m.r,ph=H-m.t-m.b;
   const COLORS=["#3fb6c9","#f5a623","#56c46e","#e96060","#a974d4","#e9d04a","#60a4e9","#ef9b3a"];
 
-  // Build per-sensor time series
+  // Build per-sensor time series (exclude some noisy stations)
+  const EXCLUDE_SENSORS = new Set(["Horsefly Mesa","Rock_Outdoor"]);
   const allTimes=new Set();
   const series=[];
   j.history.forEach((h,si)=>{
     if(!h.data||!h.data.length) return;
+    if(EXCLUDE_SENSORS.has(h.name)) return;
     const fi=f=>h.fields.indexOf(f);
     const iTs=fi("time_stamp"),iA=fi("pm2.5_atm_a"),iB=fi("pm2.5_atm_b");
     if(iTs<0) return;
@@ -1835,9 +1837,10 @@ function buildPurpleAirChart(){
   const times=[...allTimes].sort((a,b)=>a-b);
   const n=times.length;
   const avgByTime={};
+  const maxByTime={};
   times.forEach(ts=>{
     const vals=series.map(s=>s.pts[ts]).filter(v=>v!=null);
-    if(vals.length) avgByTime[ts]=vals.reduce((a,b)=>a+b,0)/vals.length;
+    if(vals.length){ avgByTime[ts]=vals.reduce((a,b)=>a+b,0)/vals.length; maxByTime[ts]=Math.max(...vals); }
   });
 
   const peak=Math.max(50,...Object.values(avgByTime).filter(v=>v!=null));
@@ -1866,7 +1869,7 @@ function buildPurpleAirChart(){
 
   let dAvg="",st=false; _paPx=[];
   times.forEach((ts,i)=>{
-    const v=avgByTime[ts];
+    const v=maxByTime[ts];
     if(v==null){st=false;return;}
     const x=X(i),y=Y(v);
     dAvg+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";st=true;
