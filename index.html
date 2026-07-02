@@ -270,6 +270,100 @@
   .fc-card .sf{font-size:11px;color:var(--ink-2);margin-top:4px;line-height:1.35;min-height:46px}
   .fc-card .wd{font-size:10.5px;color:var(--ink-3);margin-top:5px;border-top:1px solid var(--line);padding-top:5px}
   @media (max-width:560px){ .fc-now{grid-template-columns:1fr} .fc-now .ic{flex-direction:row;justify-content:flex-start;gap:14px;min-width:0} }
+  /* ---- decision matrix ---- */
+  .dm{margin-bottom:22px}
+  .dm-rec{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;padding:18px;border-bottom:1px solid var(--line);position:relative}
+  .dm-rec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--ink-3)}
+  #decision[data-rec="proceed"] .dm-rec::before{background:var(--go)}
+  #decision[data-rec="review"] .dm-rec::before{background:var(--hold)}
+  #decision[data-rec="cancel"] .dm-rec::before{background:var(--nogo)}
+  .dm-rec-word{display:flex;flex-direction:column;gap:5px;padding-left:8px;min-width:220px}
+  .dm-rec-word .label{font-family:var(--display);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .dm-rec-word .word{font-family:var(--display);font-weight:700;font-size:clamp(23px,3.4vw,36px);line-height:.95;color:var(--ink-3)}
+  #decision[data-rec="proceed"] .dm-rec-word .word{color:var(--go)}
+  #decision[data-rec="review"] .dm-rec-word .word{color:var(--hold)}
+  #decision[data-rec="cancel"] .dm-rec-word .word{color:var(--nogo)}
+  .dm-rec-word .advisory{font-size:11px;color:var(--ink-3);max-width:34ch}
+  .dm-rec-tr{display:flex;flex-direction:column;gap:9px}
+  .dm-rec-tr .dh{font-family:var(--display);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  .dm-body{padding:4px 16px 16px}
+  .dm-sec{font-family:var(--display);font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--teal);font-weight:600;margin:17px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .dm-row{display:grid;grid-template-columns:1fr auto auto;gap:18px;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.045)}
+  .dm-row:last-child{border-bottom:none}
+  .dm-f .t{font-weight:600;font-size:14px}
+  .dm-f .d{font-size:11.5px;color:var(--ink-3);margin-top:3px;max-width:66ch}
+  .dm-f .d2{font-size:11px;color:var(--ink-3);margin-top:4px;max-width:66ch;line-height:1.45}
+  .dm-c{justify-self:end}
+  .aqiscale-mini{font-size:11px;color:var(--ink-3);text-align:right;max-width:28ch;line-height:1.5}
+  .aqiscale-mini b{color:var(--nogo)}
+  .dm-s{justify-self:end;font-family:var(--display);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:600;text-align:right;min-width:108px;color:var(--ink-3)}
+  .dm-s.met{color:var(--nogo)}
+  .dm-s.ok{color:var(--go)}
+  .dm-s.adv{color:var(--ink-3)}
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;overflow:hidden}
+  .seg button{background:var(--panel-2);border:none;color:var(--ink-2);font-family:var(--body);font-weight:600;font-size:12.5px;padding:6px 15px;cursor:pointer;transition:.12s}
+  .seg button:hover{color:#fff}
+  .seg button.active{background:var(--teal-deep);color:#fff}
+  .seg button[data-v="yes"].active{background:var(--nogo-deep);color:#fff}
+  .dm-c.money{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);font-size:13px}
+  .dm-num{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13px;padding:6px 9px;width:130px;font-variant-numeric:tabular-nums}
+  .dm-num.sm{width:72px;text-align:center}
+  .dm-num:focus,.dm-txt:focus{outline:none;border-color:var(--teal)}
+  .dm-txt{background:var(--panel-2);border:1px solid var(--line-strong);border-radius:8px;color:var(--ink);font-family:var(--body);font-size:13.5px;font-weight:600;padding:7px 11px;width:min(340px,72vw)}
+  .dm-txt::placeholder{color:var(--ink-3);font-weight:500}
+  @media (max-width:760px){
+    .dm-rec{grid-template-columns:1fr}
+    .dm-row{grid-template-columns:1fr;gap:10px}
+    .dm-c,.dm-s{justify-self:start;text-align:left}
+    .aqiscale-mini{text-align:left}
+  }
+  /* ---- tabs ---- */
+  .tabs{display:flex;gap:4px;margin:0 0 20px;border-bottom:1px solid var(--line-strong)}
+  .tab{appearance:none;background:none;border:none;cursor:pointer;font-family:var(--display);font-size:14px;
+    letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-3);padding:11px 18px;
+    border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+  .tab:focus-visible{outline:2px solid var(--teal);outline-offset:2px;border-radius:6px 6px 0 0}
+  .tabpanel[hidden]{display:none}
+  /* ---- decision flow diagram ---- */
+  .flowwrap{overflow-x:auto;padding-bottom:6px}
+  #flow svg{display:block;width:100%;min-width:640px;height:auto}
+  .flow-start rect{fill:var(--panel-3);stroke:var(--line-strong);stroke-width:1.5}
+  .flow-start text{fill:var(--ink-2)}
+  .flow-gate rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
+  .flow-gate.clear rect{stroke:var(--go)}
+  .flow-gate.met rect{stroke:var(--nogo);fill:rgba(239,83,80,.12)}
+  .flow-gate .gnum{fill:#0c1117;font-weight:700}
+  .flow-gate .glabel{fill:var(--ink)}
+  .flow-edge{fill:none;stroke:var(--line-strong);stroke-width:2;transition:.18s}
+  .flow-edge.on{stroke:var(--go);stroke-width:2.6}
+  .flow-edge.cancel{stroke:var(--nogo);stroke-width:2.6}
+  .flow-elabel{fill:var(--ink-3);font-family:var(--display);letter-spacing:.08em}
+  .flow-term rect{fill:var(--panel-2);stroke:var(--line-strong);stroke-width:1.5;transition:.18s}
+  .flow-term text{font-family:var(--display);font-weight:700;letter-spacing:.06em}
+  .flow-term.proceed.on rect{fill:rgba(93,199,122,.16);stroke:var(--go)}
+  .flow-term.review.on rect{fill:rgba(240,168,48,.16);stroke:var(--hold)}
+  .flow-term.cancel.on rect{fill:var(--nogo-deep);stroke:var(--nogo)}
+  .mapstatus{display:flex;flex-wrap:wrap;gap:8px 18px;padding:11px 16px 2px;font-size:11.5px;color:var(--ink-2)}
+  .mapstatus span{display:inline-flex;align-items:center;gap:7px}
+  .mapstatus i.sw{width:10px;height:10px;border-radius:3px;display:inline-block;flex:none}
+  .mapstatus b{color:var(--ink);font-weight:600}
+  /* ---- wildland fire updates ---- */
+  .fu{background:var(--panel-2);border:1px solid var(--line);border-left:4px solid var(--ink-3);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:10px}
+  .fu[data-on="true"]{border-left-color:var(--nogo)}
+  .fu-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .fu-name{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.02em}
+  .fu-ag{font-family:var(--display);font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink-2);white-space:nowrap}
+  .fu-ag.usfs{background:rgba(46,125,79,.18);border-color:#2e7d4f;color:#7fd6a0}
+  .fu-ag.blm{background:rgba(176,122,53,.20);border-color:#b07a35;color:#e0b277}
+  .fu-m{font-size:12px;color:var(--ink-2);margin-top:5px}
+  .fu-type{font-family:var(--display);letter-spacing:.04em;text-transform:uppercase;font-size:10.5px;font-weight:600}
+  .fu-type.prescribed{color:var(--amber-soft)}
+  .fu-type.wildfire,.fu-type.complex{color:var(--nogo)}
+  .fu-type.unknown{color:var(--ink-2)}
+  .fu-d{font-size:11.5px;color:var(--ink-3);margin-top:3px}
+  .fu-x{font-size:11.5px;color:var(--ink-2);margin-top:6px;padding-top:6px;border-top:1px solid var(--line);line-height:1.45}
   .full{grid-column:1 / -1}
   .stack{display:flex;flex-direction:column;gap:20px;margin-top:20px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
@@ -320,7 +414,7 @@
   <!-- HEADER -->
   <header class="topbar">
     <div class="brandblock">
-      <div class="eyebrow kicker">Board of Directors · Go / No-Go Support</div>
+      <div class="eyebrow kicker">Board of Directors &amp; Run Committee · Go / No-Go Support</div>
       <h1>HARDROCK <span class="lo">100</span> · CONDITIONS WATCH</h1>
       <div class="sub">Live wildfire, smoke / air-quality, wind, and alert monitoring across the San Juan Mountains course corridor — Silverton · Lake City · Ouray · Telluride · Ophir.</div>
     </div>
@@ -333,6 +427,13 @@
       </button>
     </div>
   </header>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab active" role="tab" aria-selected="true" aria-controls="tab-data" id="tabbtn-data" data-tab="data">Conditions &amp; data</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="tab-logic" id="tabbtn-logic" data-tab="logic">Decision logic</button>
+  </nav>
+
+  <div class="tabpanel" id="tab-data" role="tabpanel" aria-labelledby="tabbtn-data">
 
   <!-- POSTURE BANNER -->
   <section class="posture" id="posture" data-level="loading" aria-live="polite">
@@ -363,13 +464,14 @@
         </div>
       </div>
       <div id="map"></div>
+      <div class="mapstatus" id="mapStatus"></div>
       <div class="maphint">Toggle layers (top-right): NASA/FIRMS satellite fire detections (≈12–24 h latency), NIFC live fire perimeters (refreshed ~5 min), and town air-quality. Course = official Hardrock 100 <b>clockwise</b> route from the sanctioned GPX (≈100 mi, 13 passes, high point Handies Peak 14,048 ft).</div>
     </section>
 
     <section class="panel">
       <div class="panel-head">
         <h2>Course conditions</h2>
-        <div class="meta">Wind · gusts · US AQI</div>
+        <div class="meta">Wind · gusts · US AQI (PM2.5)</div>
       </div>
       <div class="panel-body">
         <div class="cards" id="cards">
@@ -393,6 +495,20 @@
     </section>
   </div>
 
+  <!-- AQI 24H -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Air quality · last 24 hours</h2>
+        <div class="meta" id="aqiStats">—</div>
+      </div>
+      <div class="panel-body">
+        <div class="profwrap" id="aqiWrap"><div class="prof-tip" id="aqiTip"></div></div>
+        <div class="maphint">PM2.5-based US AQI over the past 24 h. <b>Bold line</b> = worst value across the course each hour; thin gray lines are individual towns. Shaded bands mark AQI categories (green &rarr; red). Hover to read a value.</div>
+      </div>
+    </section>
+  </div>
+
   <!-- NWS FORECAST -->
   <div class="stack">
     <section class="panel">
@@ -403,6 +519,31 @@
       <div class="panel-body">
         <div class="fc-pills" id="fcPills"></div>
         <div id="fcBody"><div class="skel">Loading National Weather Service forecast…</div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- WILDLAND FIRE UPDATES -->
+  <div class="stack">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Wildland fire updates · USFS / BLM</h2>
+        <div class="meta">NIFC interagency feed · nearest to route first</div>
+      </div>
+      <div class="panel-body">
+        <div class="linklist" style="margin-bottom:13px">
+          <a href="https://www.fs.usda.gov/r02/sanjuan/fire/info" target="_blank" rel="noopener"><span class="t">San Juan National Forest</span><span class="d">USFS fire info, restrictions &amp; prescribed burns</span></a>
+          <a href="https://www.blm.gov/colorado" target="_blank" rel="noopener"><span class="t">BLM Colorado</span><span class="d">Tres Rios &amp; Gunnison field offices</span></a>
+          <a href="https://inciweb.wildfire.gov/" target="_blank" rel="noopener"><span class="t">InciWeb</span><span class="d">Incident narratives &amp; evacuations</span></a>
+          <a href="https://gacc.nifc.gov/rmcc/" target="_blank" rel="noopener"><span class="t">Rocky Mtn Coordination Ctr</span><span class="d">Regional situation &amp; resources</span></a>
+        </div>
+        <div class="fc-pills" id="fuPills">
+          <button class="fc-pill active" data-f="all">All agencies</button>
+          <button class="fc-pill" data-f="USFS">USFS</button>
+          <button class="fc-pill" data-f="BLM">BLM</button>
+          <button class="fc-pill" data-f="other">Other</button>
+        </div>
+        <div id="fuList"><div class="skel">Loading interagency incidents for the San Juan region…</div></div>
       </div>
     </section>
   </div>
@@ -466,7 +607,7 @@
           <div class="tcard">
             <h3>Why AQI matters here</h3>
             <p>Runners sustain hard effort 24–48 h at 9,000–14,000 ft, where ventilation rates are already extreme. Smoke risk that's "moderate" at sea level is amplified by altitude and exposure time.</p>
-            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p>
+            <p>This tool flags caution at sustained AQI ≥101 on course and elevates sharply at ≥151.</p><p>AQI shown is the <b>PM2.5 (wildfire-smoke) sub-index</b> — not the ozone-driven composite, which runs higher at altitude.</p>
           </div>
           <div class="tcard">
             <h3>Wind &amp; alpine exposure</h3>
@@ -481,6 +622,90 @@
       </div>
     </section>
   </div>
+
+  </div><!-- /tab-data -->
+
+  <div class="tabpanel" id="tab-logic" role="tabpanel" aria-labelledby="tabbtn-logic" hidden>
+  <section class="panel" style="margin-bottom:22px">
+      <div class="panel-head"><h2>Decision path</h2><div class="meta">Any one hard trigger &rArr; cancel</div></div>
+      <div class="panel-body">
+        <div class="flowwrap"><div id="flow"></div></div>
+        <div class="maphint">Live evaluation: a gate turns red when its cancel trigger is met and the path routes to <b>CANCEL</b>; all-clear routes to <b>PROCEED</b>. Advisory factors (community financial impact, 2026 net revenue) are non-gating and live in the matrix below.</div>
+      </div>
+    </section>
+
+  <!-- DECISION MATRIX -->
+  <section class="panel dm" id="decision" data-rec="proceed">
+    <div class="panel-head">
+      <h2>Cancellation decision matrix</h2>
+      <div class="meta">Event window: <b id="dmWindow">Jul 9 6:00 AM – Jul 12 6:00 PM MT</b></div>
+    </div>
+
+    <div class="dm-rec">
+      <div class="dm-rec-word">
+        <span class="label">Recommendation</span>
+        <span class="word" id="dmWord">Evaluating…</span>
+        <span class="advisory">Decision support — the Board decides. Any one hard trigger ⇒ cancel.</span>
+      </div>
+      <div class="dm-rec-tr">
+        <span class="dh">Triggered criteria</span>
+        <div class="chips" id="dmTriggers"><span class="chip"><span class="pip"></span>Evaluating live data…</span></div>
+      </div>
+    </div>
+
+    <div class="dm-body">
+      <div class="dm-sec">1 · Fire</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Fire on course</div><div class="d" id="dmFireVal">—</div><div class="d" style="margin-top:5px">Auto counts wildfire &amp; complex perimeters within 1 mi of the route; prescribed burns are shown but don’t auto-trigger.</div></div>
+        <div class="dm-c"><div class="seg three" data-key="fire"><button data-v="auto" class="active">Auto</button><button data-v="yes">Yes</button><button data-v="no">No</button></div></div>
+        <div class="dm-s" id="dmFireStatus">—</div>
+      </div>
+
+      <div class="dm-sec">2 · Safety to the Hardrock community</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Max course AQI (PM2.5) · event window</div><div class="d2" id="dmAqiNote"></div></div>
+        <div class="dm-c"><div class="aqiscale-mini" id="dmAqiVal">—</div><div class="aqiscale-mini">Moderate 51–100 · USG 101–150 · <b>Unhealthy &gt;150 ⇒ cancel</b></div></div>
+        <div class="dm-s" id="dmAqiStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><input class="dm-txt" id="dmExtraLabel" placeholder="Additional safety factor (board-defined)"><div class="d">Optional hard trigger the Board can name and arm</div></div>
+        <div class="dm-c"><div class="seg" data-key="extra"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmExtraStatus">—</div>
+      </div>
+
+      <div class="dm-sec">3 · San Juan communities</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Impacts on emergency response</div></div>
+        <div class="dm-c"><div class="seg" data-key="emerg"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmEmergStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="soft">
+        <div class="dm-f"><div class="t">Financial impact on local community</div><div class="d">Context — likely superseded by safety triggers</div></div>
+        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmCommFin" type="number" min="0" placeholder="0"></div>
+        <div class="dm-s adv">Advisory</div>
+      </div>
+
+      <div class="dm-sec">4 · Financial</div>
+      <div class="dm-row" data-kind="soft">
+        <div class="dm-f"><div class="t">Hardrock 2026 net revenue if cancelled</div><div class="d">Context — likely superseded by safety triggers</div></div>
+        <div class="dm-c money"><span>$</span><input class="dm-num" id="dmRev" type="number" placeholder="0"></div>
+        <div class="dm-s adv">Advisory</div>
+      </div>
+
+      <div class="dm-sec">5 · Road closures</div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Aid stations with no crew access</div><div class="d">Cancel trigger if 1 or more</div></div>
+        <div class="dm-c"><input class="dm-num sm" id="dmAid" type="number" min="0" value="0"></div>
+        <div class="dm-s" id="dmAidStatus">—</div>
+      </div>
+      <div class="dm-row" data-kind="hard">
+        <div class="dm-f"><div class="t">Emergency-response access impacts</div></div>
+        <div class="dm-c"><div class="seg" data-key="access"><button data-v="no" class="active">No</button><button data-v="yes">Yes</button></div></div>
+        <div class="dm-s" id="dmAccessStatus">—</div>
+      </div>
+    </div>
+  </section>
+  </div><!-- /tab-logic -->
 
   <footer>
     <div class="src">
@@ -520,7 +745,7 @@ const AID_STATIONS = [{"name":"Putnam","lat":37.80636,"lon":-107.70874,"mile":3.
 const ELEV_PROFILE = [[0.0,9310,37.81242,-107.66573],[0.37,9475,37.81284,-107.67036],[0.59,9424,37.81099,-107.67323],[0.8,9356,37.80938,-107.67605],[0.99,9359,37.80886,-107.67862],[1.22,9387,37.80973,-107.68246],[1.44,9433,37.81145,-107.68559],[1.68,9469,37.81264,-107.68935],[1.88,9487,37.81411,-107.69209],[2.02,9497,37.81514,-107.69369],[2.1,9464,37.81532,-107.69503],[2.28,9437,37.81532,-107.6979],[2.38,9485,37.81413,-107.69835],[2.53,9585,37.81358,-107.70036],[2.76,9798,37.81163,-107.70264],[3.0,9910,37.80885,-107.70471],[3.15,9987,37.8075,-107.70672],[3.36,10095,37.80542,-107.70913],[3.55,10133,37.80328,-107.71102],[3.7,10180,37.80164,-107.71276],[3.88,10253,37.79988,-107.71473],[4.03,10339,37.79851,-107.7168],[4.14,10414,37.79742,-107.71801],[4.23,10476,37.79651,-107.71894],[4.36,10594,37.79504,-107.72046],[4.53,10687,37.79305,-107.72181],[4.65,10778,37.7915,-107.72234],[4.76,10870,37.79003,-107.72274],[4.9,10957,37.78838,-107.72395],[5.02,11038,37.78674,-107.72462],[5.11,11090,37.78561,-107.72548],[5.26,11110,37.78369,-107.72628],[5.39,11103,37.78194,-107.72615],[5.53,11182,37.78027,-107.727],[5.69,11363,37.78063,-107.72959],[5.84,11498,37.78137,-107.73176],[5.98,11580,37.78195,-107.73389],[6.08,11636,37.78188,-107.73559],[6.17,11700,37.78122,-107.73709],[6.33,11820,37.7796,-107.73918],[6.43,11872,37.77882,-107.74047],[6.55,12028,37.77846,-107.7425],[6.66,12073,37.77799,-107.74374],[6.79,12094,37.77632,-107.74455],[6.91,12194,37.77463,-107.74443],[7.15,12388,37.77129,-107.7454],[7.39,12677,37.77382,-107.74807],[7.68,12596,37.77679,-107.7514],[7.91,12169,37.77705,-107.75534],[8.13,12088,37.77523,-107.75848],[8.37,12155,37.77431,-107.76252],[8.58,12236,37.77572,-107.76578],[8.76,12265,37.77746,-107.76823],[8.88,12194,37.77822,-107.76993],[8.99,12064,37.77916,-107.7711],[9.08,11956,37.77961,-107.77208],[9.19,11837,37.78106,-107.77231],[9.27,11784,37.78187,-107.77284],[9.51,11497,37.78423,-107.77338],[9.63,11373,37.78453,-107.77553],[9.81,11298,37.78546,-107.77817],[10.0,11401,37.78635,-107.78114],[10.22,11297,37.7848,-107.78453],[10.38,11293,37.78463,-107.78732],[10.6,11307,37.78392,-107.79075],[10.75,11106,37.78347,-107.79304],[10.86,10903,37.78419,-107.7944],[10.94,10801,37.78471,-107.79524],[11.04,10693,37.78575,-107.79586],[11.2,10626,37.78797,-107.79659],[11.41,10687,37.79011,-107.79532],[11.69,10746,37.79338,-107.79241],[11.98,10934,37.79702,-107.79021],[12.24,11030,37.8006,-107.78887],[12.55,11139,37.80475,-107.78663],[12.78,11141,37.8073,-107.78426],[13.07,11097,37.80938,-107.78883],[13.25,11124,37.81075,-107.79021],[13.4,11296,37.81236,-107.7899],[13.6,11490,37.81338,-107.79115],[13.84,11785,37.81509,-107.79232],[14.09,12070,37.81522,-107.79641],[14.23,12234,37.8167,-107.79697],[14.37,12376,37.81851,-107.79756],[14.58,12580,37.82092,-107.79962],[14.72,12780,37.82281,-107.80057],[14.83,12852,37.82318,-107.7994],[14.97,12535,37.8252,-107.7993],[15.09,12374,37.8268,-107.7995],[15.15,12241,37.82757,-107.79927],[15.22,12125,37.82846,-107.79962],[15.34,11938,37.82983,-107.80042],[15.44,11805,37.83091,-107.80061],[15.52,11669,37.83168,-107.8015],[15.75,11624,37.83303,-107.80481],[15.91,11589,37.83441,-107.80718],[16.01,11480,37.83583,-107.80741],[16.11,11420,37.83709,-107.8079],[16.2,11405,37.83814,-107.80881],[16.32,11359,37.83906,-107.81032],[16.5,11299,37.84152,-107.80947],[16.67,11151,37.84367,-107.80835],[16.82,10995,37.84572,-107.80732],[17.04,10814,37.84872,-107.80701],[17.29,10563,37.84943,-107.80472],[17.48,10460,37.85155,-107.8036],[17.71,10295,37.85374,-107.80455],[17.95,10190,37.85677,-107.80535],[18.24,10169,37.85872,-107.80965],[18.49,10370,37.85965,-107.80576],[18.66,10520,37.86054,-107.80391],[18.87,10744,37.86213,-107.80132],[19.02,10909,37.86214,-107.79869],[19.2,11170,37.86305,-107.79796],[19.38,11427,37.86453,-107.79577],[19.55,11633,37.86539,-107.79605],[19.73,11896,37.86673,-107.79452],[19.96,12188,37.86938,-107.79402],[20.19,12391,37.86995,-107.79312],[20.38,12599,37.87039,-107.7917],[20.62,12922,37.87116,-107.79052],[20.91,13154,37.87497,-107.79196],[21.09,12985,37.87756,-107.79138],[21.19,13009,37.87826,-107.79201],[21.27,12944,37.87847,-107.79321],[21.38,12837,37.87885,-107.79474],[21.48,12733,37.87907,-107.79563],[21.57,12626,37.87988,-107.79657],[21.71,12492,37.88159,-107.7976],[21.94,12384,37.8844,-107.79962],[22.14,12248,37.88625,-107.8023],[22.38,12202,37.88839,-107.80536],[22.43,12154,37.88865,-107.80597],[22.54,12041,37.8893,-107.80701],[22.68,11945,37.88924,-107.80777],[22.81,11860,37.89019,-107.80933],[22.86,11791,37.8904,-107.80982],[22.97,11760,37.8919,-107.81],[23.11,11644,37.89369,-107.80916],[23.24,11486,37.89535,-107.80978],[23.31,11486,37.89463,-107.81014],[23.42,11486,37.89414,-107.81117],[23.53,10882,37.89561,-107.81184],[23.6,10882,37.89588,-107.81261],[23.78,10882,37.89822,-107.81376],[23.9,10809,37.89986,-107.8139],[24.05,10591,37.90192,-107.81404],[24.27,10384,37.90497,-107.81498],[24.44,10287,37.90735,-107.81457],[24.62,10089,37.90962,-107.81333],[24.72,9977,37.90996,-107.81264],[24.82,9829,37.91066,-107.81161],[24.93,9687,37.91019,-107.81094],[25.21,9485,37.91235,-107.80799],[25.41,9381,37.91511,-107.80785],[25.69,9277,37.91908,-107.80692],[26.05,9178,37.92409,-107.80728],[26.39,9044,37.92892,-107.80597],[26.62,8944,37.93169,-107.80769],[26.88,8835,37.93335,-107.81045],[26.98,8790,37.93366,-107.80869],[27.12,8768,37.93509,-107.80751],[27.41,8834,37.93827,-107.80814],[27.57,9017,37.93904,-107.80625],[27.73,9109,37.94056,-107.80817],[27.87,9242,37.94178,-107.80983],[27.98,9362,37.94263,-107.80982],[28.18,9546,37.94258,-107.80776],[28.37,9679,37.94508,-107.80715],[28.71,9872,37.94792,-107.80248],[29.09,10297,37.95178,-107.79805],[29.38,10669,37.9538,-107.79565],[29.72,11039,37.95786,-107.79438],[30.04,11470,37.95973,-107.7903],[30.41,11831,37.95742,-107.78538],[30.71,12306,37.95685,-107.78056],[30.99,12559,37.95692,-107.77795],[31.32,12888,37.96093,-107.77501],[31.65,12874,37.9634,-107.7724],[31.92,12464,37.96689,-107.77226],[32.13,12175,37.96967,-107.77245],[32.3,12032,37.97165,-107.77218],[32.56,11864,37.97438,-107.76948],[32.8,11730,37.97483,-107.76541],[32.99,11631,37.97581,-107.76286],[33.3,11417,37.97696,-107.76264],[33.48,11284,37.9777,-107.76319],[33.79,11122,37.97846,-107.76739],[34.08,10960,37.98082,-107.76353],[34.27,10867,37.98139,-107.76242],[34.5,10784,37.98012,-107.75996],[34.84,10713,37.97656,-107.75593],[35.16,10622,37.9757,-107.7505],[35.54,10510,37.97518,-107.74352],[35.83,10288,37.97357,-107.73886],[36.07,10113,37.97283,-107.73506],[36.44,9945,37.97341,-107.72892],[36.81,9731,37.9752,-107.7227],[37.22,9598,37.97848,-107.71675],[37.62,9340,37.98295,-107.71225],[37.86,9156,37.9842,-107.71021],[38.15,9003,37.98705,-107.70655],[38.54,8866,37.99163,-107.70292],[38.9,8721,37.99554,-107.69902],[39.3,8621,38.00042,-107.69638],[39.55,8523,38.00256,-107.69279],[39.9,8544,38.00695,-107.68975],[40.16,8412,38.01009,-107.68773],[40.42,8336,38.01254,-107.68496],[40.71,8258,38.01479,-107.68102],[40.97,8133,38.01586,-107.67687],[41.22,8049,38.01686,-107.67735],[41.38,7991,38.01838,-107.67936],[41.57,7865,38.02017,-107.67717],[41.87,7757,38.02301,-107.67523],[42.29,7702,38.02837,-107.67318],[42.47,7714,38.02599,-107.67283],[42.92,7761,38.0205,-107.67422],[43.16,7825,38.01893,-107.67676],[43.38,7899,38.01699,-107.67548],[43.52,7961,38.01621,-107.67359],[43.63,8071,38.01563,-107.67206],[43.85,8223,38.01456,-107.66845],[43.99,8217,38.01352,-107.66702],[44.06,8196,38.01294,-107.66687],[44.21,8195,38.01184,-107.66492],[44.4,8174,38.00922,-107.66424],[44.52,8248,38.00767,-107.66369],[44.64,8205,38.00623,-107.66396],[44.78,8343,38.00457,-107.66284],[44.93,8438,38.00275,-107.66232],[45.04,8563,38.00354,-107.66119],[45.24,8711,38.00387,-107.6602],[45.5,8915,38.00528,-107.65918],[45.73,9199,38.00392,-107.65805],[45.91,9386,38.00309,-107.6573],[46.07,9510,38.00359,-107.65554],[46.26,9563,38.00272,-107.65272],[46.37,9561,38.0022,-107.65102],[46.54,9594,38.00064,-107.64995],[46.83,9728,37.99979,-107.64507],[47.07,9898,37.99913,-107.6414],[47.25,9993,37.99887,-107.63871],[47.47,10037,37.99943,-107.63508],[47.61,10129,37.99982,-107.63307],[47.74,10209,37.99967,-107.63084],[47.93,10300,37.9994,-107.62761],[48.09,10425,37.99914,-107.62483],[48.26,10614,37.99888,-107.62277],[48.44,10748,37.99804,-107.61995],[48.55,10856,37.99796,-107.61856],[48.79,11028,37.99669,-107.61503],[48.92,11085,37.9965,-107.6127],[49.07,11184,37.99534,-107.61073],[49.28,11244,37.99281,-107.60898],[49.38,11277,37.99179,-107.60795],[49.47,11322,37.99068,-107.60791],[49.56,11412,37.98957,-107.60746],[49.68,11433,37.98798,-107.60674],[49.8,11563,37.98662,-107.60591],[49.96,11671,37.98568,-107.60401],[50.19,11823,37.98451,-107.6003],[50.39,11932,37.98281,-107.59783],[50.62,12097,37.97981,-107.59671],[50.87,12256,37.97669,-107.59489],[51.17,12519,37.97303,-107.59239],[51.33,12765,37.97117,-107.5909],[51.49,12938,37.96982,-107.59023],[51.73,12830,37.96738,-107.58754],[51.91,12694,37.96604,-107.58472],[52.2,12774,37.9661,-107.57981],[52.4,12649,37.9646,-107.57666],[52.61,12522,37.96357,-107.57613],[52.81,12420,37.96284,-107.57733],[52.99,12300,37.96139,-107.57603],[53.09,12237,37.96038,-107.57509],[53.2,12162,37.95984,-107.57558],[53.41,12037,37.95695,-107.57531],[53.79,11907,37.95156,-107.57406],[54.03,11863,37.9487,-107.57615],[54.22,11753,37.94946,-107.57325],[54.45,11677,37.94642,-107.57406],[54.87,11570,37.94037,-107.57361],[55.35,11363,37.93454,-107.5692],[55.66,11238,37.93068,-107.56641],[56.07,10955,37.92583,-107.56309],[56.57,10797,37.91963,-107.55888],[57.06,10933,37.91773,-107.55571],[57.43,11190,37.91846,-107.55326],[57.7,11865,37.91748,-107.5489],[57.92,11865,37.91641,-107.54545],[58.09,11957,37.91562,-107.54265],[58.34,12493,37.91399,-107.5386],[58.5,12493,37.91258,-107.5362],[58.67,12493,37.91209,-107.53374],[58.86,12493,37.91021,-107.53144],[58.96,12786,37.91045,-107.53077],[59.16,12786,37.91069,-107.52773],[59.34,12786,37.90954,-107.52517],[59.5,12786,37.90913,-107.52253],[59.67,12465,37.90797,-107.51993],[59.83,12465,37.90737,-107.51739],[59.95,12465,37.90734,-107.51613],[60.08,12465,37.90681,-107.51411],[60.2,12945,37.90661,-107.51214],[60.3,12945,37.90585,-107.51187],[60.38,12945,37.90497,-107.5118],[60.44,12945,37.90485,-107.51107],[60.53,12976,37.90543,-107.50981],[60.68,12976,37.90716,-107.5088],[60.84,13463,37.90798,-107.50821],[61.0,13463,37.90794,-107.5067],[61.13,13546,37.90863,-107.50567],[61.26,13774,37.90999,-107.50607],[61.38,13897,37.91124,-107.50547],[61.47,13901,37.91239,-107.50462],[61.53,13904,37.91304,-107.50441],[61.67,13910,37.91476,-107.50534],[61.74,13911,37.91565,-107.50516],[61.85,13911,37.91718,-107.50499],[61.98,13911,37.91743,-107.50427],[62.12,12963,37.91887,-107.50305],[62.32,12963,37.9211,-107.50117],[62.48,12787,37.92224,-107.49898],[62.67,12601,37.92172,-107.49563],[62.78,12508,37.92182,-107.49437],[62.97,12373,37.91926,-107.4945],[63.13,12201,37.92061,-107.4924],[63.24,12055,37.92147,-107.4908],[63.41,11953,37.92237,-107.48824],[63.62,11820,37.92376,-107.4851],[63.78,11713,37.92552,-107.48327],[63.98,11559,37.92786,-107.48152],[64.17,11375,37.9292,-107.47875],[64.35,11259,37.93084,-107.47651],[64.5,11143,37.93165,-107.47386],[64.59,11111,37.93239,-107.47266],[64.73,11012,37.93255,-107.47028],[64.93,10822,37.9336,-107.46743],[65.17,10533,37.93481,-107.46357],[65.33,10405,37.93626,-107.46164],[65.62,10416,37.93445,-107.45821],[66.13,10345,37.92727,-107.45659],[66.41,10335,37.92374,-107.45455],[66.75,10257,37.9198,-107.4509],[67.05,10229,37.9167,-107.44732],[67.27,10195,37.91427,-107.44481],[67.58,10164,37.91109,-107.4411],[67.72,10169,37.90957,-107.44006],[68.03,10078,37.90745,-107.43529],[68.26,10039,37.90595,-107.43256],[68.55,9937,37.9041,-107.42802],[68.8,9591,37.90241,-107.42602],[69.18,9597,37.90092,-107.43281],[69.36,9632,37.89872,-107.43355],[69.62,9857,37.89654,-107.4332],[69.82,9857,37.89608,-107.43264],[70.05,10291,37.89463,-107.43354],[70.24,10303,37.89325,-107.43314],[70.49,10466,37.88997,-107.43417],[70.63,10592,37.88818,-107.43402],[70.89,10821,37.88481,-107.43475],[71.05,10980,37.88269,-107.43515],[71.24,11103,37.88091,-107.43667],[71.42,11240,37.8792,-107.43605],[71.56,11340,37.87784,-107.43675],[71.73,11451,37.87566,-107.43648],[71.94,11562,37.87386,-107.43917],[72.06,11562,37.87273,-107.44013],[72.15,11627,37.87196,-107.4402],[72.27,11744,37.87134,-107.43864],[72.37,11789,37.8717,-107.43703],[72.54,11914,37.86962,-107.43666],[72.83,12077,37.86556,-107.43654],[73.0,12070,37.86327,-107.43711],[73.2,12040,37.86052,-107.43724],[73.34,12007,37.85867,-107.43791],[73.51,12066,37.8567,-107.43948],[73.76,12093,37.85337,-107.44091],[74.15,12175,37.84893,-107.44476],[74.35,12237,37.8472,-107.44476],[74.56,12399,37.84465,-107.44433],[74.78,12379,37.84459,-107.44048],[75.01,12323,37.84398,-107.43953],[75.3,12190,37.84064,-107.44249],[75.46,12127,37.84052,-107.4453],[75.65,12006,37.83961,-107.44799],[75.76,11895,37.83915,-107.4493],[76.03,11836,37.83653,-107.45252],[76.41,11766,37.83198,-107.4564],[76.64,11695,37.82894,-107.4581],[76.93,11675,37.82572,-107.46084],[77.17,11656,37.82275,-107.46303],[77.41,11604,37.8194,-107.46412],[77.66,11484,37.81586,-107.4647],[77.81,11407,37.81384,-107.46437],[78.03,11403,37.81122,-107.46599],[78.26,11258,37.80841,-107.46769],[78.46,11249,37.80579,-107.46626],[78.63,11221,37.80366,-107.46491],[78.86,11199,37.80085,-107.46295],[79.07,11175,37.80166,-107.46509],[79.22,11214,37.80263,-107.46724],[79.39,11271,37.80446,-107.46916],[79.69,11457,37.8029,-107.47361],[79.94,11457,37.80189,-107.47758],[80.2,11497,37.8011,-107.48224],[80.47,11495,37.79984,-107.4868],[80.76,11527,37.80018,-107.49198],[81.0,11470,37.80077,-107.49622],[81.29,11555,37.80036,-107.50142],[81.55,11648,37.80075,-107.5058],[81.83,11746,37.80298,-107.50955],[82.05,11931,37.8048,-107.51246],[82.18,12010,37.80516,-107.51465],[82.4,12090,37.80771,-107.51644],[82.59,12237,37.80971,-107.51863],[82.82,12490,37.81149,-107.52208],[83.03,12540,37.81381,-107.52442],[83.32,12311,37.81552,-107.52877],[83.47,12216,37.81465,-107.53086],[83.69,11994,37.81297,-107.53413],[83.86,11881,37.81262,-107.5365],[84.03,11967,37.81076,-107.5379],[84.12,12051,37.81114,-107.53938],[84.25,12212,37.81237,-107.54057],[84.55,12459,37.81142,-107.54473],[84.77,12744,37.8099,-107.54769],[85.05,13034,37.80763,-107.55007],[85.29,13125,37.80477,-107.55127],[85.42,13061,37.80322,-107.55002],[85.57,13002,37.80112,-107.55011],[85.81,12870,37.7979,-107.54846],[86.0,12630,37.79589,-107.54765],[86.15,12622,37.79442,-107.54958],[86.34,12701,37.79337,-107.55262],[86.48,12801,37.79241,-107.55405],[86.7,13002,37.78959,-107.55476],[87.03,12594,37.78606,-107.5579],[87.25,12269,37.78561,-107.56158],[87.6,12110,37.78915,-107.56578],[87.83,12000,37.79166,-107.56829],[88.11,11897,37.79508,-107.57071],[88.3,11592,37.79766,-107.5717],[88.52,11238,37.7974,-107.57406],[88.85,10844,37.79319,-107.5754],[89.11,10537,37.78976,-107.57635],[89.41,10383,37.79348,-107.57796],[89.57,10468,37.79475,-107.5801],[89.84,10822,37.79656,-107.58118],[90.0,11029,37.7948,-107.58234],[90.12,11206,37.79554,-107.58329],[90.27,11433,37.79458,-107.58463],[90.35,11559,37.79444,-107.58525],[90.48,11752,37.79481,-107.5866],[90.67,12025,37.79441,-107.5892],[90.81,12249,37.79459,-107.59022],[90.99,12554,37.79446,-107.59304],[91.13,12776,37.79594,-107.59363],[91.26,12979,37.79718,-107.5944],[91.42,12950,37.79924,-107.59448],[91.66,12746,37.8026,-107.59434],[91.9,12423,37.80558,-107.5965],[92.01,12285,37.80648,-107.59807],[92.21,12099,37.80812,-107.60092],[92.33,11976,37.80911,-107.60258],[92.58,11735,37.81215,-107.60348],[92.88,11517,37.81348,-107.6054],[93.12,11378,37.81564,-107.60643],[93.53,11025,37.81967,-107.61194],[93.83,10797,37.82008,-107.61445],[94.12,10578,37.82369,-107.614],[94.57,10242,37.81872,-107.61719],[94.91,9998,37.8202,-107.61946],[95.19,9859,37.81897,-107.62237],[95.55,9764,37.82402,-107.62358],[95.71,9645,37.82506,-107.62582],[96.0,9595,37.82424,-107.63052],[96.25,9526,37.8225,-107.63419],[96.44,9539,37.82149,-107.63714],[96.81,9496,37.81873,-107.64273],[97.2,9545,37.81525,-107.64813],[97.58,9397,37.81252,-107.65399],[97.87,9305,37.81113,-107.65901],[98.44,9308,37.81221,-107.66538],[98.46,9310,37.8124,-107.66571]];  // [mile, ele_ft, lat, lon]
 
 /* ---------------- State ---------------- */
-let map, fireWMS, perimeterLayer, aqiLayer, aidLayer, hoverMarker;
+let map, fireWMS, perimeterLayer, aqiLayer, purpleairLayer, aidLayer, hoverMarker;
 let fireDate = new Date();          // satellite detection day
 let latestWeather = [], latestAir = [], latestAlerts = [], latestPerims = [];
 let autoTimer = null;
@@ -560,10 +785,12 @@ function haversineMi(a,b,c,d){
 function initMap(){
   map = L.map("map",{ zoomControl:true, attributionControl:true }).setView([37.91,-107.62], 11);
 
-  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
-    maxZoom:17, subdomains:"abc",
-    attribution:'© OpenTopoMap · OpenStreetMap contributors'
+  const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+    maxZoom:19, subdomains:"abc", attribution:'© OpenStreetMap contributors'
   }).addTo(map);
+  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",{
+    maxZoom:17, subdomains:"abc", attribution:'© OpenTopoMap (CC-BY-SA) · OpenStreetMap'
+  });
   const dark = L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{
     maxZoom:19, subdomains:"abcd", attribution:'© CARTO · OpenStreetMap contributors'
   });
@@ -593,19 +820,21 @@ function initMap(){
   }).addTo(map);
 
   perimeterLayer = L.geoJSON(null,{
-    style:{ color:"#ef5350", weight:2, fillColor:"#ef5350", fillOpacity:.22 },
+    style:(f)=>{ const c = fireTypeOf(f.properties||{})==="prescribed" ? "#f5a623" : "#ef5350"; return { color:c, weight:2, fillColor:c, fillOpacity:.20 }; },
     onEachFeature:(f,layer)=>{
       const p=f.properties||{};
       const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed incident";
       const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize;
       const cont=p.attr_PercentContained;
-      layer.bindPopup(`<b>${name}</b><br>${acres?Math.round(acres).toLocaleString()+" acres":"size n/a"}`
+      const tl=fireTypeLabel(fireTypeOf(p));
+      layer.bindPopup(`<b>${name}</b><br>${tl}${acres?` \u00b7 ${Math.round(acres).toLocaleString()} acres`:""}`
         + (cont!=null?`<br>${Math.round(cont)}% contained`:"")
         + `<br><span style="color:#9fb0c0">NIFC live perimeter</span>`);
     }
   }).addTo(map);
 
-  aqiLayer = L.layerGroup();
+  aqiLayer = L.layerGroup().addTo(map);
+  purpleairLayer = L.layerGroup(); // not added by default — toggled via layer control
 
   // Aid stations (snapped to official track)
   aidLayer = L.layerGroup();
@@ -622,13 +851,14 @@ function initMap(){
   hoverMarker.addTo(map); hoverMarker.setStyle({opacity:0,fillOpacity:0});
 
   L.control.layers(
-    { "Terrain (OpenTopoMap)":topo, "Dark":dark, "Satellite":sat },
+    { "Streets (OSM)":osm, "Terrain":topo, "Dark":dark, "Satellite":sat },
     {
       "Course corridor + aid towns":courseGroup,
       "Fire detections (VIIRS)":fireWMS,
       "Fire perimeters (NIFC)":perimeterLayer,
       "Aid stations":aidLayer,
-      "Air quality (towns)":aqiLayer
+      "Air quality (towns)":aqiLayer,
+      "PurpleAir sensors":purpleairLayer
     },
     { collapsed:false }
   ).addTo(map);
@@ -656,7 +886,7 @@ async function fetchAir(){
   const lats = LOCATIONS.map(l=>l.lat).join(",");
   const lons = LOCATIONS.map(l=>l.lon).join(",");
   const url = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lats}&longitude=${lons}`
-    + `&current=us_aqi,pm2_5,pm10&timezone=America%2FDenver`;
+    + `&current=us_aqi_pm2_5,us_aqi,us_aqi_o3,pm2_5,pm10&hourly=us_aqi_pm2_5&past_days=1&forecast_days=7&timezone=America%2FDenver`;
   const r = await fetch(url);
   if(!r.ok) throw new Error("air");
   const j = await r.json();
@@ -679,6 +909,12 @@ async function fetchAlerts(){
   return [...seen.values()];
 }
 
+async function fetchPurpleAir(){
+  const r = await fetch("./data/purpleair.json");
+  if(!r.ok) throw new Error("purpleair");
+  return await r.json();
+}
+
 async function fetchPerimeters(){
   const b = COURSE_BBOX;
   const url = "https://services3.arcgis.com/T4QMspbfLg3qTGWY/arcgis/rest/services/"
@@ -692,14 +928,31 @@ async function fetchPerimeters(){
 }
 
 /* ---------------- Renderers ---------------- */
+function renderLayerStatus(){
+  const el = document.getElementById("mapStatus"); if(!el) return;
+  const nP = Array.isArray(latestPerims) ? latestPerims.length : 0;
+  const cur = (typeof currentMaxAqi==="function") ? currentMaxAqi() : null;
+  const aqiCol = cur ? aqiInfo(cur.max).color : "#6f8497";
+  const aqiTxt = cur ? `${Math.round(cur.max)} ${aqiInfo(cur.max).cat}` : "loading…";
+  el.innerHTML =
+      `<span><i class="sw" style="background:#ef5350"></i>Fire perimeters (NIFC): <b>${nP?`${nP} in region`:"none currently"}</b>${(()=>{const rx=(latestPerims||[]).filter(x=>x.type==="prescribed").length;return rx?` \u00b7 ${nP-rx} wildfire/complex, ${rx} prescribed`:"";})()}</span>`
+    + `<span><i class="sw" style="background:#f5a623"></i>Satellite detections (VIIRS): <b>${prettyDate(fireDate)}</b> · 12–24 h latency</span>`
+    + `<span><i class="sw" style="background:${aqiCol}"></i>Air quality: <b>course max ${aqiTxt}</b></span>`
+    + `<span><i class="sw" style="background:#3fb6c9"></i>Course + <b>${AID_STATIONS.length} aid stations</b></span>`;
+}
+
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
     const a = air[i]?.current || {};
-    const aqi = a.us_aqi;
+    const aqi = a.us_aqi_pm2_5;
+    const comp = a.us_aqi, o3 = a.us_aqi_o3;
     const info = aqiInfo(aqi);
+    const badgeTitle = "PM2.5 (smoke) US AQI"
+      + (comp!=null?` \u00b7 composite US AQI ${Math.round(comp)}`:"")
+      + (o3!=null?` \u00b7 ozone AQI ${Math.round(o3)}`:"");
     const gust = w.wind_gusts_10m;
     const wind = w.wind_speed_10m;
     const card = document.createElement("div");
@@ -716,7 +969,7 @@ function renderCards(weather, air){
           <div class="v num">${wind!=null?Math.round(wind):"—"}</div>
           <div class="u">${windDir(w.wind_direction_10m)} wind</div>
         </div>
-        <div class="aqibadge" style="background:${info.color}">
+        <div class="aqibadge" style="background:${info.color}" title="${badgeTitle}">
           <div class="a num">${aqi!=null?Math.round(aqi):"—"}</div>
           <div class="c">${info.cat}</div>
         </div>
@@ -728,13 +981,16 @@ function renderCards(weather, air){
   if(aqiLayer){
     aqiLayer.clearLayers();
     LOCATIONS.forEach((l,i)=>{
-      const aqi = air[i]?.current?.us_aqi;
+      const aqi = air[i]?.current?.us_aqi_pm2_5;
+      const comp = air[i]?.current?.us_aqi;
+      const o3 = air[i]?.current?.us_aqi_o3;
       const info = aqiInfo(aqi);
       const pm = air[i]?.current?.pm2_5;
       L.circleMarker([l.lat,l.lon],{
         radius:11, color:"#0c1117", weight:2, fillColor:info.color, fillOpacity:.92
-      }).bindPopup(`<b>${l.name}</b><br>US AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
-        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")).addTo(aqiLayer);
+      }).bindPopup(`<b>${l.name}</b><br>PM2.5 AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
+        + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")
+        + (comp!=null?`<br><span style="color:#9fb0c0">Composite US AQI ${Math.round(comp)}${o3!=null?` · O₃ AQI ${Math.round(o3)}`:""}</span>`:"")).addTo(aqiLayer);
     });
   }
 }
@@ -759,31 +1015,98 @@ function renderAlerts(alerts){
   });
 }
 
+function fireTypeOf(p){
+  const c = String(p.attr_IncidentTypeCategory||p.IncidentTypeCategory||p.poly_FeatureCategory||p.FeatureCategory||"").toUpperCase();
+  if(c.startsWith("RX")||c.indexOf("PRESCRIB")>=0) return "prescribed";
+  if(c.startsWith("CX")||c.indexOf("COMPLEX")>=0) return "complex";
+  if(c.startsWith("WF")||c.indexOf("WILDFIRE")>=0) return "wildfire";
+  return "unknown";
+}
+function fireTypeLabel(t){ return t==="prescribed"?"Prescribed burn":t==="complex"?"Complex":t==="wildfire"?"Wildfire":"Fire"; }
+function fireAgency(p){
+  const raw = String(p.attr_POOProtectingAgency||p.POOProtectingAgency||p.attr_POOLandownerCategory||p.attr_POOJurisdictionalAgency||p.irwin_POOProtectingAgency||"").toUpperCase().trim();
+  const unit = String(p.attr_POOProtectingUnit||p.attr_UnitIdentifier||p.irwin_POOProtectingUnit||"").toUpperCase();
+  const M={USFS:"USFS",FS:"USFS",BLM:"BLM",NPS:"NPS",BIA:"BIA",FWS:"USFWS",DOD:"DoD"};
+  if(M[raw]) return M[raw];
+  if(/USFS|FOREST SERVICE/.test(raw)) return "USFS";
+  if(raw.indexOf("BLM")>=0) return "BLM";
+  if(/\bST\b|C&L|COUNTY|LOCAL|STATE/.test(raw)) return "State/Local";
+  if(/^CO-[A-Z]*F$/.test(unit) || unit.indexOf("SJF")>=0) return "USFS";
+  if(/^CO-[A-Z]*D$/.test(unit)) return "BLM";
+  return raw||"Other";
+}
+function numOrNull(v){ const n=parseFloat(v); return isFinite(n)?n:null; }
+
+function pm25toAqi(pm){
+  if(pm==null||isNaN(pm)) return null;
+  const bp=[[0,12,0,50],[12.1,35.4,51,100],[35.5,55.4,101,150],
+            [55.5,150.4,151,200],[150.5,250.4,201,300],[250.5,350.4,301,400],[350.5,500.4,401,500]];
+  for(const [lo,hi,alo,ahi] of bp) if(pm>=lo&&pm<=hi) return Math.round((ahi-alo)/(hi-lo)*(pm-lo)+alo);
+  return pm>500?500:0;
+}
+
+function renderPurpleAir(j){
+  if(!purpleairLayer||!j||!j.fields||!j.data) return;
+  purpleairLayer.clearLayers();
+  const fi=f=>j.fields.indexOf(f);
+  const iName=fi("name"),iLat=fi("latitude"),iLon=fi("longitude");
+  const iPm=fi("pm2.5_atm"),iSeen=fi("last_seen");
+  j.data.forEach(row=>{
+    const lat=row[iLat],lon=row[iLon];
+    if(lat==null||lon==null) return;
+    const pm=row[iPm],name=row[iName]||"Sensor";
+    const aqi=pm25toAqi(pm);
+    const info=aqiInfo(aqi);
+    const seen=iSeen>=0&&row[iSeen]?new Date(row[iSeen]*1000).toLocaleTimeString(undefined,{hour:"numeric",minute:"2-digit"}):"";
+    L.circleMarker([lat,lon],{
+      radius:6,color:"#0c1117",weight:1.5,fillColor:info.color,fillOpacity:.85
+    }).bindPopup(`<b>${name}</b><br>PM2.5 ${pm!=null?pm.toFixed(1):"—"} µg/m³`
+      +(aqi!=null?`<br>AQI ~${aqi} · ${info.cat}`:"")
+      +(seen?`<br><span style="color:#9fb0c0">Updated ${seen}</span>`:""
+    )).addTo(purpleairLayer);
+  });
+}
+
 function renderPerimeters(geo){
   perimeterLayer.clearLayers();
   latestPerims = [];
+  latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
   if(!geo || !geo.features) return;
   perimeterLayer.addData(geo);
+  let bestTrig=Infinity, bestTrigName="", bestTrigType="", bestRx=Infinity, bestRxName="";
   geo.features.forEach(f=>{
     const p=f.properties||{};
     const name=p.poly_IncidentName||p.attr_IncidentName||p.IncidentName||"Unnamed";
     const acres=p.poly_GISAcres||p.GISAcres||p.attr_IncidentSize||0;
-    // nearest distance from any course point to any vertex (approx)
-    let minMi = Infinity;
+    const type=fireTypeOf(p);
     const coords = [];
-    const collect = arr => {
-      if(typeof arr[0]==="number"){ coords.push(arr); }
-      else arr.forEach(collect);
-    };
+    const collect = arr => { if(typeof arr[0]==="number") coords.push(arr); else arr.forEach(collect); };
     if(f.geometry && f.geometry.coordinates) collect(f.geometry.coordinates);
-    coords.forEach(c=>{
-      LOCATIONS.forEach(l=>{
-        const d = haversineMi(l.lat,l.lon,c[1],c[0]);
-        if(d<minMi) minMi=d;
-      });
-    });
-    latestPerims.push({ name, acres, minMi:isFinite(minMi)?minMi:null });
+    const stride = coords.length>500 ? Math.ceil(coords.length/500) : 1;
+    let minLoc = Infinity, minCourse = Infinity;
+    for(let i=0;i<coords.length;i+=stride){
+      const c=coords[i];
+      for(const l of LOCATIONS){ const d=haversineMi(l.lat,l.lon,c[1],c[0]); if(d<minLoc) minLoc=d; }
+      for(let pi=0; pi<COURSE.length; pi+=2){ const d=haversineMi(COURSE[pi][0],COURSE[pi][1],c[1],c[0]); if(d<minCourse) minCourse=d; }
+    }
+    latestPerims.push({ name, acres, type, minMi:isFinite(minLoc)?minLoc:null, courseMi:isFinite(minCourse)?minCourse:null,
+      agency: fireAgency(p),
+      pct: numOrNull(p.attr_PercentContained ?? p.irwin_PercentContained ?? p.PercentContained),
+      discovered: p.attr_FireDiscoveryDateTime || p.irwin_FireDiscoveryDateTime || p.FireDiscoveryDateTime || null,
+      cause: p.attr_FireCause || p.irwin_FireCause || "",
+      desc: p.attr_IncidentShortDescription || p.irwin_IncidentShortDescription || "" });
+    if(isFinite(minCourse)){
+      if(type==="prescribed"){ if(minCourse<bestRx){ bestRx=minCourse; bestRxName=name; } }
+      else { if(minCourse<bestTrig){ bestTrig=minCourse; bestTrigName=name; bestTrigType=type; } }
+    }
   });
+  latestFire = {
+    onCourse: isFinite(bestTrig) && bestTrig<=FIRE_ON_COURSE_MI,
+    nearestCourseMi: isFinite(bestTrig)?bestTrig:null,
+    nearestName: bestTrigName, nearestType: bestTrigType||"",
+    rxOnCourse: isFinite(bestRx) && bestRx<=FIRE_ON_COURSE_MI,
+    rxName: bestRxName, rxMi: isFinite(bestRx)?bestRx:null
+  };
 }
 
 /* ---------------- Posture engine (advisory) ---------------- */
@@ -794,7 +1117,7 @@ function computePosture(){
 
   // Air quality
   let worstAqi = -1, worstLoc = "";
-  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
+  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi_pm2_5; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
   if(worstAqi>=0){
     const info = aqiInfo(worstAqi);
     let sev="go";
@@ -857,6 +1180,8 @@ async function loadAll(){
     const [w,a] = await Promise.all([fetchWeather(), fetchAir()]);
     latestWeather = w; latestAir = a;
     renderCards(w,a);
+    latestAqiWindow = aqiWindowMax(a);
+    buildAqiChart();
   }catch(e){
     $("#cards").innerHTML = `<div class="err">Could not load wind/AQI from Open-Meteo. Retry shortly.</div>`;
   }
@@ -866,13 +1191,19 @@ async function loadAll(){
   // Perimeters
   try{ const geo = await fetchPerimeters(); renderPerimeters(geo); }
   catch(e){ /* keep map clean; sources panel covers fallback */ }
+  // PurpleAir (static JSON committed by GitHub Action every 10 min)
+  try{ const pa = await fetchPurpleAir(); renderPurpleAir(pa); }
+  catch(e){ /* optional layer — silent fail if file not yet generated */ }
 
   computePosture();
+  renderDecision();
+  renderFireUpdates();
 
   // refresh NWS forecast for the active location
   Object.keys(fcCache).forEach(k=>delete fcCache[k]);
   selectForecast(fcActive);
 
+  renderLayerStatus();
   $("#updatedAt").textContent = new Date().toLocaleString(undefined,{hour:"numeric",minute:"2-digit",month:"short",day:"numeric"});
   $("#refreshBtn").disabled = false;
 }
@@ -978,7 +1309,7 @@ function buildProfile(){
     `${xmax.toFixed(1)} mi · +32,500 ft climb · high pt 14,048 ft (Handies)`;
 }
 let _profRz;
-window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(buildProfile,180); });
+window.addEventListener("resize", ()=>{ clearTimeout(_profRz); _profRz=setTimeout(()=>{ buildProfile(); buildAqiChart(); },180); });
 
 /* ---------------- NWS forecast ---------------- */
 const fcCache = {};
@@ -1061,12 +1392,358 @@ function renderForecast(d){
   body.innerHTML = html;
 }
 
+/* ---------------- Cancellation decision matrix ---------------- */
+const EVENT_WINDOW = { startISO:"2026-07-09T06:00", endISO:"2026-07-12T18:00",
+  label:"Jul 9, 6:00 AM \u2013 Jul 12, 6:00 PM MT" };
+const FIRE_ON_COURSE_MI = 1.0;
+
+const board = { fire:"auto", extra:false, extraLabel:"", emerg:false, access:false, aid:0, commFin:"", rev:"" };
+let latestAqiWindow = null;
+let latestFire = { onCourse:false, nearestCourseMi:null, nearestName:"", nearestType:"", rxOnCourse:false, rxName:"", rxMi:null };
+
+function aqiWindowMax(air){
+  let max=-1, loc="", when="", covered=0, lastTime="";
+  (air||[]).forEach((a,i)=>{
+    const t=a&&a.hourly&&a.hourly.time, v=a&&a.hourly&&a.hourly.us_aqi_pm2_5;
+    if(!t||!v) return;
+    if(t.length && t[t.length-1]>lastTime) lastTime=t[t.length-1];
+    for(let k=0;k<t.length;k++){
+      if(t[k]>=EVENT_WINDOW.startISO && t[k]<=EVENT_WINDOW.endISO){
+        covered++;
+        if(v[k]!=null && v[k]>max){ max=v[k]; loc=LOCATIONS[i].name; when=t[k]; }
+      }
+    }
+  });
+  return { max: max>=0?max:null, loc, when, covered, lastTime };
+}
+function currentMaxAqi(){
+  let m=-1,loc=""; (latestAir||[]).forEach((a,i)=>{ const v=a&&a.current&&a.current.us_aqi_pm2_5; if(v!=null&&v>m){m=v;loc=LOCATIONS[i].name;} });
+  return m>=0?{max:m,loc}:null;
+}
+function shortWhen(iso){ if(!iso) return ""; const d=new Date(iso.replace(" ","T")); if(isNaN(d)) return iso; return d.toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric"}); }
+
+function computeDecision(){
+  const fireAuto = latestFire.onCourse;
+  const fire = board.fire==="yes" ? true : board.fire==="no" ? false : fireAuto;
+  const aqiMax = latestAqiWindow ? latestAqiWindow.max : null;
+  const aqiTrigger = aqiMax!=null && aqiMax>150;
+  const triggers=[];
+  if(fire){
+    const lbl = (board.fire==="auto")
+      ? `${fireTypeLabel(latestFire.nearestType||"wildfire")} on/near course${latestFire.nearestName?` \u2014 ${latestFire.nearestName}`:""}`
+      : "Fire on course (Board)";
+    triggers.push(lbl);
+  }
+  if(aqiTrigger) triggers.push(`Course AQI ${Math.round(aqiMax)} \u00b7 Unhealthy (>150)`);
+  if(board.extra) triggers.push(board.extraLabel.trim()||"Board-defined safety factor");
+  if(board.emerg) triggers.push("Emergency-response impact (San Juan communities)");
+  if(board.aid>0) triggers.push(`${board.aid} aid station(s) without crew access`);
+  if(board.access) triggers.push("Emergency-response access impacted by closures");
+  const rec = triggers.length ? "cancel" : "proceed";
+  let review=false;
+  if(rec==="proceed"){
+    if(aqiMax!=null && aqiMax>100) review=true;
+    if(latestFire.nearestCourseMi!=null && latestFire.nearestCourseMi<=25) review=true;
+  }
+  return { fire, fireAuto, aqiMax, aqiTrigger, triggers, rec, review };
+}
+
+function setDmStatus(sel, met){
+  const el=$(sel); if(!el) return;
+  el.textContent = met ? "\u25cf Trigger met" : "\u25cb Clear";
+  el.className = "dm-s " + (met?"met":"ok");
+}
+
+function renderDecision(){
+  const D = computeDecision();
+  const panel = $("#decision");
+  panel.dataset.rec = D.rec==="cancel" ? "cancel" : (D.review ? "review" : "proceed");
+  $("#dmWord").textContent = D.rec==="cancel" ? "RECOMMEND CANCEL" : D.review ? "PROCEED \u2014 REVIEW" : "NO CANCEL TRIGGER";
+  $("#dmTriggers").innerHTML = D.triggers.length
+    ? D.triggers.map(t=>`<span class="chip" data-sev="nogo"><span class="pip"></span>${t}</span>`).join("")
+    : `<span class="chip" data-sev="go"><span class="pip"></span>No hard trigger met</span>`;
+
+  // Fire
+  const f = latestFire;
+  let fv;
+  if(f.nearestCourseMi==null && f.rxMi==null) fv = "No mapped fire perimeters in region \u00b7 satellite/perimeter data lags \u2014 confirm with incident command";
+  else if(f.onCourse) fv = `${fireTypeLabel(f.nearestType)} on/near course \u2014 ${f.nearestName||"incident"} (\u2248${f.nearestCourseMi.toFixed(1)} mi from route)`;
+  else if(f.nearestCourseMi!=null) fv = `Nearest ${fireTypeLabel(f.nearestType).toLowerCase()} \u2248${f.nearestCourseMi.toFixed(1)} mi off route${f.nearestName?` \u2014 ${f.nearestName}`:""}`;
+  else fv = "No triggering wildfire perimeters near route";
+  if(f.rxMi!=null) fv += ` <span style="color:var(--amber-soft)">\u00b7 Prescribed burn ${f.rxName} \u2248${f.rxMi.toFixed(1)} mi (not auto-triggering)</span>`;
+  const mode = board.fire==="auto" ? `Auto \u2192 ${f.onCourse?"YES":"no"}` : `Override \u2192 ${board.fire.toUpperCase()}`;
+  $("#dmFireVal").innerHTML = `${fv} <span style="color:var(--ink-3)">\u00b7 ${mode}</span>`;
+  setDmStatus("#dmFireStatus", D.fire);
+
+  // AQI
+  const w = latestAqiWindow;
+  if(w && w.max!=null){
+    const info = aqiInfo(w.max);
+    $("#dmAqiVal").innerHTML = `<b style="color:${info.color};font-size:14px">${Math.round(w.max)}</b> \u00b7 ${info.cat} <span style="color:var(--ink-3)">@ ${w.loc}</span>`;
+    $("#dmAqiNote").textContent = `Max over ${w.covered} forecast hours inside the event window (peak ${shortWhen(w.when)}).`;
+  } else {
+    const cur = currentMaxAqi();
+    $("#dmAqiVal").innerHTML = `<span style="color:var(--ink-3)">Window forecast not available yet</span>`;
+    $("#dmAqiNote").innerHTML = `Event window opens beyond the ~7-day AQI forecast horizon`
+      + (w&&w.lastTime?` (forecast reaches ${shortWhen(w.lastTime)})` : "")
+      + `. Interim \u2014 current max on course: `
+      + (cur?`<b style="color:${aqiInfo(cur.max).color}">${Math.round(cur.max)}</b> ${aqiInfo(cur.max).cat} @ ${cur.loc}`:"\u2014")
+      + `. The trigger arms automatically once the window enters the forecast.`;
+  }
+  setDmStatus("#dmAqiStatus", D.aqiTrigger);
+
+  setDmStatus("#dmExtraStatus", board.extra);
+  setDmStatus("#dmEmergStatus", board.emerg);
+  setDmStatus("#dmAccessStatus", board.access);
+  setDmStatus("#dmAidStatus", board.aid>0);
+  updateFlow();
+}
+
+function wireDecision(){
+  document.querySelectorAll("#decision .seg").forEach(seg=>{
+    seg.addEventListener("click", e=>{
+      const btn=e.target.closest("button"); if(!btn) return;
+      const key=seg.dataset.key, v=btn.dataset.v;
+      seg.querySelectorAll("button").forEach(b=>b.classList.toggle("active", b===btn));
+      if(key==="fire") board.fire=v; else board[key]=(v==="yes");
+      renderDecision();
+    });
+  });
+  const bind=(id,fn)=>{ const el=$("#"+id); if(el) el.addEventListener("input",()=>{ fn(el.value); renderDecision(); }); };
+  bind("dmAid", v=>board.aid=Math.max(0, parseInt(v||"0",10)||0));
+  bind("dmCommFin", v=>board.commFin=v);
+  bind("dmRev", v=>board.rev=v);
+  bind("dmExtraLabel", v=>board.extraLabel=v);
+}
+
+/* ---------------- Decision flow diagram ---------------- */
+const FLOW = [
+  {id:"fire",  n:"1", t:"Fire on course?"},
+  {id:"aqi",   n:"2", t:"Max course AQI > 150 (Unhealthy)?"},
+  {id:"extra", n:"2", t:"Board-defined safety factor?"},
+  {id:"emerg", n:"3", t:"Impacts on emergency response?"},
+  {id:"aid",   n:"5", t:"Aid stations: no crew access \u2265 1?"},
+  {id:"access",n:"5", t:"Emergency-response access impact?"}
+];
+function buildFlow(){
+  const wrap = document.getElementById("flow"); if(!wrap) return;
+  const gx=30, gw=400, gh=54, gap=26, top0=70, cx=230, railX=540, W=820;
+  const cy = i => top0 + i*(gh+gap) + gh/2;
+  const termTop = top0 + FLOW.length*(gh+gap) + 14, termH=52, H=termTop+termH+16;
+  const cancelCx=630, procCx=190;
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cancellation decision path">`;
+  s += `<defs>
+    <marker id="arN" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#2c3a49"/></marker>
+    <marker id="arG" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#5dc77a"/></marker>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#ef5350"/></marker>
+  </defs>`;
+  s += `<g class="flow-start"><rect x="${cx-70}" y="20" width="140" height="34" rx="17"/><text x="${cx}" y="42" text-anchor="middle" font-family="Oswald,sans-serif" font-size="12">START</text></g>`;
+  s += `<path id="sp_0" class="flow-edge" d="M${cx} 54 L${cx} ${cy(0)-gh/2}" marker-end="url(#arN)"/>`;
+  FLOW.forEach((g,i)=>{
+    const y=cy(i), top=y-gh/2;
+    s += `<g class="flow-gate" id="g_${g.id}">
+      <rect x="${gx}" y="${top}" width="${gw}" height="${gh}" rx="10"/>
+      <circle cx="${gx+22}" cy="${y}" r="11" fill="#3fb6c9"/>
+      <text class="gnum" x="${gx+22}" y="${y+3.5}" text-anchor="middle" font-family="Oswald,sans-serif" font-size="11">${g.n}</text>
+      <text class="glabel" x="${gx+42}" y="${y+4.5}" font-family="Inter,sans-serif" font-size="12.5">${g.t}</text>
+      <text class="gval" id="gv_${g.id}" x="${gx+gw-14}" y="${y+4.5}" text-anchor="end" font-family="Oswald,sans-serif" font-size="12.5" font-weight="700" fill="#6f8497">\u2014</text>
+    </g>`;
+    s += `<text class="flow-elabel" x="${gx+gw+12}" y="${y-6}" font-size="9.5">YES</text>`;
+    s += `<path id="ye_${g.id}" class="flow-edge" d="M${gx+gw} ${y} L${railX} ${y}"/>`;
+    if(i<FLOW.length-1){
+      s += `<text class="flow-elabel" x="${cx+9}" y="${y+gh/2+18}" font-size="9.5">No</text>`;
+      s += `<path id="sp_${i+1}" class="flow-edge" d="M${cx} ${y+gh/2} L${cx} ${cy(i+1)-gh/2}" marker-end="url(#arN)"/>`;
+    }
+  });
+  s += `<path id="railEdge" class="flow-edge" d="M${railX} ${cy(0)} L${railX} ${termTop-12} L${cancelCx} ${termTop-12} L${cancelCx} ${termTop}" marker-end="url(#arN)"/>`;
+  const lastB = cy(FLOW.length-1)+gh/2;
+  s += `<text class="flow-elabel" x="${cx+9}" y="${lastB+16}" font-size="9.5">No</text>`;
+  s += `<path id="sp_${FLOW.length}" class="flow-edge" d="M${cx} ${lastB} L${cx} ${termTop-12} L${procCx} ${termTop-12} L${procCx} ${termTop}" marker-end="url(#arN)"/>`;
+  s += `<g class="flow-term proceed" id="termProceed"><rect x="30" y="${termTop}" width="320" height="${termH}" rx="12"/><text id="termProceedTxt" x="190" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#5dc77a">PROCEED</text></g>`;
+  s += `<g class="flow-term cancel" id="termCancel"><rect x="470" y="${termTop}" width="320" height="${termH}" rx="12"/><text x="630" y="${termTop+termH/2+5}" text-anchor="middle" font-size="16" fill="#ef5350">CANCEL EVENT</text></g>`;
+  s += `</svg>`;
+  wrap.innerHTML = s;
+}
+function setSpine(id,on){
+  const el=document.getElementById(id); if(!el) return;
+  el.classList.remove("on","cancel"); if(on) el.classList.add("on");
+  el.setAttribute("marker-end", on?"url(#arG)":"url(#arN)");
+}
+function updateFlow(){
+  if(!document.getElementById("flow") || !document.getElementById("g_fire")) return;
+  const D = computeDecision();
+  const met = {fire:D.fire, aqi:D.aqiTrigger, extra:board.extra, emerg:board.emerg, aid:board.aid>0, access:board.access};
+  let firstMet=-1; FLOW.forEach((g,i)=>{ if(firstMet<0 && met[g.id]) firstMet=i; });
+  const anyMet = firstMet>=0;
+  FLOW.forEach(g=>{
+    const gate=document.getElementById("g_"+g.id), val=document.getElementById("gv_"+g.id), ye=document.getElementById("ye_"+g.id);
+    const on=met[g.id];
+    gate.classList.remove("met","clear"); gate.classList.add(on?"met":"clear");
+    val.textContent = on?"YES":"NO"; val.setAttribute("fill", on?"#ef5350":"#5dc77a");
+    ye.classList.remove("cancel","on"); if(on){ ye.classList.add("cancel"); ye.setAttribute("marker-end","url(#arR)"); } else { ye.removeAttribute("marker-end"); }
+  });
+  const reached = i => (firstMet<0) || (i<=firstMet);
+  setSpine("sp_0", reached(0));
+  for(let i=1;i<FLOW.length;i++){ setSpine("sp_"+i, reached(i) && !met[FLOW[i-1].id]); }
+  setSpine("sp_"+FLOW.length, !anyMet);
+  const rail=document.getElementById("railEdge");
+  rail.classList.remove("cancel","on"); if(anyMet) rail.classList.add("cancel");
+  rail.setAttribute("marker-end", anyMet?"url(#arR)":"url(#arN)");
+  const tc=document.getElementById("termCancel"), tp=document.getElementById("termProceed");
+  tc.classList.toggle("on", anyMet);
+  tp.classList.remove("on","review");
+  if(!anyMet){ tp.classList.add("on"); if(D.review) tp.classList.add("review"); }
+  const tpt=document.getElementById("termProceedTxt");
+  if(tpt){ const rev=!anyMet&&D.review; tpt.textContent = rev?"PROCEED \u00b7 REVIEW":"PROCEED"; tpt.setAttribute("fill", rev?"#f0a830":"#5dc77a"); }
+}
+
+/* ---------------- Tabs ---------------- */
+function activateTab(name){
+  document.querySelectorAll(".tab").forEach(b=>{
+    const on=b.dataset.tab===name;
+    b.classList.toggle("active",on); b.setAttribute("aria-selected", on?"true":"false");
+  });
+  const d=document.getElementById("tab-data"), l=document.getElementById("tab-logic");
+  if(d) d.hidden = name!=="data";
+  if(l) l.hidden = name!=="logic";
+  if(name==="data" && map){ setTimeout(()=>{ map.invalidateSize(); buildProfile(); },60); }
+}
+function wireTabs(){
+  const btns=[...document.querySelectorAll(".tab")];
+  btns.forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
+  const bar=document.querySelector(".tabs");
+  if(bar) bar.addEventListener("keydown",e=>{
+    if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return;
+    let i=btns.findIndex(b=>b.classList.contains("active"));
+    i=(i+(e.key==="ArrowRight"?1:-1)+btns.length)%btns.length;
+    btns[i].focus(); activateTab(btns[i].dataset.tab);
+  });
+}
+
+/* ---------------- Wildland fire updates (USFS / BLM) ---------------- */
+let fuFilter = "all";
+function fmtDisc(d){
+  if(d==null||d==="") return "";
+  const dt = (typeof d==="number") ? new Date(d) : new Date(String(d));
+  return isNaN(dt) ? "" : dt.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+function renderFireUpdates(){
+  const host = document.getElementById("fuList"); if(!host) return;
+  let items = (latestPerims||[]).slice().sort((a,b)=>((a.courseMi==null?1e9:a.courseMi))-((b.courseMi==null?1e9:b.courseMi)));
+  if(fuFilter==="USFS") items = items.filter(i=>i.agency==="USFS");
+  else if(fuFilter==="BLM") items = items.filter(i=>i.agency==="BLM");
+  else if(fuFilter==="other") items = items.filter(i=>i.agency!=="USFS" && i.agency!=="BLM");
+  if(!items.length){
+    host.innerHTML = `<div class="empty">${(latestPerims&&latestPerims.length)?"No mapped incidents match this agency filter.":"No mapped wildland fire incidents in the San Juan region right now."} See the agency links above for the latest narrative updates and any new starts not yet mapped.</div>`;
+    return;
+  }
+  host.innerHTML = items.map(i=>{
+    const ag = i.agency||"Other";
+    const agc = ag==="USFS"?"usfs":ag==="BLM"?"blm":"oth";
+    const onCourse = i.type!=="prescribed" && i.courseMi!=null && i.courseMi<=FIRE_ON_COURSE_MI;
+    const dist = i.courseMi!=null ? `${i.courseMi.toFixed(1)} mi from route` : "distance n/r";
+    const pct = i.pct!=null ? `${Math.round(i.pct)}% contained` : "containment n/r";
+    const acres = i.acres ? `${Math.round(i.acres).toLocaleString()} ac` : "size n/r";
+    const disc = fmtDisc(i.discovered);
+    return `<div class="fu" data-on="${onCourse}">
+      <div class="fu-h"><span class="fu-name">${i.name}</span><span class="fu-ag ${agc}">${ag}</span></div>
+      <div class="fu-m"><span class="fu-type ${i.type}">${fireTypeLabel(i.type)}</span> \u00b7 ${acres} \u00b7 ${pct}${disc?` \u00b7 since ${disc}`:""}</div>
+      <div class="fu-d">${dist}${onCourse?' \u00b7 <b style="color:var(--nogo)">on course</b>':''}${i.cause?` \u00b7 cause: ${i.cause}`:''}</div>
+      ${i.desc?`<div class="fu-x">${i.desc}</div>`:''}
+    </div>`;
+  }).join("");
+}
+function wireFireUpdates(){
+  document.querySelectorAll("#fuPills .fc-pill").forEach(b=>b.addEventListener("click",()=>{
+    fuFilter = b.dataset.f;
+    document.querySelectorAll("#fuPills .fc-pill").forEach(x=>x.classList.toggle("active", x===b));
+    renderFireUpdates();
+  }));
+}
+
+/* ---------------- AQI last-24h chart ---------------- */
+let _aqiPx = [];
+function aqiSeriesData(){
+  const air = latestAir||[];
+  if(!air.length || !air[0] || !air[0].hourly) return null;
+  const t0 = air[0].hourly.time;
+  const ref = (air[0].current && air[0].current.time) || null;
+  let nowIdx = ref ? t0.indexOf(ref) : -1;
+  if(nowIdx<0 && ref){ for(let k=0;k<t0.length;k++){ if(t0[k]<=ref) nowIdx=k; else break; } }
+  if(nowIdx<0) nowIdx = Math.min(t0.length-1, 24);
+  const start = Math.max(0, nowIdx-23);
+  const idxs=[]; for(let k=start;k<=nowIdx;k++) idxs.push(k);
+  const times = idxs.map(k=>t0[k]);
+  const perTown = air.map(a=>{ const v=a.hourly && a.hourly.us_aqi_pm2_5; return idxs.map(k=> (v&&v[k]!=null)?v[k]:null); });
+  const max = idxs.map((k,ii)=>{ let mx=null; perTown.forEach(s=>{ if(s[ii]!=null && (mx==null||s[ii]>mx)) mx=s[ii]; }); return mx; });
+  return { times, perTown, max };
+}
+function buildAqiChart(){
+  const wrap = document.getElementById("aqiWrap"); if(!wrap) return;
+  const tip = wrap.querySelector("#aqiTip");
+  const D = aqiSeriesData();
+  if(!D || !D.max.some(v=>v!=null)){ wrap.innerHTML = `<div class="skel">Loading air-quality history\u2026</div>`; if(tip) wrap.appendChild(tip); return; }
+  const W=wrap.clientWidth||820, H=230, m={l:40,r:14,t:14,b:26}, pw=W-m.l-m.r, ph=H-m.t-m.b;
+  const n=D.times.length;
+  const vals=D.max.filter(v=>v!=null);
+  const peak=Math.max(50,...vals);
+  const ymax=Math.max(150, Math.ceil(peak/50)*50);
+  const X=i=> n<=1 ? m.l+pw/2 : m.l + i/(n-1)*pw;
+  const Y=v=> m.t+ph-(Math.min(v,ymax)/ymax)*ph;
+  const bands=[[0,50,"rgba(86,196,110,.13)"],[50,100,"rgba(233,208,74,.13)"],[100,150,"rgba(239,155,58,.15)"],[150,200,"rgba(236,91,84,.16)"],[200,300,"rgba(169,116,212,.16)"]];
+  let bg=""; bands.forEach(a=>{ const lo=a[0],hi=a[1],c=a[2]; if(lo>=ymax) return; const y1=Y(Math.min(hi,ymax)), y2=Y(lo); bg+=`<rect x="${m.l}" y="${y1.toFixed(1)}" width="${pw}" height="${(y2-y1).toFixed(1)}" fill="${c}"/>`; });
+  let grid=""; for(let v=0;v<=ymax;v+=50){ const y=Y(v).toFixed(1); grid+=`<line x1="${m.l}" y1="${y}" x2="${m.l+pw}" y2="${y}" stroke="rgba(255,255,255,.05)"/>`; grid+=`<text x="${m.l-6}" y="${(+y+3)}" text-anchor="end" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${v}</text>`; }
+  let xax=""; D.times.forEach((t,i)=>{ if(i%6===0 || i===n-1){ xax+=`<text x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9.5" fill="#6f8497" font-family="Inter,sans-serif">${t.slice(11,16)}</text>`; } });
+  let towns=""; D.perTown.forEach(s=>{ let d="",st=false; s.forEach((v,i)=>{ if(v==null){st=false;return;} d+=(st?"L":"M")+X(i).toFixed(1)+" "+Y(v).toFixed(1)+" "; st=true; }); if(d) towns+=`<path d="${d}" fill="none" stroke="rgba(159,176,192,.35)" stroke-width="1"/>`; });
+  let dmax="",st=false; _aqiPx=[]; D.max.forEach((v,i)=>{ if(v==null){st=false;return;} const x=X(i),y=Y(v); dmax+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" "; st=true; _aqiPx.push({x,y,v,t:D.times[i]}); });
+  const cur=D.max[D.max.length-1];
+  const col=cur!=null?aqiInfo(cur).color:"#3fb6c9";
+  const last=_aqiPx[_aqiPx.length-1];
+  const svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="US AQI last 24 hours">
+    ${bg}${grid}${towns}
+    <path d="${dmax}" fill="none" stroke="${col}" stroke-width="2.4"/>
+    ${last?`<circle cx="${last.x.toFixed(1)}" cy="${last.y.toFixed(1)}" r="3.6" fill="${col}"/>`:""}
+    ${xax}
+    <line id="aqiCursor" y1="${m.t}" y2="${m.t+ph}" stroke="#e9eef3" stroke-opacity="0"/>
+    <circle id="aqiDot" r="4" fill="#fff" stroke="${col}" stroke-width="2" opacity="0"/>
+    <rect id="aqiHit" x="${m.l}" y="${m.t}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair"/>
+  </svg>`;
+  wrap.innerHTML=svg; if(tip) wrap.appendChild(tip);
+  // stats
+  let pk=null; D.max.forEach(v=>{ if(v!=null && (pk==null||v>pk)) pk=v; });
+  const st2=document.getElementById("aqiStats");
+  if(st2) st2.innerHTML = (cur!=null)
+    ? `Now <b style="color:${aqiInfo(cur).color}">${Math.round(cur)}</b> ${aqiInfo(cur).cat} \u00b7 24 h peak <b style="color:${aqiInfo(pk).color}">${Math.round(pk)}</b> ${aqiInfo(pk).cat}`
+    : "\u2014";
+  // hover
+  const hit=wrap.querySelector("#aqiHit"), cur2=wrap.querySelector("#aqiCursor"), dot=wrap.querySelector("#aqiDot"), tp=wrap.querySelector("#aqiTip");
+  const sx=()=> (wrap.clientWidth/W)||1;
+  if(hit) hit.addEventListener("pointermove",ev=>{
+    const r=wrap.getBoundingClientRect(); const px=(ev.clientX-r.left)/sx();
+    let best=_aqiPx[0]; for(const p of _aqiPx){ if(Math.abs(p.x-px)<Math.abs(best.x-px)) best=p; }
+    cur2.setAttribute("x1",best.x); cur2.setAttribute("x2",best.x); cur2.setAttribute("stroke-opacity",".5");
+    dot.setAttribute("cx",best.x); dot.setAttribute("cy",best.y); dot.setAttribute("opacity","1");
+    const inf=aqiInfo(best.v);
+    tp.style.opacity="1"; tp.style.left=(best.x*sx())+"px"; tp.style.top=(best.y*sx())+"px";
+    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} \u00b7 ${best.t.slice(11,16)}`;
+  });
+  if(hit) hit.addEventListener("pointerleave",()=>{ cur2.setAttribute("stroke-opacity","0"); dot.setAttribute("opacity","0"); tp.style.opacity="0"; });
+}
+
 /* ---------------- Wire up ---------------- */
 document.addEventListener("DOMContentLoaded", ()=>{
   initMap();
   refreshFireDate();
   buildProfile();
+  buildAqiChart();
   buildFcPills();
+  buildFlow();
+  wireTabs();
+  wireDecision();
+  renderDecision();
+  wireFireUpdates();
+  renderFireUpdates();
+  renderLayerStatus();
   loadAll();
 
   $("#refreshBtn").addEventListener("click", loadAll);
