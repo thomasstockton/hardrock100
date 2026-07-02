@@ -1873,11 +1873,13 @@ function buildPurpleAirChart(){
     if(v==null){st=false;return;}
     const x=X(i),y=Y(v);
     dAvg+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";st=true;
-    _paPx.push({x,y,v,ts});
+    let sensorName="";
+    for(const s of series){ if(s.pts[ts]!=null && Math.abs(s.pts[ts]-v)<1e-6){ sensorName=s.name; break; } }
+    _paPx.push({x,y,v,ts,sensor:sensorName});
   });
 
-  const curAvg=avgByTime[times[times.length-1]];
-  const col=curAvg!=null?aqiInfo(Math.round(curAvg)).color:"#aaa";
+  const curMax=maxByTime[times[times.length-1]];
+  const col=curMax!=null?aqiInfo(Math.round(curMax)).color:"#aaa";
   const last=_paPx[_paPx.length-1];
 
   const svg=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="PurpleAir PM2.5 AQI 72h">
@@ -1892,10 +1894,10 @@ function buildPurpleAirChart(){
   wrap.innerHTML=svg; if(tip) wrap.appendChild(tip);
 
   const st2=document.getElementById("paStats");
-  if(st2&&curAvg!=null){
-    const pk=Math.max(...Object.values(avgByTime).filter(v=>v!=null));
-    const ci=aqiInfo(Math.round(curAvg)),pi=aqiInfo(Math.round(pk));
-    st2.innerHTML=`Avg now <b style="color:${ci.color}">${Math.round(curAvg)}</b> ${ci.cat} &middot; 72 h peak <b style="color:${pi.color}">${Math.round(pk)}</b> &middot; ${series.length} sensors`;
+  if(st2&&curMax!=null){
+    const pk=Math.max(...Object.values(maxByTime).filter(v=>v!=null));
+    const ci=aqiInfo(Math.round(curMax)),pi=aqiInfo(Math.round(pk));
+    st2.innerHTML=`Max now <b style="color:${ci.color}">${Math.round(curMax)}</b> ${ci.cat} &middot; 72 h peak <b style="color:${pi.color}">${Math.round(pk)}</b> &middot; ${series.length} sensors`;
   }
 
   const hit=wrap.querySelector("#paHit"),cur2=wrap.querySelector("#paCursor"),dot=wrap.querySelector("#paDot"),tp=wrap.querySelector("#paTip");
@@ -1908,7 +1910,7 @@ function buildPurpleAirChart(){
     const inf=aqiInfo(Math.round(best.v));
     const d=new Date(best.ts*1000).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
     tp.style.opacity="1";tp.style.left=(best.x*sx())+"px";tp.style.top=(best.y*sx())+"px";
-    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} avg &middot; ${d}`;
+    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} max &middot; ${esc(best.sensor)} &middot; ${d}`;
   });
   if(hit) hit.addEventListener("pointerleave",()=>{cur2.setAttribute("stroke-opacity","0");dot.setAttribute("opacity","0");tp.style.opacity="0";});
 }
