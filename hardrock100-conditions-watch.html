@@ -1234,7 +1234,10 @@ async function loadAll(){
   try{ const geo = await fetchPerimeters(); renderPerimeters(geo); }
   catch(e){ /* keep map clean; sources panel covers fallback */ }
   // PurpleAir (static JSON committed by GitHub Action every 10 min)
-  try{ const pa = await fetchPurpleAir(); latestPurpleAir=pa; renderPurpleAir(pa); buildPurpleAirChart(); }
+  try{ const pa = await fetchPurpleAir(); latestPurpleAir=pa; renderPurpleAir(pa); buildPurpleAirChart();
+    // re-render cards so Course conditions prefer PurpleAir when available
+    if(typeof renderCards==="function") renderCards(latestWeather, latestAir);
+  }
   catch(e){ /* optional layer — silent fail if file not yet generated */ }
 
   computePosture();
