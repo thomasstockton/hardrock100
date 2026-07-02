@@ -958,8 +958,30 @@ function renderCards(weather, air){
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
     const a = air[i]?.current || {};
-    const aqi = a.us_aqi_pm2_5;
-    const comp = a.us_aqi, o3 = a.us_aqi_o3;
+    // Prefer PurpleAir-derived AQI when available; fall back to Open-Meteo air API
+    let aqi = a.us_aqi_pm2_5;
+    let comp = a.us_aqi, o3 = a.us_aqi_o3;
+    if(latestPurpleAir && latestPurpleAir.fields && latestPurpleAir.data){
+      try{
+        const fi = f=>latestPurpleAir.fields.indexOf(f);
+        const iLat = fi("latitude"), iLon = fi("longitude"), iPm = fi("pm2.5_atm");
+        let best=null, bestDist=Infinity;
+        for(const row of latestPurpleAir.data){
+          const lat = row[iLat], lon = row[iLon];
+          if(lat==null || lon==null) continue;
+          const d = haversineMi(l.lat,l.lon,lat,lon);
+          if(d<bestDist){ bestDist=d; best=row; }
+        }
+        if(best){
+          const pm = best[iPm];
+          const paAqi = pm25toAqi(pm);
+          if(paAqi!=null && !isNaN(paAqi)){
+            aqi = paAqi;
+            comp = null; o3 = null;
+          }
+        }
+      }catch(e){ /* ignore and use default aqi */ }
+    }
     const info = aqiInfo(aqi);
     const badgeTitle = "PM2.5 (smoke) US AQI"
       + (comp!=null?` \u00b7 composite US AQI ${Math.round(comp)}`:"")
@@ -992,16 +1014,32 @@ function renderCards(weather, air){
   if(aqiLayer){
     aqiLayer.clearLayers();
     LOCATIONS.forEach((l,i)=>{
-      const aqi = air[i]?.current?.us_aqi_pm2_5;
-      const comp = air[i]?.current?.us_aqi;
-      const o3 = air[i]?.current?.us_aqi_o3;
-      const info = aqiInfo(aqi);
-      const pm = air[i]?.current?.pm2_5;
+      // compute display AQI (prefer PurpleAir)
+      let markerAqi = air[i]?.current?.us_aqi_pm2_5;
+      let markerComp = air[i]?.current?.us_aqi;
+      let markerO3 = air[i]?.current?.us_aqi_o3;
+      let pm = air[i]?.current?.pm2_5;
+      if(latestPurpleAir && latestPurpleAir.fields && latestPurpleAir.data){
+        try{
+          const fi = f=>latestPurpleAir.fields.indexOf(f);
+          const iLat = fi("latitude"), iLon = fi("longitude"), iPm = fi("pm2.5_atm");
+          let best=null, bestDist=Infinity;
+          for(const row of latestPurpleAir.data){
+            const lat = row[iLat], lon = row[iLon];
+            if(lat==null||lon==null) continue;
+            const d = haversineMi(l.lat,l.lon,lat,lon);
+            if(d<bestDist){ bestDist=d; best=row; }
+          }
+          if(best){ const pmVal = best[iPm]; const paAqi = pm25toAqi(pmVal); if(paAqi!=null&&!isNaN(paAqi)){ markerAqi=paAqi; markerComp=null; markerO3=null; pm=pmVal; } }
+        }catch(e){}
+      }
+      const info = aqiInfo(markerAqi);
       L.circleMarker([l.lat,l.lon],{
         radius:11, color:"#0c1117", weight:2, fillColor:info.color, fillOpacity:.92
-      }).bindPopup(`<b>${l.name}</b><br>PM2.5 AQI ${aqi!=null?Math.round(aqi):"—"} · ${info.cat}`
+      }).bindPopup(`<b>${l.name}</b><br>PM2.5 AQI ${markerAqi!=null?Math.round(markerAqi):"—"} · ${info.cat}`
         + (pm!=null?`<br>PM2.5 ${pm.toFixed(1)} µg/m³`:"")
-        + (comp!=null?`<br><span style="color:#9fb0c0">Composite US AQI ${Math.round(comp)}${o3!=null?` · O₃ AQI ${Math.round(o3)}`:""}</span>`:"")).addTo(aqiLayer);
+        + (markerComp!=null?`<br><span style="color:#9fb0c0">Composite US AQI ${Math.round(markerComp)}${markerO3!=null?` · O₃ AQI ${Math.round(markerO3)}`:""}</span>`:""))
+        .addTo(aqiLayer);
     });
   }
 }
