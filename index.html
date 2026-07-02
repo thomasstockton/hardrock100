@@ -1195,9 +1195,27 @@ function computePosture(){
   let level = "go";
   const bump = lv => { if(lv==="nogo") level="nogo"; else if(lv==="hold" && level!=="nogo") level="hold"; };
 
-  // Air quality
+  // Air quality — prefer PurpleAir-derived AQI when available
   let worstAqi = -1, worstLoc = "";
-  latestAir.forEach((a,i)=>{ const v=a?.current?.us_aqi_pm2_5; if(v!=null && v>worstAqi){worstAqi=v; worstLoc=LOCATIONS[i].name;} });
+  for(let i=0;i<LOCATIONS.length;i++){
+    let candidateAqi = null;
+    if(latestPurpleAir && latestPurpleAir.fields && latestPurpleAir.data){
+      try{
+        const fi = f=>latestPurpleAir.fields.indexOf(f);
+        const iLat = fi("latitude"), iLon = fi("longitude"), iPm = fi("pm2.5_atm");
+        let best=null, bestDist=Infinity;
+        for(const row of latestPurpleAir.data){
+          const lat = row[iLat], lon = row[iLon];
+          if(lat==null||lon==null) continue;
+          const d = haversineMi(LOCATIONS[i].lat, LOCATIONS[i].lon, lat, lon);
+          if(d<bestDist){ bestDist=d; best=row; }
+        }
+        if(best && bestDist<=50){ const pm = best[iPm]; const pa = pm25toAqi(pm); if(pa!=null && !isNaN(pa)) candidateAqi = pa; }
+      }catch(e){}
+    }
+    if(candidateAqi==null){ const v = latestAir[i]?.current?.us_aqi_pm2_5; if(v!=null) candidateAqi = v; }
+    if(candidateAqi!=null && candidateAqi>worstAqi){ worstAqi = candidateAqi; worstLoc = LOCATIONS[i].name; }
+  }
   if(worstAqi>=0){
     const info = aqiInfo(worstAqi);
     let sev="go";
