@@ -1869,13 +1869,12 @@ function buildPurpleAirChart(){
 
   let dAvg="",st=false; _paPx=[];
   times.forEach((ts,i)=>{
-    const v=maxByTime[ts];
-    if(v==null){st=false;return;}
+    const vals=series.map(s=>({name:s.name,v:s.pts[ts]})).filter(o=>o.v!=null);
+    if(!vals.length){st=false;return;}
+    const v=Math.max(...vals.map(o=>o.v));
     const x=X(i),y=Y(v);
     dAvg+=(st?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)+" ";st=true;
-    let sensorName="";
-    for(const s of series){ if(s.pts[ts]!=null && Math.abs(s.pts[ts]-v)<1e-6){ sensorName=s.name; break; } }
-    _paPx.push({x,y,v,ts,sensor:sensorName});
+    _paPx.push({x,y,v,ts,sensors:vals.sort((a,b)=>b.v-a.v)});
   });
 
   const curMax=maxByTime[times[times.length-1]];
@@ -1909,8 +1908,9 @@ function buildPurpleAirChart(){
     dot.setAttribute("cx",best.x);dot.setAttribute("cy",best.y);dot.setAttribute("opacity","1");
     const inf=aqiInfo(Math.round(best.v));
     const d=new Date(best.ts*1000).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+    const sensorList = best.sensors.map(o=>`${esc(o.name)} ${Math.round(o.v)}`).join(" · ");
     tp.style.opacity="1";tp.style.left=(best.x*sx())+"px";tp.style.top=(best.y*sx())+"px";
-    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} max &middot; ${esc(best.sensor)} &middot; ${d}`;
+    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} max &middot; ${sensorList} &middot; ${d}`;
   });
   if(hit) hit.addEventListener("pointerleave",()=>{cur2.setAttribute("stroke-opacity","0");dot.setAttribute("opacity","0");tp.style.opacity="0";});
 }
