@@ -1946,9 +1946,9 @@ function buildPurpleAirChart(){
     dot.setAttribute("cx",best.x);dot.setAttribute("cy",best.y);dot.setAttribute("opacity","1");
     const inf=aqiInfo(Math.round(best.v));
     const d=new Date(best.ts*1000).toLocaleString(undefined,{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
-    const sensorList = best.sensors.map(o=>`${esc(o.name)} ${Math.round(o.v)}`).join(" · ");
+    const sensorList = best.sensors.map(o=>`<div>${esc(o.name)} ${Math.round(o.v)}</div>`).join("");
     tp.style.opacity="1";tp.style.left=(best.x*sx())+"px";tp.style.top=(best.y*sx())+"px";
-    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} max &middot; ${sensorList} &middot; ${d}`;
+    tp.innerHTML=`<b style="color:${inf.color}">${Math.round(best.v)}</b> ${inf.cat} max <div style="margin-top:6px">${sensorList}</div><div style="margin-top:6px;font-size:11px;color:#a6b7c6">${d}</div>`;
   });
   if(hit) hit.addEventListener("pointerleave",()=>{cur2.setAttribute("stroke-opacity","0");dot.setAttribute("opacity","0");tp.style.opacity="0";});
 }
