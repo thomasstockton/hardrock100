@@ -477,7 +477,7 @@
     <section class="panel">
       <div class="panel-head">
         <h2>Course conditions</h2>
-        <div class="meta">Wind · gusts · US AQI (PM2.5)</div>
+        <div class="meta">Wind · gusts · 24 h max US AQI (PM2.5)</div>
       </div>
       <div class="panel-body">
         <div class="cards" id="cards">
@@ -957,40 +957,66 @@ function renderLayerStatus(){
     + `<span><i class="sw" style="background:#3fb6c9"></i>Course + <b>${AID_STATIONS.length} aid stations</b></span>`;
 }
 
+function aqi24hMax(full){
+  const t = full && full.hourly && full.hourly.time;
+  const v = full && full.hourly && full.hourly.us_aqi_pm2_5;
+  if(!t || !v) return null;
+  const ref = (full.current && full.current.time) || null;
+  let nowIdx = ref ? t.indexOf(ref) : -1;
+  if(nowIdx<0 && ref){ for(let k=0;k<t.length;k++){ if(t[k]<=ref) nowIdx=k; else break; } }
+  if(nowIdx<0) nowIdx = Math.min(t.length-1, 24);
+  const start = Math.max(0, nowIdx-23);
+  let max=null;
+  for(let k=start;k<=nowIdx;k++){ if(v[k]!=null && (max==null||v[k]>max)) max=v[k]; }
+  return max;
+}
+
+// 24h max AQI from the ground-truth PurpleAir sensor nearest a town (falls back to null if none nearby)
+function purpleAir24hMax(l){
+  const j = latestPurpleAir;
+  if(!j || !j.data || !j.fields || !j.history) return null;
+  const fi = f=>j.fields.indexOf(f);
+  const iIdx=fi("sensor_index"), iLat=fi("latitude"), iLon=fi("longitude"), iName=fi("name");
+  if(iIdx<0||iLat<0||iLon<0) return null;
+  let best=null, bestDist=Infinity;
+  for(const row of j.data){
+    const lat=row[iLat], lon=row[iLon];
+    if(lat==null||lon==null) continue;
+    const d=haversineMi(l.lat,l.lon,lat,lon);
+    if(d<bestDist){ bestDist=d; best=row; }
+  }
+  if(!best || bestDist>50) return null;
+  const h = j.history.find(h=>h.sensor_index===best[iIdx]);
+  if(!h || !h.data || !h.data.length) return null;
+  const hfi = f=>h.fields.indexOf(f);
+  const iTs=hfi("time_stamp"), iA=hfi("pm2.5_atm_a"), iB=hfi("pm2.5_atm_b");
+  if(iTs<0) return null;
+  const cutoff = Math.floor(Date.now()/1000) - 24*3600;
+  let max=null;
+  h.data.forEach(row=>{
+    const ts=row[iTs];
+    if(ts==null || ts<cutoff) return;
+    const a=iA>=0?row[iA]:null, b=iB>=0?row[iB]:null;
+    const pm=(a!=null&&b!=null)?(a+b)/2:(a??b);
+    const aqi=pm25toAqi(pm);
+    if(aqi!=null && (max==null||aqi>max)) max=aqi;
+  });
+  return max!=null ? { aqi:max, name:best[iName]||h.name, distMi:bestDist } : null;
+}
+
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
-    const a = air[i]?.current || {};
-    // Prefer PurpleAir-derived AQI when available; fall back to Open-Meteo air API
-    let aqi = a.us_aqi_pm2_5;
-    let comp = a.us_aqi, o3 = a.us_aqi_o3;
-    if(latestPurpleAir && latestPurpleAir.fields && latestPurpleAir.data){
-      try{
-        const fi = f=>latestPurpleAir.fields.indexOf(f);
-        const iLat = fi("latitude"), iLon = fi("longitude"), iPm = fi("pm2.5_atm");
-        let best=null, bestDist=Infinity;
-        for(const row of latestPurpleAir.data){
-          const lat = row[iLat], lon = row[iLon];
-          if(lat==null || lon==null) continue;
-          const d = haversineMi(l.lat,l.lon,lat,lon);
-          if(d<bestDist){ bestDist=d; best=row; }
-        }
-        if(best){
-          const pm = best[iPm];
-          const paAqi = pm25toAqi(pm);
-          if(paAqi!=null && !isNaN(paAqi)){
-            aqi = paAqi;
-            comp = null; o3 = null;
-          }
-        }
-      }catch(e){ /* ignore and use default aqi */ }
-    }
+    const full = air[i] || {};
+    // Prefer 24h max from the nearest real PurpleAir sensor; fall back to the Open-Meteo model
+    const pa = purpleAir24hMax(l);
+    const aqi = pa ? pa.aqi : aqi24hMax(full);
     const info = aqiInfo(aqi);
-    const badgeTitle = "PM2.5 (smoke) US AQI"
-      + (comp!=null?` \u00b7 composite US AQI ${Math.round(comp)}`:"")
-      + (o3!=null?` \u00b7 ozone AQI ${Math.round(o3)}`:"");
+    const badgeTitle = pa
+      ? `24 h max PM2.5 US AQI · PurpleAir (${pa.name})`
+      : "24 h max PM2.5 US AQI · Open-Meteo model (no nearby PurpleAir sensor)";
     const gust = w.wind_gusts_10m;
     const wind = w.wind_speed_10m;
     const card = document.createElement("div");
@@ -1845,7 +1871,7 @@ function buildPurpleAirChart(){
   const COLORS=["#3fb6c9","#f5a623","#56c46e","#e96060","#a974d4","#e9d04a","#60a4e9","#ef9b3a"];
 
   // Build per-sensor time series (exclude some noisy stations)
-  const EXCLUDE_SENSORS = new Set(["Horsefly Mesa","Rock_Outdoor"]);
+  const EXCLUDE_SENSORS = new Set(["Horsefly Mesa"]);
   const allTimes=new Set();
   const series=[];
   j.history.forEach((h,si)=>{
