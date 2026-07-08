@@ -1807,7 +1807,7 @@ function buildPurpleAirChart(){
   const COLORS=["#3fb6c9","#f5a623","#56c46e","#e96060","#a974d4","#e9d04a","#60a4e9","#ef9b3a"];
 
   // Build per-sensor time series (exclude some noisy stations)
-  const EXCLUDE_SENSORS = new Set(["Horsefly Mesa","Rock_Outdoor"]);
+  const EXCLUDE_SENSORS = new Set(["Horsefly Mesa"]);
   const allTimes=new Set();
   const series=[];
   j.history.forEach((h,si)=>{
