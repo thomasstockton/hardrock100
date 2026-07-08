@@ -1073,6 +1073,25 @@ function purpleAirMaxOverHours(l, hours){
 function purpleAir24hMax(l){ return purpleAirMaxOverHours(l, 24); }
 function purpleAir12hMax(l){ return purpleAirMaxOverHours(l, 12); }
 
+// Current (latest reading) AQI from the ground-truth PurpleAir sensor nearest a town
+function purpleAirCurrent(l){
+  const j = latestPurpleAir;
+  if(!j || !j.data || !j.fields) return null;
+  const fi = f=>j.fields.indexOf(f);
+  const iLat=fi("latitude"), iLon=fi("longitude"), iName=fi("name"), iPm=fi("pm2.5_atm");
+  if(iLat<0||iLon<0||iPm<0) return null;
+  let best=null, bestDist=Infinity;
+  for(const row of j.data){
+    const lat=row[iLat], lon=row[iLon];
+    if(lat==null||lon==null) continue;
+    const d=haversineMi(l.lat,l.lon,lat,lon);
+    if(d<bestDist){ bestDist=d; best=row; }
+  }
+  if(!best || bestDist>50) return null;
+  const aqi = pm25toAqi(best[iPm]);
+  return aqi!=null ? { aqi, name:best[iName], distMi:bestDist } : null;
+}
+
 function renderCards(weather, air){
   const host = $("#cards");
   host.innerHTML = "";
@@ -1080,20 +1099,26 @@ function renderCards(weather, air){
   LOCATIONS.forEach((l,i)=>{
     const w = weather[i]?.current || {};
     const full = air[i] || {};
-    // Prefer max from the nearest real PurpleAir sensor; fall back to the Open-Meteo model
+    // Prefer max/current from the nearest real PurpleAir sensor; fall back to the Open-Meteo model
     const pa = purpleAir24hMax(l);
     const pa12 = purpleAir12hMax(l);
+    const paNow = purpleAirCurrent(l);
     const aqi = pa ? pa.aqi : aqi24hMax(full);
     const aqi12 = pa12 ? pa12.aqi : aqi12hMax(full);
+    const aqiNow = paNow ? paNow.aqi : (air[i]?.current?.us_aqi_pm2_5 ?? null);
     townAqi[i] = { aqi, pa };
     const info = aqiInfo(aqi);
     const info12 = aqiInfo(aqi12);
+    const infoNow = aqiInfo(aqiNow);
     const badgeTitle = pa
       ? `24 h max PM2.5 US AQI · PurpleAir (${pa.name})`
       : "24 h max PM2.5 US AQI · Open-Meteo model (no nearby PurpleAir sensor)";
     const badgeTitle12 = pa12
       ? `12 h max PM2.5 US AQI · PurpleAir (${pa12.name})`
       : "12 h max PM2.5 US AQI · Open-Meteo model (no nearby PurpleAir sensor)";
+    const badgeTitleNow = paNow
+      ? `Current PM2.5 US AQI · PurpleAir (${paNow.name})`
+      : "Current PM2.5 US AQI · Open-Meteo model (no nearby PurpleAir sensor)";
     const gust = w.wind_gusts_10m;
     const wind = w.wind_speed_10m;
     const card = document.createElement("div");
@@ -1109,6 +1134,11 @@ function renderCards(weather, air){
         <div class="metric">
           <div class="v num">${wind!=null?Math.round(wind):"—"}</div>
           <div class="u">${windDir(w.wind_direction_10m)} wind</div>
+        </div>
+        <div class="aqibadge" style="background:${infoNow.color}" title="${badgeTitleNow}">
+          <div class="lbl">current</div>
+          <div class="a num">${aqiNow!=null?Math.round(aqiNow):"—"}</div>
+          <div class="c">${infoNow.cat}</div>
         </div>
         <div class="aqibadge" style="background:${info12.color}" title="${badgeTitle12}">
           <div class="lbl">12h max</div>
