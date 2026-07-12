@@ -1843,8 +1843,7 @@ function buildPurpleAirChart(){
     if(vals.length){ avgByTime[ts]=vals.reduce((a,b)=>a+b,0)/vals.length; maxByTime[ts]=Math.max(...vals); }
   });
 
-  const peak=Math.max(50,...Object.values(avgByTime).filter(v=>v!=null));
-  const ymax=Math.max(150,Math.ceil(peak/50)*50);
+  const ymax=200;
   const X=i=>n<=1?m.l+pw/2:m.l+i/(n-1)*pw;
   const Y=v=>m.t+ph-(Math.min(v,ymax)/ymax)*ph;
 
