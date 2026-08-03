@@ -1,8 +1,8 @@
 name: Fetch PurpleAir data
 
 on:
-  schedule:
-    - cron: "*/10 * * * *"   # every 10 minutes
+#  schedule:
+#    - cron: "*/10 * * * *"   # every 10 minutes
   workflow_dispatch:           # manual trigger from Actions tab
 
 permissions:
